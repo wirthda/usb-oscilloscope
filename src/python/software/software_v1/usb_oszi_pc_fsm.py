@@ -230,4 +230,5 @@ def fsm_pc(command_queue, status_queue, stop_event):
         time.sleep(0.01)
 
     print("FSM thread stopping.")
-    serial_interface.close()
+    if serial_interface:
+        serial_interface.close()

@@ -18,6 +18,7 @@ from PySide6.QtWidgets import QApplication, QWidget, QMainWindow, QGridLayout, Q
 from PySide6.QtCore import Qt, QObject, QTimer, Signal, Slot, QThread
 
 from measurement_functions import *
+from format_utils import format_value
 
 class UsbOsziGUI(StateMachine):
      idle = State("Idle", initial=True)     #Warten bis Run gedrückt
@@ -34,6 +35,7 @@ class UsbOsziGUI(StateMachine):
 
 
 class MatplotlibWidget(FigureCanvas):
+    cursor_diff_changed = Signal(float,float)
     def __init__(self):
         self.figure, self.ax = plt.subplots()
         super().__init__(self.figure)
@@ -59,6 +61,7 @@ class MatplotlibWidget(FigureCanvas):
         self.coord_text2 = self.ax.text(0, 0, '', color='black', visible=False,
             bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="black", lw=0.5, alpha=0.8)
         )
+        self.zero_line = self.ax.axhline(y=0, color="gray", linestyle="--", linewidth=1, zorder=1)
 
         self.data_x = np.array([])
         self.data_y = None
@@ -68,21 +71,11 @@ class MatplotlibWidget(FigureCanvas):
         self.figure.canvas.mpl_connect('motion_notify_event', self.on_mouse_move)
         self.figure.canvas.mpl_connect('button_release_event', self.on_mouse_release)
     
-    def format_timebase(self,val):
-        if val < 1e-6:
-            return f"{val*1e9:.0f} ns/div"
-        elif val < 1e-3:
-            return f"{val*1e6:.1f} µs/div"
-        elif val < 1:
-            return f"{val*1e3:.1f} ms/div"
-        else:
-            return f"{val:.2f} s/div"
+    def get_time_label(self,val):
+        return format_value(val, "s") + "/div"
         
-    def format_vdiv(self, v):
-        if v < 1:
-            return f"{v*1000:.0f} mV/div"
-        else:
-            return f"{v:.2f} V/div"
+    def get_v_label(self, val):
+        return format_value(val, "V") + "/div" 
 
     # --- Skalierung (Achsensetting nur wenn nötig aufrufen, bei Basisänderung!) ---
     def update_axes_scaling(self, num_xdiv, num_ydiv, timebase, vdiv, xoffset, yoffset):
@@ -97,8 +90,8 @@ class MatplotlibWidget(FigureCanvas):
         self.ax.set_xticks(np.linspace(x_min, x_max, num_xdiv + 1))
         self.ax.set_yticks(np.linspace(y_min, y_max, num_ydiv + 1))
         self.ax.grid(True, which="major", axis="both")
-        self.ax.set_xlabel(self.format_timebase(timebase))
-        self.ax.set_ylabel(self.format_vdiv(vdiv))
+        self.ax.set_xlabel(self.get_time_label(timebase))
+        self.ax.set_ylabel(self.get_v_label(vdiv))
         if self.data_x.any():
             self.update_cursor1(x_min)
             self.update_cursor2(x_max)
@@ -214,7 +207,7 @@ class MatplotlibWidget(FigureCanvas):
             self.cursor_y1 = y_val
             self.vline1.set_xdata([x_val])
             self.hline1.set_ydata([y_val])
-            self.coord_text1.set_text(f"x={x_val:.3e}\ny={y_val:.3e}")
+            self.coord_text1.set_text(f"x={x_val:.2e}\ny={y_val:.2e}")
             self.coord_text1.set_position((x_val, y_val))
             self.update_delta_t_textbox()
     
@@ -227,23 +220,16 @@ class MatplotlibWidget(FigureCanvas):
             self.cursor_y2 = y_val
             self.vline2.set_xdata([x_val])
             self.hline2.set_ydata([y_val])
-            self.coord_text2.set_text(f"x={x_val:.3e}\ny={y_val:.3e}")
+            self.coord_text2.set_text(f"x={x_val:.2e}\ny={y_val:.2e}")
             self.coord_text2.set_position((x_val, y_val))
             self.update_delta_t_textbox()
     
     def update_delta_t_textbox(self):
-        # Text im Plot platzieren
-        if hasattr(self, "delta_t_text") and self.delta_t_text is not None:
-            self.delta_t_text.remove()
+        
         if self.cursor_x1 is not None and self.cursor_x2 is not None and self.crosshair1_visible is True:
-            delta_t = abs(self.cursor_x2 - self.cursor_x1)
-            xcenter = (self.cursor_x1 + self.cursor_x2) / 2
-            ycenter = max(self.cursor_y1, self.cursor_y2)
-            self.delta_t_text = self.ax.text(
-                xcenter, ycenter, f"Δt = {delta_t:.3e} s",
-                color="purple", ha="center", va="bottom",
-                bbox=dict(boxstyle="round", fc="wheat", alpha=0.7)
-            )
+            delta_x = abs(self.cursor_x2 - self.cursor_x1)
+            delta_y = abs(self.cursor_y2 - self.cursor_y1)
+            self.cursor_diff_changed.emit(delta_x, delta_y)
         self.draw_idle()
 
     def on_mouse_press(self, event):
@@ -276,6 +262,19 @@ class MatplotlibWidget(FigureCanvas):
     def on_mouse_release(self, event):
         self.dragging_cursor = None
 
+UNIT_BASES = {
+    "Amplitude" : "V",
+    "Max" : "V",
+    "Min" : "V",
+    "Top" : "V",
+    "Base" : "V",
+    "Mittelwert" : "V",
+    "Peak-Peak" : "V",
+    "DC RMS" : "V",
+    "AC RMS" : "V",
+    "Periode" : "s",
+    "Frequenz" : "Hz",
+}
 
 class MeasureWorker(QObject):
     finished = Signal(list)
@@ -295,15 +294,19 @@ class MeasureWorker(QObject):
                 try:
                     result = func(self.data_buffer) 
                     if result is not None:
-                        #messwerte.append(f"{name}: {result:.3f}")
-                        messwerte.append(f"{name}: {result}")
+                        einheit = UNIT_BASES.get(name, "")
+                        if einheit: 
+                            txt = format_value(result, einheit)
+                            messwerte.append(f"{name}: {txt}")
+                        else:
+                            messwerte.append(f"{name}: {result:.3f}")
+
                     else:
                         messwerte.append(f"{name}: -")
                 except Exception as e:
                     messwerte.append(f"{name}: Fehler!")
 
         self.finished.emit(messwerte)  # Ergebnisse zur GUI senden  
-
 
 class StatusProvider(QObject):
     status_update = Signal(object)
@@ -499,23 +502,22 @@ class General(QWidget):
     def __init__(self, command_queue):
         super().__init__()
         self.command_queue = command_queue
-        #self.status_queue = status_queue
-        self.gui_fsm = UsbOsziGUI()
-        self.matplotlib_widget = MatplotlibWidget()
-        self.toolbar = NavigationToolbar(self.matplotlib_widget, self)
+        self.current_timebase = 1e-6
+        self.current_timebase_idx = 0
+        self.current_vdiv = 1
+        self.current_vdiv_idx = 0
+        self.current_yoffset = 0
+        self.current_yoffset_idx = 0
+        self.current_xoffset = 0
+        self.current_xoffset_idx = 0
+        self.max_samplerate = 10_000_000
+        self.is_run_mode = False # Flag, um den Betriebsmodus (Single/Run) zu speichern
+
         self.data_buffer = []
         self.samplingrate = 10_000_000
         self.reference_voltage = 0
         self.num_xdiv = 10
         self.num_ydiv = 8
-
-        self.current_timebase = 1e-6
-        self.current_vdiv = 1
-        self.current_yoffset = 0
-        self.current_xoffset = 0
-        self.max_samplerate = 10_000_000
-        self.is_run_mode = False # Flag, um den Betriebsmodus (Single/Run) zu speichern
-
 
         self.timebase_values = [
             0.1e-6, 0.2e-6, 0.5e-6,   # 0.1, 0.2, 0.5 µs/div
@@ -528,7 +530,7 @@ class General(QWidget):
             1.0                       # 1 s/div
         ]
         self.vdiv_values = [
-            0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000
+            0.001, 0.002, 0.005, 0.01, 0.02, 0.05, 0.1, 0.2, 0.5, 1, 2, 5, 10, 20, 50, 100, 200, 500, 1000
         ]  # in V/div, wie echte Oszilloskope
 
         # Variable zum Speichern des letzten FSM-Status
@@ -544,6 +546,10 @@ class General(QWidget):
 
         # Einstellungen beim Start der GUI laden
         self.load_settings()
+
+        self.gui_fsm = UsbOsziGUI()
+        self.matplotlib_widget = MatplotlibWidget()
+        self.toolbar = NavigationToolbar(self.matplotlib_widget, self)
 
         self.initUI()
 
@@ -568,6 +574,8 @@ class General(QWidget):
         self.status_label = QLabel("Status: Bereit")
         self.measure = QPushButton("Measure", self)
         self.toogle_crosshair_button = QPushButton("Cursor")
+        self.delta_x_text = QLabel()
+        self.delta_y_text = QLabel()
         self.measurement_results_label = QLabel()
         self.measurement_results_label.setAlignment(Qt.AlignTop | Qt.AlignLeft)
         
@@ -583,6 +591,9 @@ class General(QWidget):
         self.toogle_crosshair_button.setStyleSheet("")
         self.run.setStyleSheet("")
         self.stop.setStyleSheet("")
+
+        self.probe_combo = QComboBox()
+        self.probe_combo.addItems(["1:1", "10:1"])
 
         self.select_measure_checkbox_group = QGroupBox('select measurement:', parent =self)
         self.checkbox_layout = QVBoxLayout() # Layout für die Checkboxen innerhalb der GroupBox
@@ -617,15 +628,16 @@ class General(QWidget):
         self.timebase_dial = QDial()
         self.timebase_dial.setMinimum(0)
         self.timebase_dial.setMaximum(len(self.timebase_values)-1)
-        self.timebase_dial.setValue(self.current_timebase)
-        self.on_timebase_dial_change(10) # Standard: 10 us/div
+        self.timebase_dial.setValue(self.current_timebase_idx)
+        self.on_timebase_dial_change(self.current_timebase_idx)
         self.timebase_dial.setWrapping(False)
         self.timebase_dial.setFixedSize(120, 120)      # großer Dial
 
         self.vdiv_dial = QDial()
         self.vdiv_dial.setMinimum(0)
         self.vdiv_dial.setMaximum(len(self.vdiv_values)-1)
-        self.vdiv_dial.setValue(self.current_vdiv)  # Standard: 1 V/div
+        self.vdiv_dial.setValue(self.current_vdiv_idx)  # Wert auf letzen Wert setzen oder Standardwert
+        self.on_vdiv_dial_change(self.current_vdiv_idx)
         self.vdiv_dial.setWrapping(False)
         self.vdiv_dial.setFixedSize(120, 120)      # großer Dial
 
@@ -633,7 +645,8 @@ class General(QWidget):
         self.yoffset_dial.setRange(-100,100)
         self.yoffset_dial.setMinimum(-100)
         self.yoffset_dial.setMaximum(100)
-        self.yoffset_dial.setValue(0)
+        self.yoffset_dial.setValue(self.current_yoffset_idx)
+        self.on_yoffset_changed(self.current_yoffset_idx)
         self.yoffset_dial.setWrapping(False)
         self.yoffset_dial.setFixedSize(60, 60)      # großer Dial
 
@@ -641,7 +654,8 @@ class General(QWidget):
         self.xoffset_dial.setRange(0,2000)
         self.xoffset_dial.setMinimum(0)
         self.xoffset_dial.setMaximum(2000)
-        self.xoffset_dial.setValue(0)
+        self.xoffset_dial.setValue(self.current_xoffset_idx)
+        self.on_xoffset_changed(self.current_xoffset_idx)
         self.xoffset_dial.setWrapping(False)
         self.xoffset_dial.setFixedSize(60, 60)         # kleiner Dial
 
@@ -690,16 +704,16 @@ class General(QWidget):
         dial_row_widget_y = QWidget()
         dial_row_layout_y = QHBoxLayout()
         dial_row_layout_y.setContentsMargins(0, 0, 0, 0)
-        dial_row_layout_y.setSpacing(10)  # Optional: Abstand zwischen den Dials
+        dial_row_layout_y.setSpacing(10)
         dial_row_layout_y.addWidget(self.vdiv_dial)
         dial_row_layout_y.addWidget(yoffset_wrapper)
         dial_row_widget_y.setLayout(dial_row_layout_y)
 
         grid = QGridLayout()
-        grid.addWidget(self.toolbar, 20, 0, 1, 20) # Toolbar oberhalb des Plots
-        grid.addWidget(self.matplotlib_widget, 0, 0, 20, 19)
-        grid.addWidget(self.overflow_label, 21, 0, 1,2)
-        grid.addWidget(self.triggered_label,21, 2, 1,2)
+        grid.addWidget(self.toolbar, 24, 0, 1, 17) 
+        grid.addWidget(self.matplotlib_widget, 0, 0, 23, 19)
+        grid.addWidget(self.overflow_label, 25, 0, 1,2)
+        grid.addWidget(self.triggered_label,25, 2, 1,2)
 
         grid.addWidget(QLabel("timbase"), 0, 23)
         grid.addWidget(dial_row_widget_x, 1, 23, 3, 4)
@@ -712,17 +726,23 @@ class General(QWidget):
         grid.addWidget(QLabel("measure"), 3, 27)
         grid.addWidget(self.measure, 5, 27)
         grid.addWidget(self.toogle_crosshair_button, 4, 27)
-        grid.addWidget(self.select_measure_checkbox_group, 7, 23, 9,3)
-        grid.addWidget(self.measurement_results_label, 7, 27, 9,2)
+        grid.addWidget(self.delta_x_text, 4, 29)
+        grid.addWidget(self.delta_y_text, 5, 29)
+        grid.addWidget(self.select_measure_checkbox_group, 7, 23, 12,3)
+        grid.addWidget(self.measurement_results_label, 7, 27, 12,2)
+
 
         grid.addWidget(QLabel("trigger typ"), 4, 23)
         grid.addWidget(self.trigger_combobox, 5, 23, 1, 2)
 
-        grid.addWidget(QLabel("vertical"), 16,23)
-        grid.addWidget(dial_row_widget_y, 17, 23, 3, 4)
+        grid.addWidget(QLabel("vertical"), 19,23)
+        grid.addWidget(dial_row_widget_y, 20, 23, 3, 4)
 
         grid.addWidget(QLabel("interpolation"), 1, 27)
         grid.addWidget(self.interp_combo,2,27,1,2)
+
+        grid.addWidget(QLabel("probe"), 24, 17)
+        grid.addWidget(self.probe_combo, 25,17)
 
         grid.addWidget(QLabel("status label"), 24, 23)
         grid.addWidget(self.status_label, 25, 23, 1, 5)
@@ -752,6 +772,8 @@ class General(QWidget):
         self.vdiv_dial.valueChanged.connect(self.on_vdiv_dial_change)
         self.yoffset_dial.valueChanged.connect(self.on_yoffset_changed)
         self.xoffset_dial.valueChanged.connect(self.on_xoffset_changed)
+
+        self.matplotlib_widget.cursor_diff_changed.connect(self.set_cursor_diff)
 
 
     def handle_status(self, msg):
@@ -873,7 +895,13 @@ class General(QWidget):
         # t = np.arange(0, 100000/self.samplingrate, delta_time)
         # data = ampli*np.sin(2*np.pi*freq*t+phase)+offset
 
-        self.matplotlib_widget.plot_data(data, self.samplingrate, plot_style)
+        selected_ratio = self.probe_combo.currentText()
+        if (selected_ratio == "10:1"):
+            data_corr = data.copy() * 10
+        else:
+            data_corr = data.copy()
+
+        self.matplotlib_widget.plot_data(data_corr, self.samplingrate, plot_style)
         self.command_queue.put({
             "type": "PROCESSING_COMPLETE",
             "continue_acquisition": self.is_run_mode
@@ -950,14 +978,8 @@ class General(QWidget):
     
 
     def on_timebase_dial_change(self, idx):
+        self.current_timebase_idx = idx
         self.current_timebase = self.timebase_values[idx]
-        # if self.gui_fsm.current_state.id == "idle":
-        #     opt_samplingrate = self.calc_optimal_sampling()
-        #     self.send_sampling_to_uc(opt_samplingrate)
-        # else:
-        #     print(f"GUI: Cannot set frequency in current state: {self.gui_fsm.current_state.id}")
-        #     self.status_label.setText(f"Warning: Samplingrate only can set in idle state.")
-        #     self.status_clear_timer.start(3000) # 3 Sekunden anzeigen
         self.matplotlib_widget.update_axes_scaling(
                 self.num_xdiv, self.num_ydiv,
                 self.current_timebase, self.current_vdiv, self.current_xoffset, self.current_yoffset
@@ -965,25 +987,48 @@ class General(QWidget):
 
 
     def on_vdiv_dial_change(self, idx):
+        self.current_vdiv_idx = idx
         self.current_vdiv = self.vdiv_values[idx]
         # Achsen & Grid neu setzen bei Änderung der Amplitude:
         self.matplotlib_widget.update_axes_scaling(
             self.num_xdiv, self.num_ydiv,
             self.current_timebase, self.current_vdiv, self.current_xoffset, self.current_yoffset
         )
-        if self.num_ydiv*self.current_vdiv+self.current_yoffset*self.current_vdiv < maximum(self.data_buffer) or self.num_ydiv*self.current_vdiv+self.current_yoffset*self.current_vdiv < abs(minimum(self.data_buffer)):
-            self.status_label.setText(f"Warning: Values ​​are outside the displayed range")
-            self.status_clear_timer.start(3000) # 3 Sekunden anzeigen
+        has_data = (
+            isinstance(self.data_buffer, (list, np.ndarray)) and len(self.data_buffer) > 0
+            and not (
+                isinstance(self.data_buffer, np.ndarray)
+                and self.data_buffer.size == 0
+            )
+        )
+        if has_data:
+            if self.num_ydiv*self.current_vdiv+self.current_yoffset*self.current_vdiv < maximum(self.data_buffer) or self.num_ydiv*self.current_vdiv+self.current_yoffset*self.current_vdiv < abs(minimum(self.data_buffer)):
+                self.status_label.setText(f"Warning: Values ​​are outside the displayed range")
+                self.status_clear_timer.start(3000) # 3 Sekunden anzeigen
     
     def on_yoffset_changed(self, value):
+        self.current_yoffset_idx = value
         self.current_yoffset = value/100*self.current_vdiv*self.num_ydiv/2
         self.matplotlib_widget.update_axes_scaling(self.num_xdiv, self.num_ydiv, self.current_timebase, self.current_vdiv, self.current_xoffset, self.current_yoffset)
-        if self.num_ydiv*self.current_vdiv+self.current_yoffset*self.current_vdiv < maximum(self.data_buffer) or self.num_ydiv*self.current_vdiv+self.current_yoffset*self.current_vdiv < abs(minimum(self.data_buffer)):
-            self.status_label.setText(f"Warning: Values ​​are outside the displayed range")
-            self.status_clear_timer.start(3000) # 3 Sekunden anzeigen
+        has_data = (
+            isinstance(self.data_buffer, (list, np.ndarray)) and len(self.data_buffer) > 0
+            and not (
+                isinstance(self.data_buffer, np.ndarray)
+                and self.data_buffer.size == 0
+            )
+        )
+        if has_data:
+            if self.num_ydiv*self.current_vdiv+self.current_yoffset*self.current_vdiv < maximum(self.data_buffer) or self.num_ydiv*self.current_vdiv+self.current_yoffset*self.current_vdiv < abs(minimum(self.data_buffer)):
+                self.status_label.setText(f"Warning: Values ​​are outside the displayed range")
+                self.status_clear_timer.start(3000) # 3 Sekunden anzeigen
     
     def on_xoffset_changed(self, value):
-        self.current_xoffset = (1/self.samplingrate)*len(self.data_buffer)*(value/2000)
+        self.current_xoffset_idx = value
+        if len(self.data_buffer):
+            laenge = len(self.data_buffer)
+        else:
+            laenge = 200_000
+        self.current_xoffset = (1/self.samplingrate)*laenge*(value/2000)
         self.matplotlib_widget.update_axes_scaling(self.num_xdiv, self.num_ydiv, self.current_timebase, self.current_vdiv, self.current_xoffset, self.current_yoffset)
 
 
@@ -1080,6 +1125,14 @@ class General(QWidget):
             self.status_label.setText("Info: Cursors can only be used if data are available")
             self.status_clear_timer.start(3000) # 3 Sekunden anzeigen
 
+    @Slot(float, float)
+    def set_cursor_diff(self, dx, dy):
+        text_x = f"Δx = {format_value(dx, "s")}"
+        text_y = f"Δy = {format_value(dy, "V")}"
+        self.delta_x_text.setText(text_x)
+        self.delta_y_text.setText(text_y)
+       
+
 
     @Slot() #Slot für den Timer
     def revert_status_label(self):
@@ -1104,10 +1157,10 @@ class General(QWidget):
     def save_settings(self):
         """Speichert die aktuellen GUI-Einstellungen in einer Datei."""
         settings = {
-            'vdiv': self.current_vdiv,
-            'timebase': self.current_timebase,
-            'xoffset': self.current_xoffset,
-            'yoffset': self.current_yoffset
+            'vdiv_idx': self.current_vdiv_idx,
+            'timebase_idx': self.current_timebase_idx,
+            'xoffset_idx': self.current_xoffset_idx,
+            'yoffset_idx': self.current_yoffset_idx
         }
         try:
             # 'wb' steht für 'write binary'
@@ -1125,20 +1178,22 @@ class General(QWidget):
                 with open(self.settings_file, 'rb') as f:
                     settings = pickle.load(f)
                 # Die .get()-Methode wird verwendet, um Standardwerte zu setzen,
-                # falls ein Schlüssel in der geladenen Datei fehlt (z.B. nach einem Update).
-                self.current_vdiv = settings.get('vdiv', self.current_vdiv)
-                self.current_timebase = settings.get('timebase', self.current_timebase)
-                self.current_xoffset = settings.get('xoffset', self.current_xoffset)
-                self.current_yoffset = settings.get('yoffset', self.current_yoffset)
+                # falls ein Schlüssel in der geladenen Datei fehlt.
+                self.current_vdiv_idx = settings.get('vdiv_idx', self.current_vdiv_idx)
+                self.current_vdiv = self.vdiv_values[self.current_vdiv_idx]
+                self.current_timebase_idx = settings.get('timebase_idx', self.current_timebase_idx)
+                self.current_timebase = self.timebase_values[self.current_timebase_idx]
+
+                self.current_xoffset_idx = settings.get('xoffset_idx', self.current_xoffset_idx)
+                self.current_yoffset_idx = settings.get('yoffset_idx', self.current_yoffset_idx)
+        
                 print(f"Einstellungen erfolgreich aus '{self.settings_file}' geladen.")
             except Exception as e:
                 print(f"Fehler beim Laden der Einstellungen (Datei möglicherweise beschädigt): {e}. Verwende Standardwerte.")
-                # Optional: Löschen Sie die beschädigte Datei, damit beim nächsten Start
-                # eine neue Datei mit Standardwerten erstellt wird.
-                # os.remove(self.settings_file)
+                # Löschen Sie die beschädigte Datei, damit beim nächsten Start eine neue Datei mit Standardwerten erstellt wird.
+                os.remove(self.settings_file)
         else:
             print(f"Einstellungsdatei '{self.settings_file}' nicht gefunden. Verwende Standardwerte.")
-
 
 
 class Debugging(QWidget):
@@ -1211,10 +1266,7 @@ class Debugging(QWidget):
             str = msg["FREQUENCY"]
             if str.startswith("SAMPLING_FREQUENCY:"):
                 freq_str = str.split(":")[1].strip()
-                self.actual_samplingfrequency.setText(freq_str+" Hz")
-                        
-                        
-            
+                self.actual_samplingfrequency.setText(freq_str+" Hz")           
                     
         
 class StackedWidgetApp(QMainWindow):

@@ -7,7 +7,7 @@ def minimum(data):
     return np.min(data)
 
 def mean(data):
-    return np.mean(data)
+    return np.mean(data[0:(np.floor(len(data)/period_value(data))*period_value(data))])
 
 def peak_peak(data):
     return np.max(data) - np.min(data)
@@ -24,13 +24,13 @@ def period(data, abtastzeit):
     pv = period_value(data)
     if pv is None:
         return None
-    p = pv * abtastzeit
-    if p<1e-6:
-        p = p*1_000_000
-        return(str(p) + " uH")
-    elif p<1e-3:
-        p = p*1_000
-        return(str(p) + "mH")
+    return pv * abtastzeit
+    # if p<1e-6:
+    #     p = p*1_000_000
+    #     return(str(p) + " uHz")
+    # elif p<1e-3:
+    #     p = p*1_000
+    #     return(str(p) + " mHz")
 
 def frequency(data, abtastzeit):
     perv = period_value(data)
@@ -39,13 +39,13 @@ def frequency(data, abtastzeit):
         return None
     return 1 / per
 
-def top(data, percent=0.2):
+def top(data, percent=0.1):
     sorted_data = np.sort(data)
     N = len(data)
     cnt = max(int(N * percent), 1)
     return np.mean(sorted_data[-cnt:])
 
-def base(data, percent=0.2):
+def base(data, percent=0.1):
     sorted_data = np.sort(data)
     N = len(data)
     cnt = max(int(N * percent), 1)
@@ -55,7 +55,7 @@ def amplitude(data):
     return top(data) - base(data)
 
 def dc_rms(data):
-    return np.sqrt(np.mean(np.square(data)))
+    return np.sqrt(np.mean(np.square(data[0:(np.floor(len(data)/period_value(data))*period_value(data))])))
 
 def ac_rms(data):
-    return np.std(data, ddof=0)
+    return np.std(data[0:(np.floor(len(data)/period_value(data))*period_value(data))], ddof=0)
