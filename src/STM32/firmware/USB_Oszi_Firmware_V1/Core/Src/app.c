@@ -14,16 +14,24 @@
 
 
 /* #DEFINES */
+// usb transmission
 #define USB_BUFLEN 64
 #define CMD_RX_BUFFER_SIZE 128
 #define CMD_TX_BUFFER_SIZE 128
 
+// data transmission
 #define MAX_TRANSFER_BYTELENGTH 1000
 
+// sampling frequency
 #define FREQ_TIMER 100000000
 #define MAX_FREQ_ADC 10000000
 #define MIN_FREQ_ADC 20000
 #define INIT_FREQ_ADC MAX_FREQ_ADC
+
+// moving average filter
+#define MOV_AVG_MODE_CUMULATIVE 1
+#define MOV_AVG_MODE_RECURSIVE 2
+#define CUR_MOV_AVG_MODE MOV_AVG_MODE_RECURSIVE
 
 #define MASK_D0_D6	0x7F
 #define MASK_D7_D11 0xF80
@@ -54,14 +62,14 @@ static volatile uint16_t cmdRxIndex = 0;
 static volatile uint32_t newSamplingFrequency = 10000000;
 static volatile uint32_t currentSamplingFrequency = 10000000;
 
-static volatile uint16_t newReferenceVoltage = 0;
-static volatile uint16_t currentReferenceVoltage = 0;
+static volatile uint16_t newReferenceVoltage = 4095;
+static volatile uint16_t currentReferenceVoltage = 4095;
 
 static volatile TRIGGERMODE_T currentTriggerMode = TRIGGER_RISING_EDGE;
 
 // number of points used by moving average filter
-static volatile uint32_t newNumOfPoints = 51;
-static volatile uint32_t currentNumOfPoints = 51;
+static volatile uint16_t newNumOfPoints = 51;
+static volatile uint16_t currentNumOfPoints = 51;
 
 /* status variables */
 static volatile uint8_t overflowHappened = 0;
@@ -75,7 +83,9 @@ volatile uint32_t* addressArray[NUMBER_OF_ROWS][NUMBER_OF_COLUMNS] = {0};
 /* Global array variable for storing the 12bit sampling values from the ADC[D11...D0] */
 volatile int16_t sampleBuffer[NUM_OF_SAMPLES] = {0};
 
+// moving average filter output and status variable
 volatile int16_t filteredSampleBuffer[NUM_OF_SAMPLES] = {0};
+// 0 = inactive (default) ; 1 = active
 static volatile uint8_t movAvgFilterActive = 0;
 
 // overflowBuffer is needed to bridge the time until the DMA is disabled
@@ -311,7 +321,7 @@ void configureMovAvgFilter()
 	/* activate filter */
 	else
 	{
-		movAvgFilterActive = 0;
+		movAvgFilterActive = 1;
 		currentNumOfPoints = newNumOfPoints;
 	}
 }
@@ -370,17 +380,39 @@ void preprocessData()
  *	 													*/
 static void applyMovingAverageFilter()
 {
-	uint16_t halfPointWidth = ((currentNumOfPoints-1)/2);
-	// numOfPoints must be an odd number (checked in configureMovAvgFilter())
-	// odd number -> filter is applied
-	for(uint32_t i = halfPointWidth; i <= NUM_OF_SAMPLES-(halfPointWidth+1); i++)
+	int32_t halfPointWidth = (int32_t)((currentNumOfPoints-1)/2);
+
+	if(CUR_MOV_AVG_MODE == MOV_AVG_MODE_CUMULATIVE)
 	{
-		filteredSampleBuffer[i] = 0;
-		for(uint32_t j = -halfPointWidth; j <= halfPointWidth; j++)
+		// numOfPoints must be an odd number (checked in configureMovAvgFilter())
+		// odd number -> filter is applied
+		for(uint32_t i = halfPointWidth; i <= NUM_OF_SAMPLES-(halfPointWidth+1); i++)
 		{
-			filteredSampleBuffer[i] += sampleBuffer[i+j];
+			int32_t sum = 0;  // 32bit accumulator (16bit-int might overflow while accumulating)
+			for(int32_t j = -halfPointWidth; j <= halfPointWidth; j++)	// signed integer (negative values)
+			{
+				sum += sampleBuffer[i+j];
+			}
+			// be aware of integer conversion (conversion rank of integer type is important for correct result)
+			filteredSampleBuffer[i] = (int16_t)(sum / (int32_t)currentNumOfPoints);
 		}
-		filteredSampleBuffer[i] /= currentNumOfPoints;
+	}
+	else if(CUR_MOV_AVG_MODE == MOV_AVG_MODE_RECURSIVE)
+	{
+		int32_t accumulator = 0;
+		// first accumulation
+		for(uint32_t i = 0; i <= currentNumOfPoints-1; i++)
+		{
+			accumulator += sampleBuffer[i];
+		}
+		filteredSampleBuffer[halfPointWidth] = (int16_t)(accumulator / (int32_t)currentNumOfPoints);
+
+		// recursive calculation of rest values
+		for(uint32_t i = (halfPointWidth+1); i <= (NUM_OF_SAMPLES - (halfPointWidth+1)); i++)
+		{
+			accumulator += (sampleBuffer[i+halfPointWidth] - sampleBuffer[i-(halfPointWidth+1)]);
+			filteredSampleBuffer[i] = (int16_t)(accumulator / (int32_t)currentNumOfPoints);
+		}
 	}
 }
 

@@ -38,7 +38,7 @@ def fsm_pc(command_queue, status_queue, stop_event):
 
     serial_port = find_my_device("Serielles USB")
     serial_baudrate = 115200
-    serial_timeout = 1
+    serial_timeout = 5
     serial_interface = ''
     vref = 4095
  

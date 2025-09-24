@@ -198,6 +198,11 @@ static void fsm_state_idle(fsm_t *fsm, uint8_t event){
     }
 }
 
+/* acquisition start state
+ *
+ * START THE ACQUISITION
+ * - enable the trigger (can also be manuall enabled)
+ * - afterwards wait for completion of the acquisition*/
 static void fsm_state_acquisition_start(fsm_t *fsm, uint8_t event){
     switch(event){
     case EV_ENTRY:
@@ -221,6 +226,11 @@ static void fsm_state_acquisition_start(fsm_t *fsm, uint8_t event){
     }
 }
 
+/* acquisition done state
+ *
+ * END OF ACUISITION
+ * - reset all peripherals involved in the acquisition
+ * - wait for PC to be ready for data transmission */
 static void fsm_state_acquisition_done(fsm_t *fsm, uint8_t event){
     switch(event){
     case EV_ENTRY:
@@ -243,6 +253,11 @@ static void fsm_state_acquisition_done(fsm_t *fsm, uint8_t event){
     }
 }
 
+/* data transmission state
+ *
+ * TRANSMISSION OF DATA
+ * - send the the sampling data series (also overflow information)
+ * - wait for acknowledgement from PC (data received) */
 static void fsm_state_data_transmission(fsm_t *fsm, uint8_t event){
     switch(event){
     case EV_ENTRY:
@@ -263,6 +278,12 @@ static void fsm_state_data_transmission(fsm_t *fsm, uint8_t event){
     }
 }
 
+/* acknoledgement state
+ *
+ * WAIT FOR ACKNOLEDGEMENT FROM PC
+ * depending on ACK decide whether to ...
+ * 		- ... do another acquisition
+ * 		- ... "break" the acquisition loop */
 static void fsm_state_wait_for_ACK(fsm_t *fsm, uint8_t event){
     switch(event){
     case EV_ENTRY:
