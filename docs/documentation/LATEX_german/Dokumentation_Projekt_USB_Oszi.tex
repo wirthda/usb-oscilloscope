@@ -103,7 +103,7 @@
 \definecolor{codefunc}{rgb}{0,0.3,0.7}
 \definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 
-\lstdefinestyle{mystyle}{
+\lstdefinestyle{pythonstyle}{
     backgroundcolor=\color{backcolour},   
     commentstyle=\color{codegreen},
     keywordstyle=\color{magenta},
@@ -123,7 +123,23 @@
     tabsize=2
 }
 
-\lstset{style=mystyle}
+\lstdefinestyle{plaintextstyle}{
+    language={},                     % Keine Sprache -> keine Keywords
+    basicstyle=\ttfamily\scriptsize, % Nur kleine Monospace-Schrift
+    keywordstyle=,                    % Keywords deaktivieren
+    commentstyle=,                    % Kommentare deaktivieren
+    stringstyle=,                     % Strings deaktivieren
+    identifierstyle=,                 % Variablen/Bezeichner deaktivieren
+    numbers=none,                     % Keine Zeilennummern
+    showspaces=false,                 
+    showstringspaces=false,           
+    showtabs=false,                   
+    breaklines=true,                  
+    breakatwhitespace=false,
+    backgroundcolor=                  % Kein Hintergrund
+}
+
+\lstset{style=pythonstyle}
 
 \title{Projekt USB-Oszilloskop}
 \author{Samuel Oeser, Nicole Sturm, Daniel Wirth}
@@ -632,7 +648,7 @@ Es ist zu erkennen, dass die rechtsseitigen Eingangswerte zum Ausgangswert aufsu
 
 Damit entspricht der Moving Average Filter einer Faltung des Eingangssignals mit einem rechteckigen Filterkern \cite[S. 277f]{Smith1999}.\\
 
-Für das Projekt wurde der Filter kumulativ implementiert und nach dem Algorithmus in \autoref{fig:moving_avg_filter_algorithm} im \autoref{subsubsec:preprocessing_concept} umgesetzt.
+Für das Projekt wurde der Filter kumulativ und rekursiv implementiert und nach dem Algorithmus in \autoref{fig:moving_avg_filter_algorithm_cumulative} im \autoref{subsubsec:preprocessing_concept} umgesetzt.
 
 %%%%%%%%%%% Projektkonzeption %%%%%%%%%%%
 \section{Projektkonzeption}
@@ -947,19 +963,85 @@ def twos_complement_backward_minus1_invert(value12: int) -> int:
 \end{lstlisting}
 
 \underline{Gleitender Mittelwertfilter}\\
-In \autoref{subsec:digital_filtering} wurden bereits die Grundlagen zur digitalen Filterung von Signalen geliefert. Im Projekt wurde die DSP mittels \emph{gleitendem Mittelwertfilter} umgesetzt, welcher zufälliges Rauschen aus dem Signal herausfiltern kann. Dies ist insbesondere bei verrauschten Signalquellen mit kleiner Ausgangsamplitude relevant. In \autoref{fig:moving_avg_filter_algorithm} ist ein Filteralgorithmus beschrieben, der einen kumulativen gleitenden Mittelwertfilter umsetzt (vgl. \cite[S. 277-284]{Smith1999}). Die Grundlagen des Filters wurden ebenfalls bereits in \autoref{subsec:digital_filtering} erläutert.
+In \autoref{subsec:digital_filtering} wurden bereits die Grundlagen zur digitalen Filterung von Signalen geliefert. Im Projekt wurde die DSP mittels \emph{gleitendem Mittelwertfilter} umgesetzt, welcher zufälliges Rauschen aus dem Signal herausfiltern kann. Dies ist insbesondere bei verrauschten Signalquellen mit kleiner Ausgangsamplitude relevant. In \autoref{lst:moving_avg_filter_algorithm_cumulative} ist ein Filteralgorithmus beschrieben, der einen kumulativen gleitenden Mittelwertfilter umsetzt.
 
-\begin{figure}[H]
-	\centering
-    \includegraphics[scale=0.4]{moving_average_filter_algorithm_smith.png} 
-	\caption{Pseudocode: Moving-Average-Filter aus \cite[S. 278]{Smith1999}}
-	\label{fig:moving_avg_filter_algorithm}
-\end{figure}
 
-Dieser Pseudocode-Ausschnitt war die Basis für die Implementierung des gleitenden Mittelwertfilters.
+\begin{lstlisting}[style=plaintextstyle,caption={Pseudocode: Kumulativer Moving-Average-Filter aus \protect{\cite[S. 278]{Smith1999}}}, label={lst:moving_avg_filter_algorithm_cumulative}]
+	100 'MOVING AVERAGE FILTER
+	110 'This program filters 5000 samples with a 101 point moving
+	120 'average filter, resulting in 4900 samples of filtered data.
+	130 '
+	140 DIM X[4999] 'X[ ] holds the input signal
+	150 DIM Y[4999] 'Y[ ] holds the output signal
+	160 '
+	170 GOSUB XXXX 'Mythical subroutine to load X[ ]
+	180 '
+	190 FOR I% = 50 TO 4949 'Loop for each point in the output signal
+	200 Y[I%] = 0 'Zero, so it can be used as an accumulator
+	210 FOR J% = -50 TO 50 'Calculate the summation
+	220 Y[I%] = Y[I%] + X(I%+J%]
+	230 NEXT J%
+	240 Y[I%] = Y[I%]/101 'Complete the average by dividing
+	250 NEXT I%
+	260 '
+	270 END
+\end{lstlisting}
+
+Ein Problem der kumulativen Variante ist die lange Ausführungsdauer, da für jeden gefilterten Abtastwert eine große Summe (abhängig von der Fenstergröße) gebildet werden muss. Dies kann mitunter eine große Verzöerungszeit vor der Übertragung zur Folge haben und damit einer geringen Refreshrate des dargestellten Signals. Eine rekursive Variante des Filters muss nur einmal eine große Summe über das erste Fenster bilden. Bei den nachfolgenden Werten wird der aus dem Fensterbereich entfallene Wert von der Summe subtrahiert und der neue Wert im Fensterbereich addiert. Die Berechnung für jeden Abtastwert (abgesehen vom ersten) ist selbst für große Fenstergrößen gleich schnell. Der Algorithmus ist \autoref{lst:moving_avg_filter_algorithm_recursive} zu entnehmen (vgl. \cite[S. 277-284]{Smith1999}).
+
+\begin{lstlisting}[style=plaintextstyle,caption={Pseudocode: Rekursiver Moving-Average-Filter aus \protect{\cite[S. 284]{Smith1999}}}, label={lst:moving_avg_filter_algorithm_recursive}]
+	100 'MOVING AVERAGE FILTER IMPLEMENTED BY RECURSION
+	110 'This program filters 5000 samples with a 101 point moving
+	120 'average filter, resulting in 4900 samples of filtered data.
+	130 'A double precision accumulator is used to prevent round-off drift.
+	140 '
+	150 DIM X[4999] 'X[ ] holds the input signal
+	160 DIM Y[4999] 'Y[ ] holds the output signal
+	170 DEFDBL ACC 'Define the variable ACC to be double precision
+	180 '
+	190 GOSUB XXXX 'Mythical subroutine to load X[ ]
+	200 '
+	210 ACC = 0 'Find Y[50] by averaging points X[0] to X[100]
+	220 FOR I% = 0 TO 100
+	230 ACC = ACC + X[I%]
+	240 NEXT I%
+	250 Y[50] = ACC/101
+	260 ' 'Recursive moving average filter (Eq. 15-3)
+	270 FOR I% = 51 TO 4949
+	280 ACC = ACC + X[I%+50] - X[I%-51]
+	290 Y[I%] = ACC/101
+	300 NEXT I%
+	310 '
+	320 END
+\end{lstlisting}
 \pagebreak
 
 \subsection{Implementierung}
+\subsubsection{Allgemeines zur verwendeten Toolchain}
+\subsubsection{State-Machine}
+\subsubsection{Preprocessing}
+\underline{Gleitender Mittelwertfilter}
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.4]{rectangle_1Vpp_10kHz_noFilter.png} 
+	\caption{\centering Signalverlauf ohne Filter\\
+	\footnotesize 10kHz Rechtecksignal mit überlagertem Rauschen (1Vpp; Bandbreite: 1MHz)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.4]{rectangle_1Vpp_10kHz_Filter_cumulative.png} 
+	\caption{\centering Signalverlauf kumulativer gleitender Mittelwertfilter (M=51)\\
+	\footnotesize 10kHz Rechtecksignal mit überlagertem Rauschen (1Vpp; Bandbreite: 1MHz)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.4]{rectangle_1Vpp_10kHz_Filter_recursive.png} 
+	\caption{\centering Signalverlauf rekursiver gleitender Mittelwertfilter (M=51)\\
+	\footnotesize 10kHz Rechtecksignal mit überlagertem Rauschen (1Vpp; Bandbreite: 1MHz)}
+\end{figure}
+
 
 \pagebreak
 
