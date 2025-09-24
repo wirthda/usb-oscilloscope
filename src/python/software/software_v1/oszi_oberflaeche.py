@@ -35,6 +35,7 @@ class UsbOsziGUI(StateMachine):
 
 
 class MatplotlibWidget(FigureCanvas):
+    cursor_diff_changed = Signal(float,float)
     def __init__(self):
         self.figure, self.ax = plt.subplots()
         super().__init__(self.figure)
@@ -206,7 +207,7 @@ class MatplotlibWidget(FigureCanvas):
             self.cursor_y1 = y_val
             self.vline1.set_xdata([x_val])
             self.hline1.set_ydata([y_val])
-            self.coord_text1.set_text(f"x={x_val:.3e}\ny={y_val:.3e}")
+            self.coord_text1.set_text(f"x={x_val:.2e}\ny={y_val:.2e}")
             self.coord_text1.set_position((x_val, y_val))
             self.update_delta_t_textbox()
     
@@ -219,23 +220,16 @@ class MatplotlibWidget(FigureCanvas):
             self.cursor_y2 = y_val
             self.vline2.set_xdata([x_val])
             self.hline2.set_ydata([y_val])
-            self.coord_text2.set_text(f"x={x_val:.3e}\ny={y_val:.3e}")
+            self.coord_text2.set_text(f"x={x_val:.2e}\ny={y_val:.2e}")
             self.coord_text2.set_position((x_val, y_val))
             self.update_delta_t_textbox()
     
     def update_delta_t_textbox(self):
-        # Text im Plot platzieren
-        if hasattr(self, "delta_t_text") and self.delta_t_text is not None:
-            self.delta_t_text.remove()
+        
         if self.cursor_x1 is not None and self.cursor_x2 is not None and self.crosshair1_visible is True:
-            delta_t = abs(self.cursor_x2 - self.cursor_x1)
-            xcenter = (self.cursor_x1 + self.cursor_x2) / 2
-            ycenter = max(self.cursor_y1, self.cursor_y2)
-            self.delta_t_text = self.ax.text(
-                xcenter, ycenter, f"Δt = {delta_t:.3e} s",
-                color="purple", ha="center", va="bottom",
-                bbox=dict(boxstyle="round", fc="wheat", alpha=0.7)
-            )
+            delta_x = abs(self.cursor_x2 - self.cursor_x1)
+            delta_y = abs(self.cursor_y2 - self.cursor_y1)
+            self.cursor_diff_changed.emit(delta_x, delta_y)
         self.draw_idle()
 
     def on_mouse_press(self, event):
@@ -580,6 +574,8 @@ class General(QWidget):
         self.status_label = QLabel("Status: Bereit")
         self.measure = QPushButton("Measure", self)
         self.toogle_crosshair_button = QPushButton("Cursor")
+        self.delta_x_text = QLabel()
+        self.delta_y_text = QLabel()
         self.measurement_results_label = QLabel()
         self.measurement_results_label.setAlignment(Qt.AlignTop | Qt.AlignLeft)
         
@@ -730,8 +726,11 @@ class General(QWidget):
         grid.addWidget(QLabel("measure"), 3, 27)
         grid.addWidget(self.measure, 5, 27)
         grid.addWidget(self.toogle_crosshair_button, 4, 27)
+        grid.addWidget(self.delta_x_text, 4, 29)
+        grid.addWidget(self.delta_y_text, 5, 29)
         grid.addWidget(self.select_measure_checkbox_group, 7, 23, 12,3)
         grid.addWidget(self.measurement_results_label, 7, 27, 12,2)
+
 
         grid.addWidget(QLabel("trigger typ"), 4, 23)
         grid.addWidget(self.trigger_combobox, 5, 23, 1, 2)
@@ -773,6 +772,8 @@ class General(QWidget):
         self.vdiv_dial.valueChanged.connect(self.on_vdiv_dial_change)
         self.yoffset_dial.valueChanged.connect(self.on_yoffset_changed)
         self.xoffset_dial.valueChanged.connect(self.on_xoffset_changed)
+
+        self.matplotlib_widget.cursor_diff_changed.connect(self.set_cursor_diff)
 
 
     def handle_status(self, msg):
@@ -1123,6 +1124,14 @@ class General(QWidget):
         else:
             self.status_label.setText("Info: Cursors can only be used if data are available")
             self.status_clear_timer.start(3000) # 3 Sekunden anzeigen
+
+    @Slot(float, float)
+    def set_cursor_diff(self, dx, dy):
+        text_x = f"Δx = {format_value(dx, "s")}"
+        text_y = f"Δy = {format_value(dy, "V")}"
+        self.delta_x_text.setText(text_x)
+        self.delta_y_text.setText(text_y)
+       
 
 
     @Slot() #Slot für den Timer
