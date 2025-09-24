@@ -24,13 +24,13 @@ def period(data, abtastzeit):
     pv = period_value(data)
     if pv is None:
         return None
-    p = pv * abtastzeit
-    if p<1e-6:
-        p = p*1_000_000
-        return(str(p) + " uHz")
-    elif p<1e-3:
-        p = p*1_000
-        return(str(p) + " mHz")
+    return pv * abtastzeit
+    # if p<1e-6:
+    #     p = p*1_000_000
+    #     return(str(p) + " uHz")
+    # elif p<1e-3:
+    #     p = p*1_000
+    #     return(str(p) + " mHz")
 
 def frequency(data, abtastzeit):
     perv = period_value(data)

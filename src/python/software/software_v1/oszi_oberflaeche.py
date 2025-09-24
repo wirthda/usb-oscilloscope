@@ -18,6 +18,7 @@ from PySide6.QtWidgets import QApplication, QWidget, QMainWindow, QGridLayout, Q
 from PySide6.QtCore import Qt, QObject, QTimer, Signal, Slot, QThread
 
 from measurement_functions import *
+from format_utils import format_value
 
 class UsbOsziGUI(StateMachine):
      idle = State("Idle", initial=True)     #Warten bis Run gedrückt
@@ -59,6 +60,7 @@ class MatplotlibWidget(FigureCanvas):
         self.coord_text2 = self.ax.text(0, 0, '', color='black', visible=False,
             bbox=dict(boxstyle="round,pad=0.3", fc="white", ec="black", lw=0.5, alpha=0.8)
         )
+        self.zero_line = self.ax.axhline(y=0, color="gray", linestyle="--", linewidth=1, zorder=1)
 
         self.data_x = np.array([])
         self.data_y = None
@@ -68,21 +70,11 @@ class MatplotlibWidget(FigureCanvas):
         self.figure.canvas.mpl_connect('motion_notify_event', self.on_mouse_move)
         self.figure.canvas.mpl_connect('button_release_event', self.on_mouse_release)
     
-    def format_timebase(self,val):
-        if val < 1e-6:
-            return f"{val*1e9:.0f} ns/div"
-        elif val < 1e-3:
-            return f"{val*1e6:.1f} µs/div"
-        elif val < 1:
-            return f"{val*1e3:.1f} ms/div"
-        else:
-            return f"{val:.2f} s/div"
+    def get_time_label(self,val):
+        return format_value(val, "s") + "/div"
         
-    def format_vdiv(self, v):
-        if v < 1:
-            return f"{v*1000:.0f} mV/div"
-        else:
-            return f"{v:.2f} V/div"
+    def get_v_label(self, val):
+        return format_value(val, "V") + "/div" 
 
     # --- Skalierung (Achsensetting nur wenn nötig aufrufen, bei Basisänderung!) ---
     def update_axes_scaling(self, num_xdiv, num_ydiv, timebase, vdiv, xoffset, yoffset):
@@ -97,8 +89,8 @@ class MatplotlibWidget(FigureCanvas):
         self.ax.set_xticks(np.linspace(x_min, x_max, num_xdiv + 1))
         self.ax.set_yticks(np.linspace(y_min, y_max, num_ydiv + 1))
         self.ax.grid(True, which="major", axis="both")
-        self.ax.set_xlabel(self.format_timebase(timebase))
-        self.ax.set_ylabel(self.format_vdiv(vdiv))
+        self.ax.set_xlabel(self.get_time_label(timebase))
+        self.ax.set_ylabel(self.get_v_label(vdiv))
         if self.data_x.any():
             self.update_cursor1(x_min)
             self.update_cursor2(x_max)
@@ -276,6 +268,19 @@ class MatplotlibWidget(FigureCanvas):
     def on_mouse_release(self, event):
         self.dragging_cursor = None
 
+UNIT_BASES = {
+    "Amplitude" : "V",
+    "Max" : "V",
+    "Min" : "V",
+    "Top" : "V",
+    "Base" : "V",
+    "Mittelwert" : "V",
+    "Peak-Peak" : "V",
+    "DC RMS" : "V",
+    "AC RMS" : "V",
+    "Periode" : "s",
+    "Frequenz" : "Hz",
+}
 
 class MeasureWorker(QObject):
     finished = Signal(list)
@@ -295,15 +300,19 @@ class MeasureWorker(QObject):
                 try:
                     result = func(self.data_buffer) 
                     if result is not None:
-                        #messwerte.append(f"{name}: {result:.3f}")
-                        messwerte.append(f"{name}: {result}")
+                        einheit = UNIT_BASES.get(name, "")
+                        if einheit: 
+                            txt = format_value(result, einheit)
+                            messwerte.append(f"{name}: {txt}")
+                        else:
+                            messwerte.append(f"{name}: {result:.3f}")
+
                     else:
                         messwerte.append(f"{name}: -")
                 except Exception as e:
                     messwerte.append(f"{name}: Fehler!")
 
         self.finished.emit(messwerte)  # Ergebnisse zur GUI senden  
-
 
 class StatusProvider(QObject):
     status_update = Signal(object)
@@ -587,6 +596,9 @@ class General(QWidget):
         self.run.setStyleSheet("")
         self.stop.setStyleSheet("")
 
+        self.probe_combo = QComboBox()
+        self.probe_combo.addItems(["1:1", "10:1"])
+
         self.select_measure_checkbox_group = QGroupBox('select measurement:', parent =self)
         self.checkbox_layout = QVBoxLayout() # Layout für die Checkboxen innerhalb der GroupBox
 
@@ -696,16 +708,16 @@ class General(QWidget):
         dial_row_widget_y = QWidget()
         dial_row_layout_y = QHBoxLayout()
         dial_row_layout_y.setContentsMargins(0, 0, 0, 0)
-        dial_row_layout_y.setSpacing(10)  # Optional: Abstand zwischen den Dials
+        dial_row_layout_y.setSpacing(10)
         dial_row_layout_y.addWidget(self.vdiv_dial)
         dial_row_layout_y.addWidget(yoffset_wrapper)
         dial_row_widget_y.setLayout(dial_row_layout_y)
 
         grid = QGridLayout()
-        grid.addWidget(self.toolbar, 20, 0, 1, 20) # Toolbar oberhalb des Plots
-        grid.addWidget(self.matplotlib_widget, 0, 0, 20, 19)
-        grid.addWidget(self.overflow_label, 21, 0, 1,2)
-        grid.addWidget(self.triggered_label,21, 2, 1,2)
+        grid.addWidget(self.toolbar, 24, 0, 1, 17) 
+        grid.addWidget(self.matplotlib_widget, 0, 0, 23, 19)
+        grid.addWidget(self.overflow_label, 25, 0, 1,2)
+        grid.addWidget(self.triggered_label,25, 2, 1,2)
 
         grid.addWidget(QLabel("timbase"), 0, 23)
         grid.addWidget(dial_row_widget_x, 1, 23, 3, 4)
@@ -718,17 +730,20 @@ class General(QWidget):
         grid.addWidget(QLabel("measure"), 3, 27)
         grid.addWidget(self.measure, 5, 27)
         grid.addWidget(self.toogle_crosshair_button, 4, 27)
-        grid.addWidget(self.select_measure_checkbox_group, 7, 23, 9,3)
-        grid.addWidget(self.measurement_results_label, 7, 27, 9,2)
+        grid.addWidget(self.select_measure_checkbox_group, 7, 23, 12,3)
+        grid.addWidget(self.measurement_results_label, 7, 27, 12,2)
 
         grid.addWidget(QLabel("trigger typ"), 4, 23)
         grid.addWidget(self.trigger_combobox, 5, 23, 1, 2)
 
-        grid.addWidget(QLabel("vertical"), 16,23)
-        grid.addWidget(dial_row_widget_y, 17, 23, 3, 4)
+        grid.addWidget(QLabel("vertical"), 19,23)
+        grid.addWidget(dial_row_widget_y, 20, 23, 3, 4)
 
         grid.addWidget(QLabel("interpolation"), 1, 27)
         grid.addWidget(self.interp_combo,2,27,1,2)
+
+        grid.addWidget(QLabel("probe"), 24, 17)
+        grid.addWidget(self.probe_combo, 25,17)
 
         grid.addWidget(QLabel("status label"), 24, 23)
         grid.addWidget(self.status_label, 25, 23, 1, 5)
@@ -879,7 +894,13 @@ class General(QWidget):
         # t = np.arange(0, 100000/self.samplingrate, delta_time)
         # data = ampli*np.sin(2*np.pi*freq*t+phase)+offset
 
-        self.matplotlib_widget.plot_data(data, self.samplingrate, plot_style)
+        selected_ratio = self.probe_combo.currentText()
+        if (selected_ratio == "10:1"):
+            data_corr = data.copy() * 10
+        else:
+            data_corr = data.copy()
+
+        self.matplotlib_widget.plot_data(data_corr, self.samplingrate, plot_style)
         self.command_queue.put({
             "type": "PROCESSING_COMPLETE",
             "continue_acquisition": self.is_run_mode
@@ -1164,7 +1185,6 @@ class General(QWidget):
                 os.remove(self.settings_file)
         else:
             print(f"Einstellungsdatei '{self.settings_file}' nicht gefunden. Verwende Standardwerte.")
-
 
 
 class Debugging(QWidget):
