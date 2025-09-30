@@ -807,6 +807,7 @@ Nachdem die Entwicklungsboards in Absprache mit dem MCT-Labor beschafft worden w
 \pagebreak
 
 \subsubsection{Konzept des Abtastprozesses}
+\label{subsubsec:sampling_concept}
 Der mikrocontrollerseitige Abtastprozess gliedert sich in zwei Hauptaufgaben:
 
 \begin{itemize}
@@ -1162,8 +1163,8 @@ Zustandswechsel erfolgen durch die Funktion \texttt{fsm\_transition()}.
     \item Klare Trennung zwischen Zustandslogik und Event-Handling.
 \end{itemize}
 
-\emph{Abhängigkeiten:} Dieses Modul verwendet Funktionen aus \texttt{queue.c} zur Event-Verarbeitung
-sowie Funktionen aus \texttt{app.c} zur Hardwaresteuerung.\\
+\emph{Abhängigkeiten:} Dieses Modul verwendet Funktionen aus \texttt{queue.h} zur Event-Verarbeitung
+sowie Funktionen aus \texttt{app.h} zur Hardwaresteuerung.\\
 
 Eine nähere Erläuterung zum Modul findet sich in \autoref{subsubsec:fsm_impl}.\\
 
@@ -1266,7 +1267,7 @@ Ereignisse werden beim Auftreten erst einmal \emph{eingereiht} (\texttt{enqueueE
 \end{itemize}
 
 \subsubsection{Preprocessing}
-Der Algorithmus zur Umrechnung 12bit signed (ADC) in 16bit signed aus \autoref{lst:reverse_2s_compl_v2} wurde in der Funktion \texttt{preprocessData()} in \texttt{app.c} umgesetzt. Hier erfolgt auch die optionale Anwendung des gleitenden Mittelwertfilter durch Aufruf der Funktion\\ \texttt{applyMovingAverageFilter()} in \texttt{app.c}. Die Berechnung erfolgt in der aktuellen Implemetierung rekursiv nach dem Algorithmus in \autoref{lst:moving_avg_filter_algorithm_recursive}.\\
+Der Algorithmus zur Umrechnung 12bit signed (ADC) in 16bit signed aus \autoref{lst:reverse_2s_compl_v2} wurde in der Funktion \texttt{preprocessData()} in \texttt{app.c} umgesetzt. Hier erfolgt auch die optionale Anwendung des gleitenden Mittelwertfilter durch Aufruf der Funktion\\ \texttt{applyMovingAverageFilter()} in \texttt{app.c}. Die Berechnung erfolgt in der aktuellen Implementierung rekursiv nach dem Algorithmus in \autoref{lst:moving_avg_filter_algorithm_recursive}.\\
 
 \underline{Hinweis:}\\
 Aufgrund der späten Fertigstellung im Projektverlauf kann der Filter in der Benutzeroberfläche aktuell nicht aktiviert werden, da keine entsprechenden Interaktionselemente für die Konfiguration verfügbar sind. Ein Test des Filters konnte aber durchgeführt werden (siehe \autoref{subsubsec:test_mov_avg}).
@@ -1275,6 +1276,16 @@ Aufgrund der späten Fertigstellung im Projektverlauf kann der Filter in der Ben
 
 \subsection{FW-Test}
 \subsubsection{Integrierter Debugger}
+Die Funktionsweise der Abtastung (gemäß \autoref{subsubsec:sampling_concept}) wurde zunächst mit dem integrierten Debugging-Tool der IDE überprüft. Ein wichtiger Schritt war die Überprüfung des konfigurierten DMA-Streams mit definiertem Start und Ende.\\
+
+Hierzu wurden die DMA-Transfers manuell gestartet und das Ergebnis in der Expression-Debug-Ansicht der IDE verifiziert. Zunächst wurden durch Pull-Up- und Pull-Down-Widerstände definierte Pegel am Eingangsdatenregister erzeugt, welches später als Schnittstelle zum ADC dienen sollte.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.35]{rectangle_1Vpp_10kHz_noFilter.png} 
+	\caption{Expression-Debug-Ansicht zur Überprüfung der Abtastwerte}
+	\label{fig:mov_avg_test_no_filter}
+\end{figure}
 
 \pagebreak
 
@@ -1302,7 +1313,7 @@ Zum Test des gleitenden Mittelwertfilters wurden in einer vorläufigen Version d
 	\label{fig:mov_avg_test_with_filter}
 \end{figure}
 
-Den Abbildungen ist zu entnehmen, dass die Anwendung des Filters eine Rauschunterdrückung zur Folge hat. Des Weiteren wird aber auch die Flankensteilheit verringert.
+Es ist zu erkennen, dass die Anwendung des Filters, wie erwartet, eine Rauschunterdrückung bewirkt. Weiterhin wird aber auch die Flankensteilheit des Signals verringert.
 
 \pagebreak
 
