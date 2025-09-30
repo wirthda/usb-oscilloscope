@@ -1017,21 +1017,25 @@ Ein Problem der kumulativen Variante ist die lange Ausführungsdauer, da für je
 \pagebreak
 
 \subsection{Implementierung}
+Die nachfolgende Beschreibung gibt einen Überblick über die Umsetzung der Firmware. Hierbei handelt es sich um das Programm des verwendeten Mikrocontrollers STM32F767ZI. Für genaue Informationen zur Implementierung sei auf die Quellcode-Dateien verwiesen.
+
 \subsubsection{Allgemeines zur verwendeten Toolchain}
 
 \underline{Überblick über die Entwicklungsumgebung}\\
 Für die Entwicklung der Firmware wurde die STM32CubeIDE verwendet.
-Diese ist ein von STMicroelectronics bereitgestelltes integriertes Entwicklungswerkzeug, das IDE-Funktion-alität, Code-Generierung, Debugging und Konfigurationswerkzeuge vereint. Sie basiert auf dem Eclipse/CDT-Framework und nutzt den GCC-Compiler sowie GDB für Debugging. Die IDE integriert die Funktionalitäten von STM32CubeMX, so dass die Hardwarekonfiguration (Pins, Peripherie, Clock-Tree etc.) direkt im Projekt erstellt und entsprechende Initialisierungscodes automatisch generiert werden können. Über STM32CubeMX werden u.a. der Pinout \& Configuration, der Clock-Tree (Takteinstellungen) und Middleware (z. B. USB-Device) konfiguriert \cite{STmicroelectronics2025a}. In unserem Projekt diente das Tool besonders zur Konfiguration des Clock-Tree und der USB-Device-Treiber – d.h. die Taktquellen und -verzweigungen sowie die USB-Funktionalität wurden über CubeMX festgelegt. Es weird hierbei automatisch Quellcode in vorgegebenen Bereichen der Quellcode-Dateien (z.B. \texttt{main.c}) erzeugt.
+Diese ist ein von STMicroelectronics bereitgestelltes integriertes Entwicklungswerkzeug, das IDE-Funktion-alität, Code-Generierung, Debugging und Konfigurationswerkzeuge vereint. Sie basiert auf dem Eclipse/CDT-Framework und nutzt den GCC-Compiler sowie GDB für Debugging. Die IDE integriert die Funktionalitäten von STM32CubeMX, so dass die \emph{Hardwarekonfiguration} (Pins, Peripherie, Clock-Tree etc.) \emph{direkt im Projekt erstellt} und entsprechende \emph{Initialisierungscodes automatisch generiert} werden können. Über STM32CubeMX werden u.a. der Pinout \& Configuration, der Clock-Tree (Takteinstellungen) und Middleware (z. B. USB-Device) konfiguriert \cite{STmicroelectronics2025a}. In unserem Projekt diente das Tool besonders zur Konfiguration des Clock-Tree und der USB-Device-Treiber – d.h. die Taktquellen und -verzweigungen sowie die USB-Funktionalität wurden über CubeMX festgelegt.
 
 \begin{figure}[H]
 	\centering
-    \includegraphics[scale=0.5]{stm32cubemx_firmware_clock.png} 
+    \includegraphics[scale=0.45]{stm32cubemx_firmware_clock.png} 
 	\caption{Clock-Tree-Ansicht in STM32CubeMX}
 	\label{fig:stm32cubemx_clock_tree}
 \end{figure}
 
+\pagebreak
+
 \underline{Build-Prozess}\\
-Der Build-Prozess in STM32CubeIDE folgt dem klassischen Ablauf von C-basierten Em-bedded-Projekten. Laut UM2609 (\cite[S. 41ff]{STmicroelectronics2025a}) umfasst dieser Prozess:
+Der Build-Prozess in STM32CubeIDE folgt dem klassischen Ablauf von C-basierten Em-bedded-Projekten. Laut ``STM32CubeIDE user guide`` (\cite[S. 41ff]{STmicroelectronics2025a}) umfasst dieser:
 
 \begin{enumerate}
 	\item Preprocessing – Auflösen von Makros und Includes
@@ -1199,7 +1203,7 @@ Die FSM ist damit klar strukturiert, erweiterbar und unterstützt sauberes Debug
 \underline{\textbf{Queue-Modul (\texttt{queue.c }/ \texttt{queue.h})}}\\
 Das Queue-Modul verwaltet alle asynchron auftretenden Ereignisse. 
 Es stellt eine FIFO-Queue bereit, die als Bindeglied zwischen Interrupts, PC-Befehlen und der FSM dient. 
-Ereignisse werden beim Auftreten lediglich \emph{eingereiht} (\texttt{enqueueEvent()}) und später von der FSM sequenziell \emph{abgearbeitet} (\texttt{dequeueEvent()}).\\
+Ereignisse werden beim Auftreten erst einmal \emph{eingereiht} (\texttt{enqueueEvent()}) und später von der FSM sequenziell \emph{abgearbeitet} (\texttt{dequeueEvent()}).\\
 
 \textbf{\emph{Wichtige Funktionen}}
 \begin{itemize}
@@ -1215,10 +1219,6 @@ Ereignisse werden beim Auftreten lediglich \emph{eingereiht} (\texttt{enqueueEve
     \item Entkopplung der Event-Erzeugung von deren Verarbeitung.
     \item Deterministische, nachvollziehbare Abarbeitung in der FSM.
 \end{itemize}
-
-\textbf{\emph{Theoretischer Bezug}}\\
-Die Queue bildet die Schnittstelle zum Ereignisalphabet $E$ der FSM und sorgt dafür, dass Ereignisse in der Reihenfolge ihres Eintreffens verarbeitet werden. 
-Dies entspricht der Theorie eines deterministischen endlichen Automaten (DEA) und unterstützt einen klar definierten, vorhersehbaren Ablauf.
 
 \subsubsection{Preprocessing}
 Der Algorithmus zur Umrechnung 12bit signed (ADC) in 16bit signed aus \autoref{lst:reverse_2s_compl_v2} wurde in der Funktion \texttt{preprocessData()} in \texttt{app.c} umgesetzt. Hier erfolgt auch die optionale Anwendung des gleitenden Mittelwertfilter durch Aufruf der Funktion\\ \texttt{applyMovingAverageFilter()} in \texttt{app.c}. Die Berechnung erfolgt in der aktuellen Implemetierung rekursiv nach dem Algorithmus in \autoref{lst:moving_avg_filter_algorithm_recursive}.\\
