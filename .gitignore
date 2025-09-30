@@ -21,3 +21,5 @@
 **.elf
 **.list
 **.map
+**.bbl-SAVE-ERROR
+**.fls
