@@ -997,7 +997,7 @@ def twos_complement_backward_invert_plus1(value12: int) -> int:
 \pagebreak
 
 \textbf{3. Zweierkomplement rückwärts: -1 → invertieren}
-\begin{lstlisting}[language=Python, caption=Alternative zu 2.: Erst -1 $\rightarrow$ dann invertieren.]
+\begin{lstlisting}[language=Python, caption={Alternative zu 2.: Erst -1 $\rightarrow$ dann invertieren.}, label={lst:reverse_2s_compl_v2}]
 def twos_complement_backward_minus1_invert(value12: int) -> int:
 	if value12 & 0x800:  # Vorzeichenbit pruefen
 		decreased = (value12 - 1) & 0xFFF
@@ -1062,41 +1062,256 @@ Ein Problem der kumulativen Variante ist die lange Ausführungsdauer, da für je
 \pagebreak
 
 \subsection{Implementierung}
+Die nachfolgende Beschreibung gibt einen Überblick über die Umsetzung der Firmware. Hierbei handelt es sich um das Programm des verwendeten Mikrocontrollers STM32F767ZI. Für genaue Informationen zur Implementierung sei auf die Quellcode-Dateien verwiesen.
+
 \subsubsection{Allgemeines zur verwendeten Toolchain}
-\subsubsection{State-Machine}
+
+\underline{Überblick über die Entwicklungsumgebung}\\
+Für die Entwicklung der Firmware wurde die STM32CubeIDE verwendet.
+Diese ist ein von STMicroelectronics bereitgestelltes integriertes Entwicklungswerkzeug, das IDE-Funktion-alität, Code-Generierung, Debugging und Konfigurationswerkzeuge vereint. Sie basiert auf dem Eclipse/CDT-Framework und nutzt den GCC-Compiler sowie GDB für Debugging. Die IDE integriert die Funktionalitäten von STM32CubeMX, so dass die \emph{Hardwarekonfiguration} (Pins, Peripherie, Clock-Tree etc.) \emph{direkt im Projekt erstellt} und entsprechende \emph{Initialisierungscodes automatisch generiert} werden können. Über STM32CubeMX werden u.a. der Pinout \& Configuration, der Clock-Tree (Takteinstellungen) und Middleware (z. B. USB-Device) konfiguriert \cite{STmicroelectronics2025a}. In unserem Projekt diente das Tool besonders zur Konfiguration des Clock-Tree und der USB-Device-Treiber – d.h. die Taktquellen und -verzweigungen sowie die USB-Funktionalität wurden über CubeMX festgelegt.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.45]{stm32cubemx_firmware_clock.png} 
+	\caption{Clock-Tree-Ansicht in STM32CubeMX}
+	\label{fig:stm32cubemx_clock_tree}
+\end{figure}
+
+\pagebreak
+
+\underline{Build-Prozess}\\
+Der Build-Prozess in STM32CubeIDE folgt dem klassischen Ablauf von C-basierten Em-bedded-Projekten. Laut ``STM32CubeIDE user guide`` (\cite[S. 41ff]{STmicroelectronics2025a}) umfasst dieser:
+
+\begin{enumerate}
+	\item Preprocessing – Auflösen von Makros und Includes
+	\item Kompilierung – Übersetzen in Objektcode
+	\item Assemblierung – Erzeugen der Objektdateien
+	\item Linking – Verknüpfen mit Hilfe eines Linkerskripts
+	\item Erzeugung des finalen Images / Executable
+\end{enumerate}
+
+Der Linker nutzt ein Linker-Skript (.ld), das die Speicherbereiche (z. B. Flash, RAM) festlegt – dieses Skript wird ebenfalls durch das Projekt generiert bzw. angepasst. Das Endprodukt (z. B. im ELF-Format) liegt in den Binaries des Projekts vor.\\
+
+\underline{Debugging}\\
+Die STM32CubeIDE bietet einige Debug-Funktionen unter Verwendung von GDB und dem ST-Link-Probe (auf dem Entwicklungsboard integriert).
+Zu den typischen Debug-Features gehören:
+
+\begin{itemize}
+	\item Setzen von Breakpoints
+	\item Schrittweise Ausführung (Step-In, Step-Over, Step-Out)
+	\item Überwachung von Variablen und Ausdrücken (Watch Window)
+	\item Einsicht in Register, Peripherieregister und Speicher
+\end{itemize}
+
+\underline{Projektstruktur}\\
+Die standardmäßig von STM32CubeIDE \& CubeMX generierte Projektstruktur folgt einem festen Schema. Wichtige Komponenten sind:
+
+\begin{itemize}
+	\item \texttt{Projektname.ioc} – die CubeMX-Konfigurationsdatei
+	\item \texttt{Core/} – enthält \texttt{main.c}, Systeminitialisierung, Applikationslogik
+	\item \texttt{Drivers/} – enthält HAL-Treiber, ggf. LL (Low-Layer) Treiber und CMSIS
+	\item \texttt{Includes/} – Pfaddefinitionen für Headerdateien
+	\item \texttt{Binaries/} (oder Build-Ausgabeordner) – kompiliertes Ergebnis (z. B. ELF)
+	\item \texttt{Debug/} – temporäre Build-Artefakte (Objektdateien, LST, Map-Dateien)
+	\item Linker-Skripte (z.B. \texttt{.ld}) – Speicherlayout und Segmentdefinitionen
+\end{itemize}
+
+\underline{Rolle der HAL und Low-Layer-Treiber (LL)}\\
+Für die STM32F7-Controllerfamilie stellt ST eine HAL (Hardware Abstraction Layer) bereit, die als Zwischenschicht dient, um Hardwarezugriffe abstrahiert zu kapseln. Die HAL-APIs prüfen zusätzlich Laufzeitbedingungen und Input-Parameter, um Robustheit zu erhöhen. Die LL-Treiber (Low-Layer) bieten einen direkteren Zugriff, nahe an den Hardware-Registeroperationen, mit geringerer Abstraktion und somit höherer Effizienz, aber weniger Komfort.
+In Kombination ermöglichen HAL und LL ein gutes Gleichgewicht zwischen Portierbarkeit, Lesbarkeit und Performance \cite{STmicroelectronics2023}.\\
+
+Die HAL-Funktionen wurden im Projekt in Bereichen verwendet, in denen STM32CubeMX automatisch Initialisierungscode erzeugt hat (z.B. zur Konfiguration des Taktes in der Funktion \texttt{SystemClock\_Config()} im Sourcefile \texttt{main.c}).\\
+
+\subsubsection{Übersicht über die Applikations-Sourcefiles}
+Im Folgenden wird die Funktion und der Zweck der Einzel-Sourcefiles, in welchen der Hauptteil der Applikation implementiert ist, erläutert.\\
+\footnotesize
+
+\underline{\textbf{\texttt{app.c} / \texttt{app.h}}}\\
+Das Modul \texttt{app} beinhaltet die Applikationslogik und stellt Funktionen zur Initialisierung der Firmware bereit.
+Es ist für die Steuerung der Status-LEDs sowie die Hardwarevorbereitung für den Messbetrieb verantwortlich Außerdem sind hier die Benutzerfunktionen zur Kommunikation über USB definiert..
+
+\emph{Wichtige Funktionalitäten:}
+\begin{itemize}
+    \item \texttt{app\_Init()} – Initialisiert die Anwendung und richtet benötigte Hardwarekomponenten ein.
+    \item USB-Benutzerfunktionen (z.B. \texttt{sendCommand(), sendData(), ...})
+\end{itemize}
+
+\emph{Abhängigkeiten:} Dieses Modul verwendet die Event-Makros von \texttt{fsm.c/fsm.h}.\\
+
+\underline{\textbf{\texttt{queue.c} / \texttt{queue.h}}}\\
+Dieses Modul stellt eine \emph{FIFO-Queue} für Events bereit.
+Es dient als Schnittstelle zwischen asynchronen Ereignissen (z.\,B. Interrupts, USB-Kommandos) und der FSM.
+
+\emph{Wichtige Funktionen:}
+\begin{itemize}
+    \item \texttt{enqueueEvent(event)} – Fügt ein neues Event am Ende der Queue ein.
+    \item \texttt{dequeueEvent()} – Gibt das älteste Event zurück und entfernt es aus der Queue.
+\end{itemize}
+
+\emph{Abhängigkeiten:} Dieses Modul arbeitet unabhängig von der Hardware und hat keine direkten HAL-Bezüge.\\
+
+\underline{\textbf{\texttt{fsm.c} / \texttt{fsm.h}}}\\
+Dieses Modul implementiert die \emph{Finite State Machine (FSM)} zur Ablaufsteuerung der Firmware.
+Jeder Zustand der FSM wird durch eine eigene Funktion abgebildet.
+Zustandswechsel erfolgen durch die Funktion \texttt{fsm\_transition()}.
+
+\emph{Kernkonzepte:}
+\begin{itemize}
+    \item Ereignisgesteuerte Zustandsmaschine mit definierten \texttt{EV\_ENTRY}-, \texttt{EV\_EXIT}- und regulären Events.
+    \item Verarbeitung externer Befehle und interner Hardware-Events über die Event-Queue.
+    \item Klare Trennung zwischen Zustandslogik und Event-Handling.
+\end{itemize}
+
+\emph{Abhängigkeiten:} Dieses Modul verwendet Funktionen aus \texttt{queue.c} zur Event-Verarbeitung
+sowie Funktionen aus \texttt{app.c} zur Hardwaresteuerung.\\
+
+Eine nähere Erläuterung zum Modul findet sich in \autoref{subsubsec:fsm_impl}.\\
+
+\underline{\textbf{\texttt{main.c} / \texttt{main.h}}}\\
+Die Datei \texttt{main.c} bildet den Einstiegspunkt der Firmware. 
+Hier werden Systeminitialisierung, HAL-Setup und der Start der FSM durchgeführt.
+
+\emph{Zentrale Aufgaben:}
+\begin{itemize}
+    \item Aufruf von \texttt{HAL\_Init()} und der SystemClock-Konfiguration.
+    \item Initialisierung der FSM mit dem Startzustand.
+\end{itemize}
+
+\emph{Abhängigkeiten:} Starke Kopplung an \texttt{fsm.c} sowie HAL-Treiber.\\
+
+\underline{\textbf{\texttt{stm32f7xx\_it.c} / \texttt{stm32f7xx\_it.h}}}\\
+Dieses Modul enthält alle Interrupt-Handler des Systems. 
+Bei eintreffenden Interrupts werden entsprechende Events erzeugt und an die Queue übergeben.
+
+\emph{Beispiele:}
+\begin{itemize}
+    \item \texttt{DMAx\_IRQHandler()} – Fügt ein Event \texttt{EV\_SAMPL\_DONE} in die Queue ein.
+    \item \texttt{EXTIx\_IRQHandler()} – Reagiert auf externe Trigger-Signale oder Button-Eingaben.
+\end{itemize}
+
+\underline{\textbf{\texttt{startup\_stm32f767zitx.s}}}\\
+Diese Assembly-Datei enthält den Start-Up-Code. 
+Hier werden der Stackpointer initialisiert, die Vektortabelle definiert und die \texttt{Reset\_Handler}-Funktion aufgerufen.
+
+\emph{Zentrale Aufgaben:}
+\begin{itemize}
+    \item Definition des Exception-Vector-Table.
+    \item Aufruf von \texttt{SystemInit()} und anschließend \texttt{main()}.
+\end{itemize}
+
+\normalsize
+\pagebreak
+
+
+\subsubsection{FSM}
+\label{subsubsec:fsm_impl}
+
+Die Implementierung der Firmware basiert auf einer ereignisgesteuerten FSM-Architektur, 
+die sich an einem Open-Source-Beispielprojekt orientiert, welches unter \url{https://github.com/NinjaNymo/C_StateMachines/} verfügbar ist.\\
+
+\underline{\textbf{FSM-Modul (\texttt{fsm.c} / \texttt{fsm.h})}}\\
+Das Modul \texttt{fsm} implementiert die in \autoref{subsec:fsm} beschriebene Finite State Machine (FSM). 
+Die Firmware ist als deterministischer endlicher Automat (DEA) ausgeführt, konkret als Moore-Automat, bei dem die Ausgaben nur vom aktuellen Zustand abhängen. 
+Dies ermöglicht ein vorhersagbares, deterministisches Verhalten.\\
+
+\textbf{\emph{Aufbau}}\\
+Jeder Zustand wird durch eine eigene C-Funktion repräsentiert, die drei Event-Typen verarbeitet: 
+\texttt{EV\_ENTRY} (Aktionen beim Eintritt), 
+\texttt{EV\_EXIT} (Aktionen beim Verlassen) 
+sowie zustandsspezifische Events. 
+Übergänge zwischen Zuständen erfolgen über die Funktion \texttt{fsm\_transition()}, die automatisch \texttt{EV\_EXIT} und \texttt{EV\_ENTRY} auslöst. 
+Die Funktion \texttt{fsm\_dispatch()} leitet eingehende Events an die aktuelle Zustandsfunktion weiter.\\
+
+\textbf{\emph{Zentrale Zustände}}
+\begin{itemize}
+	\footnotesize
+    \item \texttt{fsm\_state\_init()}: Einmalige Initialisierung der Hardware (\texttt{app\_Init()}), Übergang zu \texttt{IDLE}.
+    \item \texttt{fsm\_state\_idle()}: Konfiguration, Start der Messung bei Event \texttt{EV\_SAMPL\_RUN\_START}.
+    \item \texttt{fsm\_state\_acquisition\_start()}: Aktivieren des Triggers und Start der Datenerfassung.
+    \item \texttt{fsm\_state\_acquisition\_done()}: Aufräumen, Datenvorbereitung für Übertragung.
+    \item \texttt{fsm\_state\_data\_transmission()}: Versand der Messdaten an den PC.
+    \item \texttt{fsm\_state\_wait\_for\_ACK()}: Warten auf PC-Bestätigung für Neustart oder Rückkehr in \texttt{IDLE}.
+\end{itemize}
+
+\textbf{\emph{Bezug zur Theorie}}\\
+Die Implementierung bildet die Theorie direkt ab:
+\begin{itemize}
+	\footnotesize
+    \item Zustandsmenge $S$: Zustandsfunktionen \texttt{fsm\_state\_*}
+    \item Ereignismenge $E$: definierte Events (z.B. \texttt{EV\_SAMPL\_DONE})
+    \item Übergangsfunktion $\delta$: \texttt{fsm\_transition()}
+    \item Ausgabefunktion $\lambda$: Aktionen in \texttt{EV\_ENTRY}-Blöcken
+\end{itemize}
+Die FSM ist damit klar strukturiert, erweiterbar und unterstützt sauberes Debugging.
+\pagebreak
+
+\underline{\textbf{Queue-Modul (\texttt{queue.c }/ \texttt{queue.h})}}\\
+Das Queue-Modul verwaltet alle asynchron auftretenden Ereignisse. 
+Es stellt eine FIFO-Queue bereit, die als Bindeglied zwischen Interrupts, PC-Befehlen und der FSM dient. 
+Ereignisse werden beim Auftreten erst einmal \emph{eingereiht} (\texttt{enqueueEvent()}) und später von der FSM sequenziell \emph{abgearbeitet} (\texttt{dequeueEvent()}).\\
+
+\textbf{\emph{Wichtige Funktionen}}
+\begin{itemize}
+	\footnotesize
+    \item \texttt{enqueueEvent(event)}: Fügt ein neues Event am Ende der Queue hinzu (z.B. aus Interrupt).
+    \item \texttt{dequeueEvent()}: Gibt das älteste Event zurück und entfernt es.
+\end{itemize}
+
+\textbf{\emph{Vorteile}}
+\begin{itemize}
+	\footnotesize
+    \item Ereignisse gehen nicht verloren, auch wenn mehrere gleichzeitig auftreten.
+    \item Entkopplung der Event-Erzeugung von deren Verarbeitung.
+    \item Deterministische, nachvollziehbare Abarbeitung in der FSM.
+\end{itemize}
+
 \subsubsection{Preprocessing}
-\underline{Gleitender Mittelwertfilter}
-\begin{figure}[H]
-	\centering
-    \includegraphics[scale=0.4]{rectangle_1Vpp_10kHz_noFilter.png} 
-	\caption{\centering Signalverlauf ohne Filter\\
-	\footnotesize 10kHz Rechtecksignal mit überlagertem Rauschen (1Vpp; Bandbreite: 1MHz)}
-\end{figure}
+Der Algorithmus zur Umrechnung 12bit signed (ADC) in 16bit signed aus \autoref{lst:reverse_2s_compl_v2} wurde in der Funktion \texttt{preprocessData()} in \texttt{app.c} umgesetzt. Hier erfolgt auch die optionale Anwendung des gleitenden Mittelwertfilter durch Aufruf der Funktion\\ \texttt{applyMovingAverageFilter()} in \texttt{app.c}. Die Berechnung erfolgt in der aktuellen Implemetierung rekursiv nach dem Algorithmus in \autoref{lst:moving_avg_filter_algorithm_recursive}.\\
 
-\begin{figure}[H]
-	\centering
-    \includegraphics[scale=0.4]{rectangle_1Vpp_10kHz_Filter_cumulative.png} 
-	\caption{\centering Signalverlauf kumulativer gleitender Mittelwertfilter (M=51)\\
-	\footnotesize 10kHz Rechtecksignal mit überlagertem Rauschen (1Vpp; Bandbreite: 1MHz)}
-\end{figure}
-
-\begin{figure}[H]
-	\centering
-    \includegraphics[scale=0.4]{rectangle_1Vpp_10kHz_Filter_recursive.png} 
-	\caption{\centering Signalverlauf rekursiver gleitender Mittelwertfilter (M=51)\\
-	\footnotesize 10kHz Rechtecksignal mit überlagertem Rauschen (1Vpp; Bandbreite: 1MHz)}
-\end{figure}
-
+\underline{Hinweis:}\\
+Aufgrund der späten Fertigstellung im Projektverlauf kann der Filter in der Benutzeroberfläche aktuell nicht aktiviert werden, da keine entsprechenden Interaktionselemente für die Konfiguration verfügbar sind. Ein Test des Filters konnte aber durchgeführt werden (siehe \autoref{subsubsec:test_mov_avg}).
 
 \pagebreak
 
 \subsection{FW-Test}
+\subsubsection{Integrierter Debugger}
+
+\pagebreak
+
+\subsubsection{Terminal Programm und Python-Testcode}
+
+\pagebreak
+
+\subsubsection{Gleitender Mittelwertfilters}
+\label{subsubsec:test_mov_avg}
+Zum Test des gleitenden Mittelwertfilters wurden in einer vorläufigen Version der Benutzeranwendung die vorverarbeiteten übertragenen Daten geplottet. Der Filter wurde manuell durch Setzen einer Zustandsvariable in der Firmware aktiviert. Die \autoref{fig:mov_avg_test_no_filter} zeigt das empfangene Eingangssignal ohne Filter (Rechtecksignal mit überlagertem Rauschen). \autoref{fig:mov_avg_test_with_filter} zeigt das Signal nach Aktivierung des Filters.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.35]{rectangle_1Vpp_10kHz_noFilter.png} 
+	\caption{\centering Signalverlauf ohne Filter\\
+	\footnotesize 10kHz Rechtecksignal mit überlagertem Rauschen (1Vpp; Bandbreite: 1MHz)}
+	\label{fig:mov_avg_test_no_filter}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.35]{rectangle_1Vpp_10kHz_Filter_recursive.png} 
+	\caption{\centering Signalverlauf rekursiver gleitender Mittelwertfilter (M=51)\\
+	\footnotesize 10kHz Rechtecksignal mit überlagertem Rauschen (1Vpp; Bandbreite: 1MHz)}
+	\label{fig:mov_avg_test_with_filter}
+\end{figure}
+
+Den Abbildungen ist zu entnehmen, dass die Anwendung des Filters eine Rauschunterdrückung zur Folge hat. Des Weiteren wird aber auch die Flankensteilheit verringert.
 
 \pagebreak
 
 \section{Schnittstelle Firmware - Software}
+\subsection{USB Communication Device Class (CDC)}
 
-\subsection{Konzept der Kommunikation (USB CDC)}
+\pagebreak
+
+\subsection{Konzept der Kommunikation}
 
 \begin{figure}[H]
 	\centering
@@ -1104,6 +1319,8 @@ Ein Problem der kumulativen Variante ist die lange Ausführungsdauer, da für je
 	\caption{UML-Sequenzdiagramm: Kommunikation ohne Konfiguration}
 	\label{fig:uml_sequence_communication}
 \end{figure}
+
+Nachfolgend die Liste der Einzelkommandos, die das Kommunikationsprotokoll definieren:
 
 \pagebreak
 
@@ -1126,7 +1343,7 @@ Bibliotheken wie \emph{numpy} für numerische Auswertung, \emph{pyserial} für S
 \section{Zusammenführung}
 \subsection{Entwurf}
 \subsection{Implementierung}
-\subsection{SW-Test}
+\subsection{Test}
 
 \pagebreak
 
