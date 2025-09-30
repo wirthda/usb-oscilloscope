@@ -1078,7 +1078,7 @@ class General(QWidget):
             (self.measure_amplitude,    ("Amplitude", amplitude)),
             (self.measure_max,          ("Max", maximum)),
             (self.measure_min,          ("Min", minimum)),
-            (self.measure_top,          ("Top", top)),
+            (self.measure_top,          ("Top", dach)),
             (self.measure_base,         ("Base", base)),
             (self.measure_mean,         ("Mittelwert", mean)),
             (self.measure_peak_peak,    ("Peak-Peak", peak_peak)),

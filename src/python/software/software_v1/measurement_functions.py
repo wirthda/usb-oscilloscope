@@ -8,7 +8,7 @@ def minimum(data):
     return np.min(data)
 
 def mean(data):
-    return np.mean(data[0:(np.floor(len(data)/period_value(data))*period_value(data))])
+    return np.mean(data[0:int((np.floor(len(data)/period_value(data))*period_value(data)))])
 
 def peak_peak(data):
     return np.max(data) - np.min(data)
@@ -116,7 +116,7 @@ def amplitude(data):
     return dach(data) - base(data)
 
 def dc_rms(data):
-    return np.sqrt(np.mean(np.square(data[0:(np.floor(len(data)/period_value(data))*period_value(data))])))
+    return np.sqrt(np.mean(np.square(data[0:int((np.floor(len(data)/period_value(data))*period_value(data)))])))
 
 def ac_rms(data):
-    return np.std(data[0:(np.floor(len(data)/period_value(data))*period_value(data))], ddof=0)
+    return np.std(data[0:int((np.floor(len(data)/period_value(data))*period_value(data)))], ddof=0)

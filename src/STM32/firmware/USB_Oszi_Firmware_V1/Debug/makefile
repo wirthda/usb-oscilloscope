@@ -64,8 +64,8 @@ all: main-build
 main-build: USB_Oszi_Firmware_V1.elf secondary-outputs
 
 # Tool invocations
-USB_Oszi_Firmware_V1.elf USB_Oszi_Firmware_V1.map: $(OBJS) $(USER_OBJS) C:\dev\Projekt_USB_Oszi\workspace\USB_Oszi_Firmware_V1\STM32F767ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-gcc -o "USB_Oszi_Firmware_V1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"C:\dev\Projekt_USB_Oszi\workspace\USB_Oszi_Firmware_V1\STM32F767ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="USB_Oszi_Firmware_V1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
+USB_Oszi_Firmware_V1.elf USB_Oszi_Firmware_V1.map: $(OBJS) $(USER_OBJS) D:\Projekt_Datenerfassung\usb-oscilloscope\src\STM32\firmware\USB_Oszi_Firmware_V1\STM32F767ZITX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-gcc -o "USB_Oszi_Firmware_V1.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m7 -T"D:\Projekt_Datenerfassung\usb-oscilloscope\src\STM32\firmware\USB_Oszi_Firmware_V1\STM32F767ZITX_FLASH.ld" --specs=nosys.specs -Wl,-Map="USB_Oszi_Firmware_V1.map" -Wl,--gc-sections -static --specs=nano.specs -mfpu=fpv5-d16 -mfloat-abi=hard -mthumb -Wl,--start-group -lc -lm -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

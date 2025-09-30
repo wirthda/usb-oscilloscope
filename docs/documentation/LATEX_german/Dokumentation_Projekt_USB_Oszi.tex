@@ -650,6 +650,51 @@ Damit entspricht der Moving Average Filter einer Faltung des Eingangssignals mit
 
 Für das Projekt wurde der Filter kumulativ und rekursiv implementiert und nach dem Algorithmus in \autoref{fig:moving_avg_filter_algorithm_cumulative} im \autoref{subsubsec:preprocessing_concept} umgesetzt.
 
+\subsection{Parallele Prozesse und Nebenläufigkeiten in Python}
+\subsubsection{Threads in Python}
+	
+	Ein Thread ist ein paralleler Ausführungsstrang innerhalb eines Programms. Alle Threads teilen sich den selben Speicherbereich. 
+	Dadurch kann es zu Wettlaufbedingungen kommen oder zu unvorhersehbaren Verhalten. Der Zugriff auf gemeinsame Daten muss daher synchronisiert werden, z.B. mit Locks, Semaphoren oder Warteschlangen. 
+	Durch den Global Interpreter Lock (GIL), ein zentrales Konzept im Standard-Python-Interpreter CPython, 
+	kann zu einem Zeitpunkt immer nur ein Thread, Python-Bytecode ausführen. Das heißt, auch wenn für einen Job mehrere Threads gestartet werden, arbeitet immer nur ein Thread gleichzeitig.
+	Dieses Prinzip widersricht zwar der Idee von paralleler Ausführung, jedoch darf ein anderer Thread Programmcode ausführen, wenn der Thread gerade auf eine Eingabe wartet.
+	Das GIL wird in Python genutzt, da es die Verwaltung von Python-Objekten im Speicher vereinfacht. Dies ist vor allem wichtig, da der der Speicher in Python typischerweise
+	automatisch verwaltet wird. 
+
+	Threading eignet sich vor allem für E/A-lastige Aufgaben, die mit Datenaustausch verbunden sind.
+
+	\underline{Synchronisation}
+	\begin{itemize}
+		\item Locks: Sperren, die verhindern, dass mehrere Threads gleichzeitig auf dieselben Daten zugreifen.
+		\item Semaphoren: Begrenzen die Anzahl gleichzeitiger Zugriffe auf eine Ressource.
+		\item Warteschlange (Queues): Erlauben thread-sicheren Austausch von Datenobjekten, nach dem FIFO-Prinzip.
+	\end{itemize}
+
+\subsubsection{Multiprocessing in Python}	
+	
+	Beim multiprocessing werden mehrere, vollständig unabhängige Prozesse gestartet. Jeder Prozess ist eine eigene Instanz des Programms mit eigenem Speicherbereich. Dies führt dazu, dass die
+	Kommunikation zwischen den jeweiligen Prozessen komplexer ist. Hierfür stellt das Python-Modul multiprocessing Funktionen und Klassen bereit. 
+
+	Multiprocessing kann die Leistungsfähigkeit bei rechenintensiven Aufgaben deutlich steigern, bringt aber auch Overhead durch Speicherbedarf und zusätzliche Komplexität in der Verwaltung mit.
+
+	\underline{Synchronisation}
+	\begin{itemize}
+		\item Pipes: Unidirektionale Kanäle für Datenübertragung zwischen Prozessen. 
+		\item Shared Memory: Gemeinsamer Speicherbereich für Datenaustausch.
+	\end{itemize}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.4]{multi-threading_multi-processing.png} 
+	\caption{Vergleich Multi-Threading und Multi-Processing}
+	\label{fig:multithr/pro}
+\end{figure}
+
+In unserem Projekt wurden Threads verwendet, da die Anwendung hauptsächlich E/A-gebunden ist. Zusätlich wird ein gemeinsamer Speicher benötigt, damit die Messdaten an die Benutzeroberfläche 
+übergeben werden können. Die Kommunikation wurde mit zwei Warteschlangen realisiert, eine dient zur Übergabe von Statusmeldungne von der FSM zur Benutzeroberfläche (GUI) und die andere zur
+Übergabe von Befehlen von der GUI an die FSM. 
+
+
 %%%%%%%%%%% Projektkonzeption %%%%%%%%%%%
 \section{Projektkonzeption}
 \subsection{Vorgehensweise}
@@ -1067,6 +1112,10 @@ Ein Problem der kumulativen Variante ist die lange Ausführungsdauer, da für je
 
 \pagebreak
 \subsection{Implementierung}
+\subsubsection{Auswahl des Frameworks}
+Die Programmiersprache Python wurde für die Umsetzung gewählt, da sie eine breite Unterstützung für wissenschaftliche und hardware-nahe Programmierung bietet. Durch umfangreiche
+Bibliotheken wie \emph{numpy} für numerische Auswertung, \emph{pyserial} für Schnittstellenkommunikation sowie leistungsfähige Frameworks für GUI-Entwicklung wie \emph{PySide6}, 
+
 
 \pagebreak
 

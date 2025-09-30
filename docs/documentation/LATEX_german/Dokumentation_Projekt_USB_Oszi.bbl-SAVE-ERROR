@@ -1,0 +1,625 @@
+% $ biblatex auxiliary file $
+% $ biblatex bbl format version 3.3 $
+% Do not modify the above lines!
+%
+% This is an auxiliary file used by the 'biblatex' package.
+% This file may safely be deleted. It will be recreated by
+% biber as required.
+%
+\begingroup
+\makeatletter
+\@ifundefined{ver@biblatex.sty}
+  {\@latex@error
+     {Missing 'biblatex' package}
+     {The bibliography requires the 'biblatex' package.}
+      \aftergroup\endinput}
+  {}
+\endgroup
+
+
+\refsection{0}
+  \datalist[entry]{anyt/global//global/global/global}
+    \entry{AnalogDevices2001a}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=a12ff886a2379a9ee6efaa9acfb54df4}{%
+           family={AnalogDevices},
+           familyi={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{fullhash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{fullhashraw}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{bibnamehash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{authorbibnamehash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{authornamehash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{authorfullhash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{authorfullhashraw}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \field{extraname}{1}
+      \field{labelalpha}{Ana01}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extraalpha}{1}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{20}
+      \field{journaltitle}{Analog Devices - Technical Articles}
+      \field{month}{11}
+      \field{title}{Pipeline ADCs Come of Age}
+      \field{urlday}{16}
+      \field{urlmonth}{9}
+      \field{urlyear}{2025}
+      \field{year}{2001}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.analog.com/en/resources/technical-articles/pipeline-adcs-come-of-age.html
+      \endverb
+      \verb{url}
+      \verb https://www.analog.com/en/resources/technical-articles/pipeline-adcs-come-of-age.html
+      \endverb
+    \endentry
+    \entry{AnalogDevices2001c}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=a12ff886a2379a9ee6efaa9acfb54df4}{%
+           family={AnalogDevices},
+           familyi={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{fullhash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{fullhashraw}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{bibnamehash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{authorbibnamehash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{authornamehash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{authorfullhash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{authorfullhashraw}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \field{extraname}{2}
+      \field{labelalpha}{Ana01}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extraalpha}{2}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{2}
+      \field{journaltitle}{Analog Devices - Technical Articles}
+      \field{month}{10}
+      \field{title}{Understanding Flash ADCs}
+      \field{urlday}{16}
+      \field{urlmonth}{9}
+      \field{urlyear}{2025}
+      \field{year}{2001}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.analog.com/en/resources/technical-articles/understanding-flash-adcs.html
+      \endverb
+      \verb{url}
+      \verb https://www.analog.com/en/resources/technical-articles/understanding-flash-adcs.html
+      \endverb
+    \endentry
+    \entry{AnalogDevices2001b}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=a12ff886a2379a9ee6efaa9acfb54df4}{%
+           family={AnalogDevices},
+           familyi={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{fullhash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{fullhashraw}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{bibnamehash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{authorbibnamehash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{authornamehash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{authorfullhash}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \strng{authorfullhashraw}{a12ff886a2379a9ee6efaa9acfb54df4}
+      \field{extraname}{3}
+      \field{labelalpha}{Ana01}
+      \field{sortinit}{A}
+      \field{sortinithash}{2f401846e2029bad6b3ecc16d50031e2}
+      \field{extraalpha}{3}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{2}
+      \field{journaltitle}{Analog Devices - Technical Articles}
+      \field{month}{10}
+      \field{title}{Understanding Pipelined ADCs}
+      \field{urlday}{16}
+      \field{urlmonth}{9}
+      \field{urlyear}{2025}
+      \field{year}{2001}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.analog.com/en/resources/technical-articles/understanding-pipelined-adcs.html
+      \endverb
+      \verb{url}
+      \verb https://www.analog.com/en/resources/technical-articles/understanding-pipelined-adcs.html
+      \endverb
+    \endentry
+    \entry{Baesig2019}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=9c17c033f9c24edab66c410d6fa8785c}{%
+           family={Bäsig},
+           familyi={B\bibinitperiod},
+           given={Prof.\bibnamedelimi Dr.-Ing.\bibnamedelimi J.},
+           giveni={P\bibinitperiod\bibinitdelim D\bibinithyphendelim I\bibinitperiod\bibinitdelim J\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {TH Nürnberg}%
+      }
+      \list{publisher}{1}{%
+        {TH Nürnberg}%
+      }
+      \strng{namehash}{9c17c033f9c24edab66c410d6fa8785c}
+      \strng{fullhash}{9c17c033f9c24edab66c410d6fa8785c}
+      \strng{fullhashraw}{9c17c033f9c24edab66c410d6fa8785c}
+      \strng{bibnamehash}{9c17c033f9c24edab66c410d6fa8785c}
+      \strng{authorbibnamehash}{9c17c033f9c24edab66c410d6fa8785c}
+      \strng{authornamehash}{9c17c033f9c24edab66c410d6fa8785c}
+      \strng{authorfullhash}{9c17c033f9c24edab66c410d6fa8785c}
+      \strng{authorfullhashraw}{9c17c033f9c24edab66c410d6fa8785c}
+      \field{labelalpha}{Bäs19}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{edition}{12}
+      \field{subtitle}{Skriptum zur Vorlesung Informatik 2}
+      \field{title}{Automaten und ihre Anwendung}
+      \field{year}{2019}
+      \field{dateera}{ce}
+    \endentry
+    \entry{Bernstein2023}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=305304894df00a5dfcbd9c8aa5f344af}{%
+           family={Bernstein},
+           familyi={B\bibinitperiod},
+           given={Herbert},
+           giveni={H\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer Fachmedien Wiesbaden}%
+      }
+      \strng{namehash}{305304894df00a5dfcbd9c8aa5f344af}
+      \strng{fullhash}{305304894df00a5dfcbd9c8aa5f344af}
+      \strng{fullhashraw}{305304894df00a5dfcbd9c8aa5f344af}
+      \strng{bibnamehash}{305304894df00a5dfcbd9c8aa5f344af}
+      \strng{authorbibnamehash}{305304894df00a5dfcbd9c8aa5f344af}
+      \strng{authornamehash}{305304894df00a5dfcbd9c8aa5f344af}
+      \strng{authorfullhash}{305304894df00a5dfcbd9c8aa5f344af}
+      \strng{authorfullhashraw}{305304894df00a5dfcbd9c8aa5f344af}
+      \field{extraname}{1}
+      \field{labelalpha}{Ber23}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{9783658391164}
+      \field{title}{NF- und HF-Messtechnik: Messen mit Oszilloskopen, Netzwerkanalysatoren und Spektrumanalysator}
+      \field{year}{2023}
+      \field{dateera}{ce}
+      \verb{doi}
+      \verb 10.1007/978-3-658-39116-4
+      \endverb
+    \endentry
+    \entry{Bernstein2024}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=305304894df00a5dfcbd9c8aa5f344af}{%
+           family={Bernstein},
+           familyi={B\bibinitperiod},
+           given={Herbert},
+           giveni={H\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer Fachmedien Wiesbaden}%
+      }
+      \strng{namehash}{305304894df00a5dfcbd9c8aa5f344af}
+      \strng{fullhash}{305304894df00a5dfcbd9c8aa5f344af}
+      \strng{fullhashraw}{305304894df00a5dfcbd9c8aa5f344af}
+      \strng{bibnamehash}{305304894df00a5dfcbd9c8aa5f344af}
+      \strng{authorbibnamehash}{305304894df00a5dfcbd9c8aa5f344af}
+      \strng{authornamehash}{305304894df00a5dfcbd9c8aa5f344af}
+      \strng{authorfullhash}{305304894df00a5dfcbd9c8aa5f344af}
+      \strng{authorfullhashraw}{305304894df00a5dfcbd9c8aa5f344af}
+      \field{extraname}{2}
+      \field{labelalpha}{Ber24}
+      \field{sortinit}{B}
+      \field{sortinithash}{d7095fff47cda75ca2589920aae98399}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{9783658389291}
+      \field{title}{Messelektronik und Sensoren: Grundlagen der Messtechnik, Sensoren, analoge und digitale Signalverarbeitung}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \verb{doi}
+      \verb 10.1007/978-3-658-38929-1
+      \endverb
+    \endentry
+    \entry{IEEE2023}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=472abfae8142fdb6f39d081303e8af85}{%
+           family={IEEE},
+           familyi={I\bibinitperiod}}}%
+      }
+      \strng{namehash}{472abfae8142fdb6f39d081303e8af85}
+      \strng{fullhash}{472abfae8142fdb6f39d081303e8af85}
+      \strng{fullhashraw}{472abfae8142fdb6f39d081303e8af85}
+      \strng{bibnamehash}{472abfae8142fdb6f39d081303e8af85}
+      \strng{authorbibnamehash}{472abfae8142fdb6f39d081303e8af85}
+      \strng{authornamehash}{472abfae8142fdb6f39d081303e8af85}
+      \strng{authorfullhash}{472abfae8142fdb6f39d081303e8af85}
+      \strng{authorfullhashraw}{472abfae8142fdb6f39d081303e8af85}
+      \field{labelalpha}{IEE23}
+      \field{sortinit}{I}
+      \field{sortinithash}{8d291c51ee89b6cd86bf5379f0b151d8}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{IEEE Std 1241-2023 (Revision of IEEE Std 1241-2010)}
+      \field{title}{IEEE Standard for Terminology and Test Methods for Analog-to-Digital Converters}
+      \field{year}{2023}
+      \field{dateera}{ce}
+      \verb{doi}
+      \verb 10.1109/IEEESTD.2023.10269815
+      \endverb
+      \keyw{IEEE Standards;AC-DC power converters;Histograms;Noise measurement;Error analysis;ADC;analog-to-digital converter;code transition level;coherent sampling;DNL;ENOB;histogram;IEEE 1241™;INL;LSB;missing codes;noise power ratio;noncoherent sampling;quantization error;quantization noise;SAR;SFDR;sine fitting}
+    \endentry
+    \entry{MPS}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=e7eabfc914389c1778ccb48a7b204600}{%
+           family={MPS},
+           familyi={M\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {Monolithic Power Systems}%
+      }
+      \strng{namehash}{e7eabfc914389c1778ccb48a7b204600}
+      \strng{fullhash}{e7eabfc914389c1778ccb48a7b204600}
+      \strng{fullhashraw}{e7eabfc914389c1778ccb48a7b204600}
+      \strng{bibnamehash}{e7eabfc914389c1778ccb48a7b204600}
+      \strng{authorbibnamehash}{e7eabfc914389c1778ccb48a7b204600}
+      \strng{authornamehash}{e7eabfc914389c1778ccb48a7b204600}
+      \strng{authorfullhash}{e7eabfc914389c1778ccb48a7b204600}
+      \strng{authorfullhashraw}{e7eabfc914389c1778ccb48a7b204600}
+      \field{labelalpha}{MPS}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{Types Of ADCs}
+      \field{urlday}{16}
+      \field{urlmonth}{9}
+      \field{urlyear}{2025}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.monolithicpower.com/en/learning/mpscholar/analog-to-digital-converters/introduction-to-adcs/types-of-adcs
+      \endverb
+      \verb{url}
+      \verb https://www.monolithicpower.com/en/learning/mpscholar/analog-to-digital-converters/introduction-to-adcs/types-of-adcs
+      \endverb
+    \endentry
+    \entry{Muehl2020}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=a1bf5f9645350d583e9193cb846da370}{%
+           family={Mühl},
+           familyi={M\bibinitperiod},
+           given={Thomas},
+           giveni={T\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Springer Fachmedien Wiesbaden}%
+      }
+      \strng{namehash}{a1bf5f9645350d583e9193cb846da370}
+      \strng{fullhash}{a1bf5f9645350d583e9193cb846da370}
+      \strng{fullhashraw}{a1bf5f9645350d583e9193cb846da370}
+      \strng{bibnamehash}{a1bf5f9645350d583e9193cb846da370}
+      \strng{authorbibnamehash}{a1bf5f9645350d583e9193cb846da370}
+      \strng{authornamehash}{a1bf5f9645350d583e9193cb846da370}
+      \strng{authorfullhash}{a1bf5f9645350d583e9193cb846da370}
+      \strng{authorfullhashraw}{a1bf5f9645350d583e9193cb846da370}
+      \field{labelalpha}{Müh20}
+      \field{sortinit}{M}
+      \field{sortinithash}{4625c616857f13d17ce56f7d4f97d451}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{9783658291167}
+      \field{title}{Elektrische Messtechnik: Grundlagen, Messverfahren, Anwendungen}
+      \field{year}{2020}
+      \field{dateera}{ce}
+      \verb{doi}
+      \verb 10.1007/978-3-658-29116-7
+      \endverb
+    \endentry
+    \entry{Padmanabhuni2017}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=4abe53cc1abb69716d271a533e585689}{%
+           family={Padmanabhuni},
+           familyi={P\bibinitperiod},
+           given={Kushwanthi},
+           giveni={K\bibinitperiod}}}%
+      }
+      \strng{namehash}{4abe53cc1abb69716d271a533e585689}
+      \strng{fullhash}{4abe53cc1abb69716d271a533e585689}
+      \strng{fullhashraw}{4abe53cc1abb69716d271a533e585689}
+      \strng{bibnamehash}{4abe53cc1abb69716d271a533e585689}
+      \strng{authorbibnamehash}{4abe53cc1abb69716d271a533e585689}
+      \strng{authornamehash}{4abe53cc1abb69716d271a533e585689}
+      \strng{authorfullhash}{4abe53cc1abb69716d271a533e585689}
+      \strng{authorfullhashraw}{4abe53cc1abb69716d271a533e585689}
+      \field{labelalpha}{Pad17}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{journaltitle}{Analog Dialogue}
+      \field{month}{11}
+      \field{title}{Confused About Choosing the Right Amplifier for Your Filter? Here’s the Answer to Put an End to Your Worries—the Analog Filter Wizard Design Tool!}
+      \field{urlday}{15}
+      \field{urlmonth}{9}
+      \field{urlyear}{2025}
+      \field{volume}{51}
+      \field{year}{2017}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.analog.com/en/resources/analog-dialogue/studentzone/studentzone-october-2017.html
+      \endverb
+      \verb{url}
+      \verb https://www.analog.com/en/resources/analog-dialogue/studentzone/studentzone-october-2017.html
+      \endverb
+    \endentry
+    \entry{Pini2020}{article}{}{}
+      \name{author}{1}{}{%
+        {{hash=5fe1f37f0110f764e048e3f6e3676cd9}{%
+           family={Pini},
+           familyi={P\bibinitperiod},
+           given={Art},
+           giveni={A\bibinitperiod}}}%
+      }
+      \strng{namehash}{5fe1f37f0110f764e048e3f6e3676cd9}
+      \strng{fullhash}{5fe1f37f0110f764e048e3f6e3676cd9}
+      \strng{fullhashraw}{5fe1f37f0110f764e048e3f6e3676cd9}
+      \strng{bibnamehash}{5fe1f37f0110f764e048e3f6e3676cd9}
+      \strng{authorbibnamehash}{5fe1f37f0110f764e048e3f6e3676cd9}
+      \strng{authornamehash}{5fe1f37f0110f764e048e3f6e3676cd9}
+      \strng{authorfullhash}{5fe1f37f0110f764e048e3f6e3676cd9}
+      \strng{authorfullhashraw}{5fe1f37f0110f764e048e3f6e3676cd9}
+      \field{labelalpha}{Pin20}
+      \field{sortinit}{P}
+      \field{sortinithash}{ff3bcf24f47321b42cb156c2cc8a8422}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{day}{24}
+      \field{journaltitle}{DigiKey - Articles \& Blogs}
+      \field{month}{3}
+      \field{title}{The Basics of Anti-Aliasing Low-Pass Filters (and Why They Need to be Matched to the ADC)}
+      \field{urlday}{15}
+      \field{urlmonth}{9}
+      \field{urlyear}{2025}
+      \field{year}{2020}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb www.digikey.de/en/articles/the-basics-of-anti-aliasing-low-pass-filters
+      \endverb
+      \verb{url}
+      \verb www.digikey.de/en/articles/the-basics-of-anti-aliasing-low-pass-filters
+      \endverb
+    \endentry
+    \entry{Smith1999}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=1795fe90e11d3a84947c656b94c2fd87}{%
+           family={Smith},
+           familyi={S\bibinitperiod},
+           given={Steven\bibnamedelima W.},
+           giveni={S\bibinitperiod\bibinitdelim W\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Analog Devices}%
+      }
+      \strng{namehash}{1795fe90e11d3a84947c656b94c2fd87}
+      \strng{fullhash}{1795fe90e11d3a84947c656b94c2fd87}
+      \strng{fullhashraw}{1795fe90e11d3a84947c656b94c2fd87}
+      \strng{bibnamehash}{1795fe90e11d3a84947c656b94c2fd87}
+      \strng{authorbibnamehash}{1795fe90e11d3a84947c656b94c2fd87}
+      \strng{authornamehash}{1795fe90e11d3a84947c656b94c2fd87}
+      \strng{authorfullhash}{1795fe90e11d3a84947c656b94c2fd87}
+      \strng{authorfullhashraw}{1795fe90e11d3a84947c656b94c2fd87}
+      \field{labelalpha}{Smi99}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{title}{The Scientist \& Engineer's Guide to Digital Signal Processing}
+      \field{urlyear}{1999}
+      \field{year}{1999}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.analog.com/en/resources/technical-books/scientist_engineers_guide.html
+      \endverb
+      \verb{url}
+      \verb https://www.analog.com/en/resources/technical-books/scientist_engineers_guide.html
+      \endverb
+    \endentry
+    \entry{Schruefer2022}{book}{}{}
+      \name{author}{3}{}{%
+        {{hash=d628f324a85d4acd7392e9e5b725d447}{%
+           family={Schrüfer},
+           familyi={S\bibinitperiod},
+           given={Elmar},
+           giveni={E\bibinitperiod}}}%
+        {{hash=504c51f77999cebbbf72bd0de013342e}{%
+           family={Reindl},
+           familyi={R\bibinitperiod},
+           given={Leonhard\bibnamedelima M.},
+           giveni={L\bibinitperiod\bibinitdelim M\bibinitperiod}}}%
+        {{hash=acbe63640eb54084627435e6180818e6}{%
+           family={Zagar},
+           familyi={Z\bibinitperiod},
+           given={Bernhard},
+           giveni={B\bibinitperiod}}}%
+      }
+      \list{publisher}{1}{%
+        {Carl Hanser Verlag GmbH \& Co. KG}%
+      }
+      \strng{namehash}{0f0da3b079dc3340b758d84c5d2faec4}
+      \strng{fullhash}{0f0da3b079dc3340b758d84c5d2faec4}
+      \strng{fullhashraw}{0f0da3b079dc3340b758d84c5d2faec4}
+      \strng{bibnamehash}{0f0da3b079dc3340b758d84c5d2faec4}
+      \strng{authorbibnamehash}{0f0da3b079dc3340b758d84c5d2faec4}
+      \strng{authornamehash}{0f0da3b079dc3340b758d84c5d2faec4}
+      \strng{authorfullhash}{0f0da3b079dc3340b758d84c5d2faec4}
+      \strng{authorfullhashraw}{0f0da3b079dc3340b758d84c5d2faec4}
+      \field{labelalpha}{SRZ22}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{isbn}{9783446474437}
+      \field{month}{8}
+      \field{title}{Elektrische Messtechnik: Messung elektrischer und nichtelektrischer Größen}
+      \field{year}{2022}
+      \field{dateera}{ce}
+      \verb{doi}
+      \verb 10.3139/9783446474437
+      \endverb
+    \endentry
+    \entry{STmicroelectronics2016}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=38a05b7ed659e57ad7f9e75520419350}{%
+           family={STmicroelectronics},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{fullhash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{fullhashraw}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{bibnamehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authorbibnamehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authornamehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authorfullhash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authorfullhashraw}{38a05b7ed659e57ad7f9e75520419350}
+      \field{extraname}{1}
+      \field{labelalpha}{STm16}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{6}
+      \field{title}{AN4031 - Using the STM32F2, STM32F4 and STM32F7 Series DMA controller}
+      \field{urlday}{11}
+      \field{urlmonth}{9}
+      \field{urlyear}{2025}
+      \field{year}{2016}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.st.com/resource/en/application_note/dm00046011-using-the-stm32f2-stm32f4-and-stm32f7-series-dma-controller-stmicroelectronics.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.st.com/resource/en/application_note/dm00046011-using-the-stm32f2-stm32f4-and-stm32f7-series-dma-controller-stmicroelectronics.pdf
+      \endverb
+    \endentry
+    \entry{STmicroelectronics2024}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=38a05b7ed659e57ad7f9e75520419350}{%
+           family={STmicroelectronics},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{fullhash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{fullhashraw}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{bibnamehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authorbibnamehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authornamehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authorfullhash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authorfullhashraw}{38a05b7ed659e57ad7f9e75520419350}
+      \field{extraname}{2}
+      \field{labelalpha}{STm24}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{7}
+      \field{title}{Reference Manual for STM32F76xxx and STM32F77xxx advanced Arm®-based 32-bit MCUs}
+      \field{urlday}{11}
+      \field{urlmonth}{9}
+      \field{urlyear}{2025}
+      \field{year}{2024}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.st.com/resource/en/reference_manual/rm0410-stm32f76xxx-and-stm32f77xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.st.com/resource/en/reference_manual/rm0410-stm32f76xxx-and-stm32f77xxx-advanced-armbased-32bit-mcus-stmicroelectronics.pdf
+      \endverb
+    \endentry
+    \entry{STmicroelectronics2025}{online}{}{}
+      \name{author}{1}{}{%
+        {{hash=38a05b7ed659e57ad7f9e75520419350}{%
+           family={STmicroelectronics},
+           familyi={S\bibinitperiod}}}%
+      }
+      \strng{namehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{fullhash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{fullhashraw}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{bibnamehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authorbibnamehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authornamehash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authorfullhash}{38a05b7ed659e57ad7f9e75520419350}
+      \strng{authorfullhashraw}{38a05b7ed659e57ad7f9e75520419350}
+      \field{extraname}{3}
+      \field{labelalpha}{STm25}
+      \field{sortinit}{S}
+      \field{sortinithash}{b164b07b29984b41daf1e85279fbc5ab}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{month}{7}
+      \field{title}{Datasheet for STM32F765xx, STM32F767xx, STM32F768Ax, STM32F769xx}
+      \field{urlday}{11}
+      \field{urlmonth}{9}
+      \field{urlyear}{2025}
+      \field{year}{2025}
+      \field{dateera}{ce}
+      \field{urldateera}{ce}
+      \verb{urlraw}
+      \verb https://www.st.com/resource/en/datasheet/stm32f767zi.pdf
+      \endverb
+      \verb{url}
+      \verb https://www.st.com/resource/en/datasheet/stm32f767zi.pdf
+      \endverb
+    \endentry
+    \entry{Urbanek2020}{book}{}{}
+      \name{author}{1}{}{%
+        {{hash=6429fe0231e97be140dbae913d6b5296}{%
+           family={Urbanek},
+           familyi={U\bibinitperiod},
+           given={Prof.\bibnamedelimi Dr.\bibnamedelimi Peter},
+           giveni={P\bibinitperiod\bibinitdelim D\bibinitperiod\bibinitdelim P\bibinitperiod}}}%
+      }
+      \list{organization}{1}{%
+        {TH Nürnberg}%
+      }
+      \list{publisher}{1}{%
+        {TH Nürnberg}%
+      }
+      \strng{namehash}{6429fe0231e97be140dbae913d6b5296}
+      \strng{fullhash}{6429fe0231e97be140dbae913d6b5296}
+      \strng{fullhashraw}{6429fe0231e97be140dbae913d6b5296}
+      \strng{bibnamehash}{6429fe0231e97be140dbae913d6b5296}
+      \strng{authorbibnamehash}{6429fe0231e97be140dbae913d6b5296}
+      \strng{authornamehash}{6429fe0231e97be140dbae913d6b5296}
+      \strng{authorfullhash}{6429fe0231e97be140dbae913d6b5296}
+      \strng{authorfullhashraw}{6429fe0231e97be140dbae913d6b5296}
+      \field{labelalpha}{Urb20}
+      \field{sortinit}{U}
+      \field{sortinithash}{6901a00e45705986ee5e7ca9fd39adca}
+      \field{labelnamesource}{author}
+      \field{labeltitlesource}{title}
+      \field{subtitle}{Vom Mikrochip zum Rechnersystem. Ein Grundlagenbuch mit vielen Beispielen.}
+      \field{title}{Das MCT Skript}
+      \field{titleaddon}{Version 3.5}
+      \field{year}{2020}
+      \field{dateera}{ce}
+    \endentry
+  \enddatalist
+\endrefsection
+\endinput
+

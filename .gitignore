@@ -9,3 +9,15 @@
 **.run.xml
 **.synctex.gz
 **.toc
+**/venv
+**/__pycache__
+.venv
+**.out
+**.o
+**.d
+**.su
+**.cyclo
+**.pkl
+**.elf
+**.list
+**.map
