@@ -740,16 +740,9 @@ Für die Schnittstelle zwischen ADC und Mikrocontroller wurde eine \emph{paralle
 Neben diesen zentralen Vorgaben wurden auch \emph{optionale Erweiterungen} definiert, die nicht als kritisch für den Projekterfolg eingestuft wurden oder den vorgesehenen Arbeitsumfang überschritten. Dazu zählten insbesondere die Implementierung eines \emph{Logikanalysators} mit Protokolldekodierung gängiger Schnittstellen (z. B. SPI, I²C, UART), die Realisierung einer \emph{Fast-Fourier-Transformation (FFT)} zur Spektrumanalyse, die Erweiterung um einen \emph{zweiten analogen Kanal}, die Integration von \emph{Mathematik- und Messfunktionen} sowie die Nutzung unterschiedlicher \emph{Triggerbedingungen}. Weitere Optionen im Hardwarebereich betrafen eine \emph{Optimierung hinsichtlich elektromagnetischer Verträglichkeit (EMV)}, eine \emph{Minimierung des Rauschverhaltens}, die \emph{Stromversorgung über USB} sowie die \emph{Integration des Mikrocontrollers direkt auf der Baugruppe}.
 
 \subsection{Konzept / Architektur}
-Parallel zu den Anforderungen wurde ein Konzept entwickelt, um die grundlegende Architektur und Aufgabenverteilung des Projekts festzulegen. Zu Beginn entstand ein grundlegendes, rein funktionales Übersichtsbild (siehe \autoref{fig:block_concept}). Dieses stellt die wesentlichen Signalflüsse und Verarbeitungsschritte dar, die für die Realisierung des USB-Oszilloskops erforderlich sind. Der Signalpfad führt dabei vom Device under Test (DUT) über die Signalerfassung zur Speicherung der Rohdaten und weiter zur Verarbeitung auf PC-Ebene. Dieses Schema diente als Orientierungshilfe für die weiteren konzeptionellen Schritte, ohne jedoch bereits konkrete Funktionseinheiten Bauteile oder Schnittstellen festzulegen.\\
+Parallel zu den Anforderungen wurde ein Konzept entwickelt, um die grundlegende Architektur und Aufgabenverteilung des Projekts festzulegen. Zu Beginn entstand ein grundlegendes, rein funktionales Übersichtsbild (siehe \autoref{fig:block_concept} in \autoref{sec:appendix_a}). Dieses stellt die wesentlichen Signalflüsse und Verarbeitungsschritte dar, die für die Realisierung des USB-Oszilloskops erforderlich sind. Der Signalpfad führt dabei vom Device under Test (DUT) über die Signalerfassung zur Speicherung der Rohdaten und weiter zur Verarbeitung auf PC-Ebene. Dieses Schema diente als Orientierungshilfe für die weiteren konzeptionellen Schritte, ohne jedoch bereits konkrete Funktionseinheiten Bauteile oder Schnittstellen festzulegen.\\
 
 Auf Basis dieser funktionalen Skizze sowie des in der Fachliteratur beschriebenen Grundaufbaus eines digitalen Speicheroszilloskops (siehe \autoref{subsec:oscilloscope_func}) wurde schließlich ein Gesamtkonzept entwickelt, das Funktionseinheiten definiert und den jeweiligen Bereichen Hardware, Firmware und Software zuordnet (siehe \autoref{fig:complete_concept}).
-
-\begin{figure}[H]
-	\centering
-    \includegraphics[scale=0.4]{Projektarbeit_Architektur.png} 
-	\caption{Übersichts-Blockschaltbild (erstellt für die Konzeptvorstellung)}
-	\label{fig:block_concept}
-\end{figure}
 
 \begin{figure}[H]
 	\centering
@@ -771,6 +764,13 @@ Ausgehend von diesem Konzept und der klaren Aufteilung in die Bereiche Hardware,
 \pagebreak
 
 \section{Schnittstelle Hardware - Firmware}
+- Anforderungen HW-seitig und FW-seitig (wie gelöst?)\\
+- Explizite Erwähnung, dass das Routing der ADC-Datenpins zu einem Port des uC geschehen musste! Aufwand im Layout)\\
+- Pinbelegung\\
+- Komparator-Auswahl (LT1714)\\
+- Pegelwandlung: Trigger und Clock\\
+- Pegelwandlung: Pull-Ups+Open-Drain; Spannungsteiler\\
+- DAC-Ansteuerung
 
 \pagebreak
 
@@ -1275,25 +1275,46 @@ Aufgrund der späten Fertigstellung im Projektverlauf kann der Filter in der Ben
 \pagebreak
 
 \subsection{FW-Test}
-\subsubsection{Integrierter Debugger}
+\subsubsection{Abtastung}
 Die Funktionsweise der Abtastung (gemäß \autoref{subsubsec:sampling_concept}) wurde zunächst mit dem integrierten Debugging-Tool der IDE überprüft. Ein wichtiger Schritt war die Überprüfung des konfigurierten DMA-Streams mit definiertem Start und Ende.\\
 
 Hierzu wurden die DMA-Transfers manuell gestartet und das Ergebnis in der Expression-Debug-Ansicht der IDE verifiziert. Zunächst wurden durch Pull-Up- und Pull-Down-Widerstände definierte Pegel am Eingangsdatenregister erzeugt, welches später als Schnittstelle zum ADC dienen sollte.
 
 \begin{figure}[H]
 	\centering
-    \includegraphics[scale=0.35]{rectangle_1Vpp_10kHz_noFilter.png} 
+    \includegraphics[scale=0.35]{*.png} 
 	\caption{Expression-Debug-Ansicht zur Überprüfung der Abtastwerte}
 	\label{fig:mov_avg_test_no_filter}
 \end{figure}
 
 \pagebreak
 
-\subsubsection{Terminal Programm und Python-Testcode}
+\subsubsection{FSM}
+
+Bevor die Funktionsweise der State-Machine überprüft werden konnte, wurde das Kommunikationskonzept (siehe \autoref{subsec:communication_concept}) umgesetzt. Hierdurch war eine externe Steuerung der Firmware-FSM möglich, wie es auch in der Endanwendung vorgesehen war. Die Steuerung erfolgte mittels String-Befehlen, ein genauer Ablauf kann \autoref{fig:uml_sequence_communication} entnommen werden. Bei der USB-Spezifikation wurde sich für die USB Communication Device Class (CDC) entschieden (siehe \autoref{subsec:usb_cdc}), wodurch der $\mu$C einen virtuellen COM-Port (VCP) für die Kommunikation zur Verfügung stellt (als COM-Port auf dem Rechner sichtbar).\\
+
+Ausgehend von dieser Grundlage wurde der Ablauf zunächst durch manuelles Senden der einzelnen Befehle und das Empfangen der entsprechenden Antworten (Acknowledgement, Daten) überprüft. Hierzu wurde das Terminal-Programm \emph{hterm}\footnote{\url{www.der-hammer.info/pages/terminal.html}} genutzt, welches die Verbindung mit einem COM-Port ermöglicht und einen zweckmäßigen Funktionsumfang bietet (siehe \autoref{fig:hterm_view}).
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.35]{*.png} 
+	\caption{Kommunikationsablauf im Terminal-Programm \emph{hterm}}
+	\label{fig:hterm_view}
+\end{figure}
+
+Nachdem die Auswahl des SW-Frameworks feststand (Python-Framework siehe \autoref{subsubsec:framework_selection}) und sich auf die Nutzung von USB CDC geeinigt wurde, wurde als rechnerseitige Schnittstelle, das \texttt{pyserial}-Paket ausgewählt, welches eine große Bandbreite an Funktionen für die serielle Kommunikation bereitstellt. Da durch das manuelle Senden von Einzelbefehlen mit \emph{hterm} keine realistischen Bedingungen bezüglich Timing gegeben waren, wurden mehrere Testskripts in Python angefertigt, mit denen die Funktion der FSM tiefergehend überprüft wurde. Eine beispielhafte Konsolenausgabe eines Testskripts kann \autoref{fig:console_out_python_test_scripts} entnommen werden. Anhand dieser Tests konnten bereits einzelne Fehler ausgebessert werden, bevor Software und Firmware zusammen getestet wurden.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.35]{*.png} 
+	\caption{Beispielhafte Konsolenausgabe bei Ablauf eines Python-Testskripts}
+	\label{fig:console_out_python_test_scripts}
+\end{figure}
+
 
 \pagebreak
 
-\subsubsection{Gleitender Mittelwertfilters}
+\subsubsection{Gleitender Mittelwertfilter}
 \label{subsubsec:test_mov_avg}
 Zum Test des gleitenden Mittelwertfilters wurden in einer vorläufigen Version der Benutzeranwendung die vorverarbeiteten übertragenen Daten geplottet. Der Filter wurde manuell durch Setzen einer Zustandsvariable in der Firmware aktiviert. Die \autoref{fig:mov_avg_test_no_filter} zeigt das empfangene Eingangssignal ohne Filter (Rechtecksignal mit überlagertem Rauschen). \autoref{fig:mov_avg_test_with_filter} zeigt das Signal nach Aktivierung des Filters.
 
@@ -1319,10 +1340,12 @@ Es ist zu erkennen, dass die Anwendung des Filters, wie erwartet, eine Rauschunt
 
 \section{Schnittstelle Firmware - Software}
 \subsection{USB Communication Device Class (CDC)}
+\label{subsec:usb_cdc}
 
 \pagebreak
 
 \subsection{Konzept der Kommunikation}
+\label{subsec:communication_concept}
 
 \begin{figure}[H]
 	\centering
@@ -1351,19 +1374,18 @@ Bibliotheken wie \emph{numpy} für numerische Auswertung, \emph{pyserial} für S
 
 \pagebreak
 
+
 \section{Zusammenführung}
-\subsection{Entwurf}
-\subsection{Implementierung}
-\subsection{Test}
 
 \pagebreak
 
 %%%%%%%%%%% Schluss %%%%%%%%%
 
-\pagebreak
-
 %%%%%%%%%%% Ergebnisse %%%%%%%%%%%
 \section{Ergebnisse}
+- Übersicht der Funktionen\\
+- Übersicht der Grenzbereiche (Bandbreite, Aufnehmbare Zeitdauer)\\
+- Anleitung zur Benutzung der Baugruppe
 
 \pagebreak
 
@@ -1395,6 +1417,14 @@ Bibliotheken wie \emph{numpy} für numerische Auswertung, \emph{pyserial} für S
 \appendix
 \section{Anhang}
 \label{sec:appendix_a}
+\subsection{Blockschaltbilder}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.6]{Projektarbeit_Architektur.png} 
+	\caption{Übersichts-Blockschaltbild (erstellt für die Konzeptvorstellung)}
+	\label{fig:block_concept}
+\end{figure}
 
   
 \end{document}
