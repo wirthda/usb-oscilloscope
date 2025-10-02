@@ -1332,7 +1332,9 @@ Die Programmiersprache Python wurde für die Umsetzung gewählt, da sie eine bre
 Durch umfangreiche Bibliotheken wie \emph{numpy} für numerische Auswertung, \emph{pyserial} für Schnittstellenkommunikation sowie leistungsfähige Frameworks für GUI-Entwicklung wie \emph{PySide6},
 eignet sich Python besonders für prototypische Entwicklung. Python ist eine dynamische Sprache mit einfachen Syntax, so dass Funktionalitäten rasch entwickelt, geteste und iterativ verbessert werden können. Ein weiterer Vorteil ist die Portabilität und einfache Installation. Python ist auf allen wichtigen Betriebssystemen verfügbar und einfach zu installieren. Außerdem können Pakete einfach in einer virtuellen Umgebung gebündelt werden, um den eigenen PC nicht unnötig zu belasten. Alle für unser Projekt benötigten Pakete sind in der Datei \emph{requirements.txt} aufgelistet. Eine Installationsanleitung findet sich im ANHANG.
 
-\subsubsection{Architektur}
+Die Benutzeroberfläche wurde mit dem Framework \emph{Pyside6} realisiert. Dies ist eine speziell für Python abgewandelte Version von Qt. \emph{PySide6} stellt viele Klassen und Objekte zur Verfügung, die es dem Nutzer einfach machen, ohne viel Erfahrung eine Benutzeroberfläche zu programmieren. Der Vorteil gegenüber der Nutzung von Qt für C++ liegt, darin, dass sich der Nutzer nicht selbst um die Speicherverwaltung kümmern muss. 
+
+\subsubsection{Architektur Gesamtübersicht}
 Zur Übersichtlichkeit wurde das Programm in mehrere Unterprogramme zerlegt. \autoref{fig:paktediagramm_sw} zeigt, welche Unterprogramme, in der Abbildung blau dargestellt, zu welcher logischen Einheit gehören. Zusätzlich zeigt diese die groben Zusammenhänge der einzelnen Einheiten. In orange sind Klassen des Programms \emph{oszi\_oberflaeche.py} dargestellt, welche mit anderen Unterprogrammen interagieren. Die Klasse \emph{StatusProvider} empfängt die Statusmeldungen vom Hardwareinterface und verteilt diese an das richtige Fenster der Benutzeroberfläche. Die Klasse \emph{MeasureWorker} kümmert sich um den Aufruf der Messfunktionen, die vom Benutzer ausgewählt worden sind.
 
 \begin{figure}[H]
@@ -1342,9 +1344,12 @@ Zur Übersichtlichkeit wurde das Programm in mehrere Unterprogramme zerlegt. \au
 	\label{fig:paktediagramm_sw}
 \end{figure}
 
-Um das Hardwareinterface zu realisieren wurde die Zustandsmaschine, die auf den Microcontroller läuft auf den PC abgebildet. Das Zustandsdiagramm des PCs befindet sich im ANHANG. Mit dem Unterprogramm \emph{find\_my\_device.py} wird der passende COM-Port automatisch gefunden. Mit \emph{serial\_interface.py} werden die Methoden der Python Klasse \emph{serial\_interface} überschrieben. Die Kommunikation zwischen PC und Microcontroller wird über diese Funktionen realisiert.
+\subsection{Konzept Hardwareinterface}
 
-Die Benutzeroberfläche wurde mit dem Framework \emph{Pyside6} realisiert. Dies ist eine speziell für Python abgewandelte Version von Qt. \emph{PySide6} stellt viele Klassen und Objekte zur Verfügung, die es dem Nutzer einfach machen, ohne viel Erfahrung eine Benutzeroberfläche zu programmieren. Der Vorteil gegenüber der Nutzung von Qt für C++ liegt, darin, dass sich der Nutzer nicht selbst um die Speicherverwaltung kümmern muss. 
+Um das Hardwareinterface zu realisieren wurde die Zustandsmaschine, die auf den Microcontroller läuft auf den PC abgebildet. Das Zustandsdiagramm des PCs befindet sich im ANHANG. Mit dem Unterprogramm \emph{find\_my\_device.py} wird der passende COM-Port automatisch gefunden. Mit \emph{serial\_interface.py} werden die Methoden der Python Klasse \emph{serial\_interface} überschrieben. Die Kommunikation zwischen PC und Microcontroller wird über diese Funktionen realisiert. Die Zustandsmaschine soll in einem seperaten Thread laufen, um die Benutzeroberfläche responsiv zu halten.
+
+\subsection{Konzept Benutzeroberfläche}
+
 
 
 
