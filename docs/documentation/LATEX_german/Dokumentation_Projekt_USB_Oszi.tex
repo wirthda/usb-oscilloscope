@@ -758,6 +758,13 @@ Ausgehend von diesem Konzept und der klaren Aufteilung in die Bereiche Hardware,
 %%%%%%%%%%% Realisierung %%%%%%%%%%%
 \section{Hardware (HW)}
 \subsection{Entwurf}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.1]{Prinzipschaltbild_AFE.png} 
+	\caption{Prinzipschaltbild des Analog-Frontends (AFE)}
+	\label{fig:afe_diagram}
+\end{figure}
 \subsection{Implementierung}
 \subsection{HW-Test}
 
@@ -1278,13 +1285,15 @@ Aufgrund der späten Fertigstellung im Projektverlauf kann der Filter in der Ben
 \subsubsection{Abtastung}
 Die Funktionsweise der Abtastung (gemäß \autoref{subsubsec:sampling_concept}) wurde zunächst mit dem integrierten Debugging-Tool der IDE überprüft. Ein wichtiger Schritt war die Überprüfung des konfigurierten DMA-Streams mit definiertem Start und Ende.\\
 
-Hierzu wurden die DMA-Transfers manuell gestartet und das Ergebnis in der Expression-Debug-Ansicht der IDE verifiziert. Zunächst wurden durch Pull-Up- und Pull-Down-Widerstände definierte Pegel am Eingangsdatenregister erzeugt, welches später als Schnittstelle zum ADC dienen sollte.
+Hierzu wurden die DMA-Transfers manuell gestartet und das Ergebnis in der ``Expressions``-Debug-Ansicht der IDE verifiziert. Mit dieser können die tatsächlich im SRAM abgelegten Werte betrachtet werden. Zunächst wurden durch Pull-Up- und Pull-Down-Widerstände definierte Pegel angelegt, um Testmuster am Eingangsdatenregister der GPIOs der parallelen Schnittstelle zwischen ADC und $\mu$C zu erzeugen.\\
+
+Nachdem die FSM implementiert wurde, konnte auch explizit im Zustand nach Beendigung der Abtastung (\texttt{STATE:ACQUISITION\_DONE}) ein Breakpoint gesetzt und die Abtastwerte auf Plausiblität überprüft werden (siehe \autoref{fig:cubeide_debug_view}).
 
 \begin{figure}[H]
 	\centering
-    \includegraphics[scale=0.35]{*.png} 
+    \includegraphics[scale=0.26]{CubeIDE_Debug_View_Samples.png} 
 	\caption{Expression-Debug-Ansicht zur Überprüfung der Abtastwerte}
-	\label{fig:mov_avg_test_no_filter}
+	\label{fig:cubeide_debug_view}
 \end{figure}
 
 \pagebreak
@@ -1293,20 +1302,22 @@ Hierzu wurden die DMA-Transfers manuell gestartet und das Ergebnis in der Expres
 
 Bevor die Funktionsweise der State-Machine überprüft werden konnte, wurde das Kommunikationskonzept (siehe \autoref{subsec:communication_concept}) umgesetzt. Hierdurch war eine externe Steuerung der Firmware-FSM möglich, wie es auch in der Endanwendung vorgesehen war. Die Steuerung erfolgte mittels String-Befehlen, ein genauer Ablauf kann \autoref{fig:uml_sequence_communication} entnommen werden. Bei der USB-Spezifikation wurde sich für die USB Communication Device Class (CDC) entschieden (siehe \autoref{subsec:usb_cdc}), wodurch der $\mu$C einen virtuellen COM-Port (VCP) für die Kommunikation zur Verfügung stellt (als COM-Port auf dem Rechner sichtbar).\\
 
-Ausgehend von dieser Grundlage wurde der Ablauf zunächst durch manuelles Senden der einzelnen Befehle und das Empfangen der entsprechenden Antworten (Acknowledgement, Daten) überprüft. Hierzu wurde das Terminal-Programm \emph{hterm}\footnote{\url{www.der-hammer.info/pages/terminal.html}} genutzt, welches die Verbindung mit einem COM-Port ermöglicht und einen zweckmäßigen Funktionsumfang bietet (siehe \autoref{fig:hterm_view}).
+Ausgehend von dieser Grundlage wurde der Ablauf zunächst durch manuelles Senden der einzelnen Befehle und das Empfangen der entsprechenden Antworten (Acknowledgement, Daten) überprüft. Hierzu wurde das Terminal-Programm \emph{hterm}\footnote{\url{www.der-hammer.info/pages/terminal.html} (benutzte Version: 0.8.9)} genutzt, welches die Verbindung mit einem COM-Port ermöglicht und einen zweckmäßigen Funktionsumfang bietet (siehe \autoref{fig:hterm_view}).
 
 \begin{figure}[H]
 	\centering
-    \includegraphics[scale=0.35]{*.png} 
+    \includegraphics[scale=0.55]{hterm_view.png} 
 	\caption{Kommunikationsablauf im Terminal-Programm \emph{hterm}}
 	\label{fig:hterm_view}
 \end{figure}
+
+\pagebreak
 
 Nachdem die Auswahl des SW-Frameworks feststand (Python-Framework siehe \autoref{subsubsec:framework_selection}) und sich auf die Nutzung von USB CDC geeinigt wurde, wurde als rechnerseitige Schnittstelle, das \texttt{pyserial}-Paket ausgewählt, welches eine große Bandbreite an Funktionen für die serielle Kommunikation bereitstellt. Da durch das manuelle Senden von Einzelbefehlen mit \emph{hterm} keine realistischen Bedingungen bezüglich Timing gegeben waren, wurden mehrere Testskripts in Python angefertigt, mit denen die Funktion der FSM tiefergehend überprüft wurde. Eine beispielhafte Konsolenausgabe eines Testskripts kann \autoref{fig:console_out_python_test_scripts} entnommen werden. Anhand dieser Tests konnten bereits einzelne Fehler ausgebessert werden, bevor Software und Firmware zusammen getestet wurden.
 
 \begin{figure}[H]
 	\centering
-    \includegraphics[scale=0.35]{*.png} 
+    \includegraphics[scale=0.65]{python_test_script_console_out.png} 
 	\caption{Beispielhafte Konsolenausgabe bei Ablauf eines Python-Testskripts}
 	\label{fig:console_out_python_test_scripts}
 \end{figure}
