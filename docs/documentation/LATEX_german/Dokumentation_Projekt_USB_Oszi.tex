@@ -685,13 +685,13 @@ Für das Projekt wurde der Filter kumulativ und rekursiv implementiert und nach 
 
 \begin{figure}[H]
 	\centering
-    \includegraphics[scale=0.4]{multi-threading_multi-processing.png} 
+    \includegraphics[scale=0.6]{multi-threading_multi-processing.png} 
 	\caption{Vergleich Multi-Threading und Multi-Processing}
 	\label{fig:multithr/pro}
 \end{figure}
 
-In unserem Projekt wurden Threads verwendet, da die Anwendung hauptsächlich E/A-gebunden ist. Zusätlich wird ein gemeinsamer Speicher benötigt, damit die Messdaten an die Benutzeroberfläche 
-übergeben werden können. Die Kommunikation wurde mit zwei Warteschlangen realisiert, eine dient zur Übergabe von Statusmeldungne von der FSM zur Benutzeroberfläche (GUI) und die andere zur
+In unserem Projekt wurden Threads verwendet, da die Anwendung hauptsächlich E/A-gebunden ist. Zusätzlich wird ein gemeinsamer Speicher benötigt, damit die Messdaten an die Benutzeroberfläche 
+übergeben werden können. Die Kommunikation wurde mit zwei Warteschlangen realisiert, eine dient zur Übergabe von Statusmeldungen von der FSM zur Benutzeroberfläche (GUI) und die andere zur
 Übergabe von Befehlen von der GUI an die FSM. 
 
 
@@ -1371,12 +1371,36 @@ Nachfolgend die Liste der Einzelkommandos, die das Kommunikationsprotokoll defin
 
 \section{Software (SW)}
 \subsection{Entwurf}
+\subsubsection{Auswahl des Frameworks}
+\label{subsubsec:framework_selection}
+Die Programmiersprache Python wurde für die Umsetzung gewählt, da sie eine breite Unterstützung für wissenschaftliche und hardware-nahe Programmierung bietet. 
+Durch umfangreiche Bibliotheken wie \emph{numpy} für numerische Auswertung, \emph{pyserial} für Schnittstellenkommunikation sowie leistungsfähige Frameworks für GUI-Entwicklung wie \emph{PySide6},
+eignet sich Python besonders für prototypische Entwicklung. Python ist eine dynamische Sprache mit einfachen Syntax, so dass Funktionalitäten rasch entwickelt, geteste und iterativ verbessert werden können. Ein weiterer Vorteil ist die Portabilität und einfache Installation. Python ist auf allen wichtigen Betriebssystemen verfügbar und einfach zu installieren. Außerdem können Pakete einfach in einer virtuellen Umgebung gebündelt werden, um den eigenen PC nicht unnötig zu belasten. Alle für unser Projekt benötigten Pakete sind in der Datei \emph{requirements.txt} aufgelistet. Eine Installationsanleitung findet sich im ANHANG.
+
+Die Benutzeroberfläche wurde mit dem Framework \emph{Pyside6} realisiert. Dies ist eine speziell für Python abgewandelte Version von Qt. \emph{PySide6} stellt viele Klassen und Objekte zur Verfügung, die es dem Nutzer einfach machen, ohne viel Erfahrung eine Benutzeroberfläche zu programmieren. Der Vorteil gegenüber der Nutzung von Qt für C++ liegt, darin, dass sich der Nutzer nicht selbst um die Speicherverwaltung kümmern muss. 
+
+\subsubsection{Architektur Gesamtübersicht}
+Zur Übersichtlichkeit wurde das Programm in mehrere Unterprogramme zerlegt. \autoref{fig:paktediagramm_sw} zeigt, welche Unterprogramme, in der Abbildung blau dargestellt, zu welcher logischen Einheit gehören. Zusätzlich zeigt diese die groben Zusammenhänge der einzelnen Einheiten. In orange sind Klassen des Programms \emph{oszi\_oberflaeche.py} dargestellt, welche mit anderen Unterprogrammen interagieren. Die Klasse \emph{StatusProvider} empfängt die Statusmeldungen vom Hardwareinterface und verteilt diese an das richtige Fenster der Benutzeroberfläche. Die Klasse \emph{MeasureWorker} kümmert sich um den Aufruf der Messfunktionen, die vom Benutzer ausgewählt worden sind.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.6]{paketdiagramm.png}
+	\caption{Paketdiagramm zur Darstellung der Unterprogramme}
+	\label{fig:paktediagramm_sw}
+\end{figure}
+
+\subsection{Konzept Hardwareinterface}
+
+Um das Hardwareinterface zu realisieren wurde die Zustandsmaschine, die auf den Microcontroller läuft auf den PC abgebildet. Das Zustandsdiagramm des PCs befindet sich im ANHANG. Mit dem Unterprogramm \emph{find\_my\_device.py} wird der passende COM-Port automatisch gefunden. Mit \emph{serial\_interface.py} werden die Methoden der Python Klasse \emph{serial\_interface} überschrieben. Die Kommunikation zwischen PC und Microcontroller wird über diese Funktionen realisiert. Die Zustandsmaschine soll in einem seperaten Thread laufen, um die Benutzeroberfläche responsiv zu halten.
+
+\subsection{Konzept Benutzeroberfläche}
+
+
+
 
 \pagebreak
 \subsection{Implementierung}
-\subsubsection{Auswahl des Frameworks}
-Die Programmiersprache Python wurde für die Umsetzung gewählt, da sie eine breite Unterstützung für wissenschaftliche und hardware-nahe Programmierung bietet. Durch umfangreiche
-Bibliotheken wie \emph{numpy} für numerische Auswertung, \emph{pyserial} für Schnittstellenkommunikation sowie leistungsfähige Frameworks für GUI-Entwicklung wie \emph{PySide6}, 
+
 
 
 \pagebreak
@@ -1398,6 +1422,45 @@ Bibliotheken wie \emph{numpy} für numerische Auswertung, \emph{pyserial} für S
 - Übersicht der Grenzbereiche (Bandbreite, Aufnehmbare Zeitdauer)\\
 - Anleitung zur Benutzung der Baugruppe
 
+\subsection{Benutzeroberfläche des USB-Oszilloskops}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{Oszi_Oberflaeche.png}
+	\caption{Benutzeroberfläche}
+	\label{fig:Benutzeroberflaeche}
+\end{figure}
+
+Das Endergebnis der entwickelten Benutzeroberfläche ist in \autoref{fig:Benutzeroberflaeche} dargestellt. Die Bedienung und Einstellmöglichkeiten orientieren sich stark an einem klassischen Oszilloskop und bieten dem Anwender zahlreiche sinnvolle Funktionen für die Signalbetrachtung und -auswertung.
+
+\subsubsection{Hauptfunktionen}
+
+\begin{itemize}
+  \item \textbf{Live-Plot:} Im linken Bereich der GUI werden die aktuell aufgenommenen Messdaten als Signalverlauf angezeigt. Über die Navigationstoolbar unterhalb des Plots können spezifische Ausschnitte des Signals betrachtet, die Ansicht vergrößert und der Plot als Bild exportiert werden.
+  \item \textbf{Statusanzeige:} Unterhalb der Toolbar signalisiert die farbige „Overflow“-Anzeige (rot bei Überlauf) einen Buffer-Überlauf. Das danebenliegende grüne „Trig’d“-Label zeigt an, ob ein Triggerereignis vorliegt (erlischt, wenn keine neuen Daten vorliegen).
+  \item \textbf{Tastkopf-Einstellung:} Rechts unterhalb des Plots kann der Benutzer wählen, ob ein 10:1 Tastkopf angeschlossen ist.
+\end{itemize}
+
+\subsubsection{Bedienelemente und Einstellmöglichkeiten}
+
+\begin{itemize}
+  \item \textbf{Modus-Auswahl:} Oben rechts kann zwischen „Run-Modus“ (kontinuierliche Messung) und „Single-Shot-Modus“ (einmalige Messung) gewählt werden. Die Messung kann im Run-Modus jederzeit pausiert („Stop“-Button) oder wieder gestartet werden.
+  \item \textbf{Zeitbasis und Achsverschiebung:} Über zwei Drehregler wird die horizontale Zeitbasis (großer Regler) sowie die Verschiebung der X-Achse (kleiner Regler) eingestellt.
+  \item \textbf{Trigger-Einstellungen:} Mithilfe eines Auswahlfensters kann der Triggertyp (steigende oder fallende Flanke) gewählt werden.
+  \item \textbf{Interpolation:} Zusätzlich steht eine Auswahl zur Signalinterpolation bereit (z.\,B.\ linear, spline, steps, points).
+  \item \textbf{Messfunktion und Cursor:} Die Messfunktionen lassen sich mithilfe der „Measure“-Schaltfläche aktivieren. Die gewünschten Kennwerte (Amplitude, Mittelwert, Frequenz usw.) können über eine Checkbox ausgewählt werden; die berechneten Werte werden unmittelbar angezeigt. Mit dem Cursor-Button werden zwei Kreuzcursor aktiviert, deren Differenzen ($\Delta x$, $\Delta y$) links daneben angezeigt werden.
+  \item \textbf{Vertikale Achseneinstellung:} Zwei weitere Drehregler erlauben die Einstellung von Skalierung (Volt pro Kästchen) und Verschiebung der Y-Achse (Nullpunkt).
+  \item \textbf{Status-Label:} Das Status-Label informiert über den aktuellen Zustand der Zustandsmaschine (PC und Mikrocontroller) und gibt Hinweise zu Änderungen der Trigger- oder Interpolationsart, Verbindungsstatus oder Fehlern.
+  \item \textbf{Reset-Schaltfläche:} Damit kann die Zustandsmaschine zurückgesetzt werden, falls sie in einem ungültigen Zustand verharrt.
+\end{itemize}
+
+\subsection{Besonderheiten und Bedienhinweise}
+
+\begin{itemize}
+    \item Änderungen der Trigger- oder Interpolationsart sind ausschließlich im Idle-Zustand des Mikrocontrollers möglich. Die Messung muss zuvor gestoppt werden.
+    \item Die Einstellungen der horizontalen und vertikalen Achsen werden beim Schließen der GUI gespeichert und beim nächsten Öffnen wiederhergestellt.
+\end{itemize}
+
+\textbf{Zusammenfassend} bietet die GUI des USB-Oszilloskops eine nutzerfreundliche und praxisorientierte Oberfläche mit allen aus einem klassischen Tischoszilloskop bekannten Einstellungsmöglichkeiten, ergänzt um die Darstellung der Zustände.
 \pagebreak
 
 %%%%%%%%%%% Fazit und Ausblick %%%%%%%%%%%
