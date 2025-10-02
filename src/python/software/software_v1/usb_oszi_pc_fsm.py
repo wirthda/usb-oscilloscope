@@ -50,7 +50,6 @@ def fsm_pc(command_queue, status_queue, stop_event):
             command = command_queue.get(timeout=0.05)
             print(f"FSM received command: {command}")
             if command["type"] == "RESET":
-                #serial_interface.write("RESET")
                 fsm.reset()
                 print("FSM wurde resetet")
             elif command["type"] == "START_ACQUISITION" and fsm.current_state == fsm.idle:

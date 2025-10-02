@@ -685,13 +685,13 @@ Für das Projekt wurde der Filter kumulativ und rekursiv implementiert und nach 
 
 \begin{figure}[H]
 	\centering
-    \includegraphics[scale=0.4]{multi-threading_multi-processing.png} 
+    \includegraphics[scale=0.6]{multi-threading_multi-processing.png} 
 	\caption{Vergleich Multi-Threading und Multi-Processing}
 	\label{fig:multithr/pro}
 \end{figure}
 
-In unserem Projekt wurden Threads verwendet, da die Anwendung hauptsächlich E/A-gebunden ist. Zusätlich wird ein gemeinsamer Speicher benötigt, damit die Messdaten an die Benutzeroberfläche 
-übergeben werden können. Die Kommunikation wurde mit zwei Warteschlangen realisiert, eine dient zur Übergabe von Statusmeldungne von der FSM zur Benutzeroberfläche (GUI) und die andere zur
+In unserem Projekt wurden Threads verwendet, da die Anwendung hauptsächlich E/A-gebunden ist. Zusätzlich wird ein gemeinsamer Speicher benötigt, damit die Messdaten an die Benutzeroberfläche 
+übergeben werden können. Die Kommunikation wurde mit zwei Warteschlangen realisiert, eine dient zur Übergabe von Statusmeldungen von der FSM zur Benutzeroberfläche (GUI) und die andere zur
 Übergabe von Befehlen von der GUI an die FSM. 
 
 
@@ -1326,12 +1326,31 @@ Nachfolgend die Liste der Einzelkommandos, die das Kommunikationsprotokoll defin
 
 \section{Software (SW)}
 \subsection{Entwurf}
+\subsubsection{Auswahl des Frameworks}
+\label{subsubsec:framework_selection}
+Die Programmiersprache Python wurde für die Umsetzung gewählt, da sie eine breite Unterstützung für wissenschaftliche und hardware-nahe Programmierung bietet. 
+Durch umfangreiche Bibliotheken wie \emph{numpy} für numerische Auswertung, \emph{pyserial} für Schnittstellenkommunikation sowie leistungsfähige Frameworks für GUI-Entwicklung wie \emph{PySide6},
+eignet sich Python besonders für prototypische Entwicklung. Python ist eine dynamische Sprache mit einfachen Syntax, so dass Funktionalitäten rasch entwickelt, geteste und iterativ verbessert werden können. Ein weiterer Vorteil ist die Portabilität und einfache Installation. Python ist auf allen wichtigen Betriebssystemen verfügbar und einfach zu installieren. Außerdem können Pakete einfach in einer virtuellen Umgebung gebündelt werden, um den eigenen PC nicht unnötig zu belasten. Alle für unser Projekt benötigten Pakete sind in der Datei \emph{requirements.txt} aufgelistet. Eine Installationsanleitung findet sich im ANHANG.
+
+\subsubsection{Architektur}
+Zur Übersichtlichkeit wurde das Programm in mehrere Unterprogramme zerlegt. \autoref{fig:paktediagramm_sw} zeigt, welche Unterprogramme, in der Abbildung blau dargestellt, zu welcher logischen Einheit gehören. Zusätzlich zeigt diese die groben Zusammenhänge der einzelnen Einheiten. In orange sind Klassen des Programms \emph{oszi\_oberflaeche.py} dargestellt, welche mit anderen Unterprogrammen interagieren. Die Klasse \emph{StatusProvider} empfängt die Statusmeldungen vom Hardwareinterface und verteilt diese an das richtige Fenster der Benutzeroberfläche. Die Klasse \emph{MeasureWorker} kümmert sich um den Aufruf der Messfunktionen, die vom Benutzer ausgewählt worden sind.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.6]{paketdiagramm.png}
+	\caption{Paketdiagramm zur Darstellung der Unterprogramme}
+	\label{fig:paktediagramm_sw}
+\end{figure}
+
+Um das Hardwareinterface zu realisieren wurde die Zustandsmaschine, die auf den Microcontroller läuft auf den PC abgebildet. Das Zustandsdiagramm des PCs befindet sich im ANHANG. Mit dem Unterprogramm \emph{find\_my\_device.py} wird der passende COM-Port automatisch gefunden. Mit \emph{serial\_interface.py} werden die Methoden der Python Klasse \emph{serial\_interface} überschrieben. Die Kommunikation zwischen PC und Microcontroller wird über diese Funktionen realisiert.
+
+Die Benutzeroberfläche wurde mit dem Framework \emph{Pyside6} realisiert. Dies ist eine speziell für Python abgewandelte Version von Qt. \emph{PySide6} stellt viele Klassen und Objekte zur Verfügung, die es dem Nutzer einfach machen, ohne viel Erfahrung eine Benutzeroberfläche zu programmieren. Der Vorteil gegenüber der Nutzung von Qt für C++ liegt, darin, dass sich der Nutzer nicht selbst um die Speicherverwaltung kümmern muss. 
+
+
 
 \pagebreak
 \subsection{Implementierung}
-\subsubsection{Auswahl des Frameworks}
-Die Programmiersprache Python wurde für die Umsetzung gewählt, da sie eine breite Unterstützung für wissenschaftliche und hardware-nahe Programmierung bietet. Durch umfangreiche
-Bibliotheken wie \emph{numpy} für numerische Auswertung, \emph{pyserial} für Schnittstellenkommunikation sowie leistungsfähige Frameworks für GUI-Entwicklung wie \emph{PySide6}, 
+
 
 
 \pagebreak
