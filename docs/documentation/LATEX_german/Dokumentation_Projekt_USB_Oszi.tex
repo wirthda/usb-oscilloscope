@@ -724,6 +724,7 @@ Die Abstimmung innerhalb des Teams erfolgte in regelmäßigen Treffen, in denen 
 \pagebreak
 
 \subsection{Anforderungen}
+\label{subsec:requirements}
 Die Anforderungen an das Projekt wurden in Zusammenarbeit mit dem betreuenden Professor sowie dem Laboringenieur des MCT-Labors Hr. Lenkowski nach einer ersten Machbarkeitsanalyse im Hinblick auf die definierten Projektziele festgelegt. Neben den obligatorischen Grundfunktionen eines digitalen Speicheroszilloskops (siehe \autoref{subsec:oscilloscope_func} ``\nameref{subsec:oscilloscope_func}``) wurden folgende zentrale technische Parameter bestimmt:
 \begin{itemize}
 \item Bandbreite: 1 MHz (Grenzfrequenz des Anti-Aliasing-Filters)
@@ -767,6 +768,15 @@ Ausgehend von diesem Konzept und der klaren Aufteilung in die Bereiche Hardware,
 \end{figure}
 \subsection{Implementierung}
 \subsection{HW-Test}
+\label{subsec:hw_test}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.25]{aufbau_hardwaretest.jpg} 
+	\caption{Aufbau zum Test der Hardware}
+	\label{fig:afe_diagram}
+\end{figure}
+
 
 \pagebreak
 
@@ -1384,7 +1394,7 @@ Zur Übersichtlichkeit wurde das Programm in mehrere Unterprogramme zerlegt. \au
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.6]{paketdiagramm.png}
+	\includegraphics[scale=0.55]{paket_diagramm.png}
 	\caption{Paketdiagramm zur Darstellung der Unterprogramme}
 	\label{fig:paktediagramm_sw}
 \end{figure}
@@ -1412,25 +1422,210 @@ Um das Hardwareinterface zu realisieren wurde die Zustandsmaschine, die auf den 
 
 \section{Zusammenführung}
 
+Nachdem die Tests der Einzelkomponenten (HW, FW, SW) erfolgt war, konnte deren Zusammenführung durchgeführt werden.\\
+
+Hierbei wurden zunächst die Software mit der Firmware verbunden und die einwandfreie Kommunikation zwischen $\mu$C und der Rechner-Anwendung überprüft. Nachdem dies erfolgreich getestet wurde, konnte die Oszi-Baugruppe auf das NUCLEO-Board aufgesteckt werden. Der Gesamtaufbau kann \autoref{fig:test_setup} entnommen werden.
+
+\subsection{Testaufbau}
+\label{subsec:test_setup}
+
+Beim Anschluss sind die \autoref{tab:connections} und die darunterliegenden Hinweise zu beachten.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.6]{Übersichtsschaltbild_Testaufbau.png}
+	\caption{Übersichtsschaltbild für den Testaufbau des Projekts}
+	\label{fig:test_setup}
+\end{figure}
+
+\pagebreak
+
+\begin{table}[H]
+	\centering
+	\scriptsize
+	\begin{tabular}{|c|c|c|}
+	\hline 
+	\textbf{Oszi-Anschluss} & \textbf{externer Anschluss} & Beschreibung \\ 
+	\hline
+	\hline 
+	\emph{H1} (Baugruppe) & +5 V + $U_D$ & \\ 
+	\hline 
+	\emph{H2} (Baugruppe) & -5 V - $U_D$ & \\ 
+	\hline 
+	\emph{H3} (Baugruppe) & +12 V + $U_D$ & \\ 
+	\hline 
+	\emph{H4} (Baugruppe) & -12 V - $U_D$ & \\ 
+	\hline 
+	\emph{H5, H6} (Baugruppe) & 0V (GND) & \\ 
+	\hline 
+	\emph{J1} (Baugruppe, BNC) & DUT (Device Under Test) & \\ 
+	\hline
+	\emph{CN13} (NUCLEO, micro-USB) & PC (USB) & Kommunikationsanschluss \\ 
+	\hline
+	\hline
+	\multicolumn{3}{|c|}{optional:}\\
+	\hline
+	\emph{CN1} (NUCLEO, micro-USB) &  PC (USB) & Programmieranschluss \\ 
+	\hline 
+	\end{tabular} 
+	\caption{Verbindungstabelle}
+	\label{tab:connections}
+\end{table}
+
+\begin{footnotesize}
+	\underline{\emph{Hinweise:}}\\
+	\begin{itemize}
+		\item Aufgrund der eingebauten Verpolungsschutz-Diode ist jeweils eine zusätzliche Spannung von $U_D\approx 0.3\hspace{0.1cm}V$ zu berücksichtigen.
+		\item Zunächst müssen die Versorgungsspannungen $\pm$ 5 V eingeschaltet werden, danach die Versorgungsspannungen $\pm$ 12 V.
+		\item Anschließend kann die Kommunikationsleitung an CN13 angeschlossen und mit dem PC verbunden werden.
+		\item Als letztes wird das Signal an J1 eingespeist.
+	\end{itemize}
+\end{footnotesize}
+
+\pagebreak
+
+Um die Funktion des Oszilloskops zu überprüfen wurde eine Reihe an Testsignalen mittels Funktionsgenerator eingespeist. Dies sollten dazu dienen die Performanz der Baugruppe zu testen. Die resultierenden Signale sind den folgenden Abbildungen zu entnehmen.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sine_10khz_2vpp.png}
+	\caption{Testsignal: Sinus (f = 10 kHz, $V_{pp}$ = 2 V)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sine_100khz_2vpp.png}
+	\caption{Testsignal: Sinus (f = 100 kHz, $V_{pp}$ = 2 V)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sine_100khz_8vpp.png}
+	\caption{Testsignal: Sinus (f = 100 kHz, $V_{pp}$ = 8 V)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sine_500khz_2vpp.png}
+	\caption{Testsignal: Sinus (f = 500 kHz, $V_{pp}$ = 2 V)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sine_500khz_2vpp_interpolation_spline.png}
+	\caption{\centering Testsignal: Sinus (f = 500 kHz, $V_{pp}$ = 2 V)\\ \footnotesize Polynom-Interpolation}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sine_1Mhz_2vpp.png}
+	\caption{Testsignal: Sinus (f = 1 MHz, $V_{pp}$ = 2 V)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sine_1Mhz_2vpp_interpolation_spline.png}
+	\caption{\centering Testsignal: Sinus (f = 1 MHz, $V_{pp}$ = 2 V)\\ \footnotesize Polynom-Interpolation}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sine_100khz_4vpp_gui_measurements.png}
+	\caption{\centering Testsignal: Sinus (f = 1 MHz, $V_{pp}$ = 4 V)\\ \footnotesize Überprüfung mittels Measure-Funktionen}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sine_100khz_4vpp_1v_offset_gui_measurements.png}
+	\caption{\centering Testsignal: Sinus (f = 100 kHz, $V_{pp}$ = 4 V, $V_{offset}$ = 1 V)\\ \footnotesize Überprüfung mittels Measure-Funktionen}
+\end{figure}
+
+Rechnerische Überprüfung des Measure-Ergebnisses von \emph{AC-RMS} und \emph{DC-RMS}\\
+($V_1$: 1. Oberwelle, $V_0$: Gleichanteil):
+
+\begin{equation}
+	V_{AC-RMS} = \frac{\hat{V_1}}{\sqrt{2}} = \frac{2V}{\sqrt{2}} = 1.41 V
+\end{equation}
+
+\begin{equation}
+	V_{DC-RMS} = \sqrt{\left( \frac{\hat{V_1}}{\sqrt{2}}\right)^2 + V_0^2} = \sqrt{\left( \frac{2V}{\sqrt{2}}\right)^2 + (1V)^2} = 1.73 V
+\end{equation}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_square_10khz_2vpp_gui_measurements_cursors.png}
+	\caption{\centering Testsignal: Rechteck (f = 10 kHz, $V_{pp}$ = 2 V)\\ \footnotesize Überprüfung mittels Measure-Funktionen und Cursorn}
+\end{figure}
+
+Man beachte die Top- und Bottom-Messung, die ist top.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_square_100khz_2vpp.png}
+	\caption{Testsignal: Rechteck (f = 100 kHz, $V_{pp}$ = 2 V)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_square_200khz_2vpp.png}
+	\caption{Testsignal: Rechteck (f = 200 kHz, $V_{pp}$ = 2 V)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_square_500khz_2vpp.png}
+	\caption{Testsignal: Rechteck (f = 500 kHz, $V_{pp}$ = 2 V)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_square_1Mhz_2vpp.png}
+	\caption{Testsignal: Rechteck (f = 1 MHz, $V_{pp}$ = 2 V)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sawtooth_10khz_4vpp.png}
+	\caption{Testsignal: Sägezahn (f = 10 kHz, $V_{pp}$ = 4 V)}
+\end{figure}
+
+
+
+
+
+
+
 \pagebreak
 
 %%%%%%%%%%% Schluss %%%%%%%%%
 
 %%%%%%%%%%% Ergebnisse %%%%%%%%%%%
 \section{Ergebnisse}
-- Übersicht der Funktionen\\
-- Übersicht der Grenzbereiche (Bandbreite, Aufnehmbare Zeitdauer)\\
-- Anleitung zur Benutzung der Baugruppe
 
-\subsection{Benutzeroberfläche des USB-Oszilloskops}
+\subsection{Vergleich mit ursprünglichen Anforderungen}
+
+Zunächst erfolgt eine Vergleich mit den Anforderungen, welche zu Beginn des Projekts definiert wurden (siehe \autoref{subsec:requirements}). Der vorliegende Prototyp implementiert eine 1-kanaliges Messsystem, welches zusammen mit der programmierten PC-Anwendung als Oszilloskop verwendet werden kann. Die Verbindung zwischen PC und Baugruppe erfolgt über USB.
+
+Die angestrebte Bandbreite von 1 MHz wurde erreicht. Abweichungen vom eingespeisten Signal, sowie Maßnahmen zur Kompensation dieser Effekte wurden bereits im \autoref{subsec:hw_test} (\nameref{subsec:hw_test}) ausführlich beschrieben (merkliche Abweichungen bei Signalen mit Frequenzen ab 500 kHz).
+Die Abtastrate von 10 MS/s konnte durch die Auswahl der entsprechenden Bauelemente (ADC, $\mu$C, etc.) gewährleistet werden.
+
+Mit der vorliegenden Hardware (AFE und ADC) lässt sich ein Eingangsspannungsbereich $\pm$ 5 V mit einer Auflösung von 12 Bit betrachten.
+Mittels herkömmlicher 10:1 Tastköpfe lässt sich der Eingangsspannungsbereich auf $\pm$ 50 V vergrößern.
+Für die nach den Anforderungen festgelegte Verwendung eines Offsets wären Ergänzungen im Layout der Baugruppe notwendig (beschrieben in \autoref{subsec:hw_test}).
+\pagebreak
+
+\subsection{Benutzung des USB-Oszilloskops}
+
+Die Verwednung des Oszilloskops setzt den Aufbau gemäß \autoref{fig:test_setup} in \autoref{subsec:test_setup} voraus.\\
+
+Das Endergebnis der entwickelten Benutzeroberfläche ist in \autoref{fig:Benutzeroberflaeche} dargestellt. Die Bedienung und Einstellmöglichkeiten orientieren sich stark an einem klassischen Oszilloskop und bieten dem Anwender zahlreiche sinnvolle Funktionen für die Signalbetrachtung und -auswertung.
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.4]{Oszi_Oberflaeche.png}
 	\caption{Benutzeroberfläche}
 	\label{fig:Benutzeroberflaeche}
 \end{figure}
-
-Das Endergebnis der entwickelten Benutzeroberfläche ist in \autoref{fig:Benutzeroberflaeche} dargestellt. Die Bedienung und Einstellmöglichkeiten orientieren sich stark an einem klassischen Oszilloskop und bieten dem Anwender zahlreiche sinnvolle Funktionen für die Signalbetrachtung und -auswertung.
 
 \subsubsection{Hauptfunktionen}
 
@@ -1453,10 +1648,21 @@ Das Endergebnis der entwickelten Benutzeroberfläche ist in \autoref{fig:Benutze
   \item \textbf{Reset-Schaltfläche:} Damit kann die Zustandsmaschine zurückgesetzt werden, falls sie in einem ungültigen Zustand verharrt.
 \end{itemize}
 
+Debugfenster beschreiben:\\
+ - Variable Eingangsspannung\\
+ - Einstellbare Abtastrate
+ 
+ \begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{GUI_debug_view.png}
+	\caption{Debug-Fenster der Benutzeroberfläche}
+	\label{fig:debug_Benutzeroberflaeche}
+\end{figure}
+
 \subsection{Besonderheiten und Bedienhinweise}
 
 \begin{itemize}
-    \item Änderungen der Trigger- oder Interpolationsart sind ausschließlich im Idle-Zustand des Mikrocontrollers möglich. Die Messung muss zuvor gestoppt werden.
+    \item Änderungen der Trigger- oder Interpolationsart und Einstellungen im Debug-Fenster sind \textbf{\emph{ausschließlich im Idle-Zustand}} des Mikrocontrollers möglich. Die Messung muss zuvor gestoppt werden.
     \item Die Einstellungen der horizontalen und vertikalen Achsen werden beim Schließen der GUI gespeichert und beim nächsten Öffnen wiederhergestellt.
 \end{itemize}
 
@@ -1465,6 +1671,8 @@ Das Endergebnis der entwickelten Benutzeroberfläche ist in \autoref{fig:Benutze
 
 %%%%%%%%%%% Fazit und Ausblick %%%%%%%%%%%
 \section{Fazit und Ausblick}
+
+Da das Ziel des Projekts die Validierung unseres Konzepts zur Signalerfassung, -konditionierung und -verarbeitung für ein USB-Oszilloskop war, wurden weitergehende Aspekte nicht behandelt. Hierbei handelt es sich um Aspekte, die für die Validierung des Konzeptes nicht selbst entwickelt werden mussten. Hierunter fällt vorwiegend die Verwendung externer Netzteile zur Versorgung der Baugruppe.
 
 \pagebreak
 
