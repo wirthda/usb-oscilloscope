@@ -1373,6 +1373,45 @@ Die Benutzeroberfläche wurde mit dem Framework \emph{Pyside6} realisiert. Dies 
 %%%%%%%%%%% Ergebnisse %%%%%%%%%%%
 \section{Ergebnisse}
 
+\subsection{Benutzeroberfläche des USB-Oszilloskops}
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{Oszi_Oberflaeche.png}
+	\caption{Benutzeroberfläche}
+	\label{fig:Benutzeroberflaeche}
+\end{figure}
+
+Das Endergebnis der entwickelten Benutzeroberfläche ist in \autoref{fig:Benutzeroberflaeche} dargestellt. Die Bedienung und Einstellmöglichkeiten orientieren sich stark an einem klassischen Oszilloskop und bieten dem Anwender zahlreiche sinnvolle Funktionen für die Signalbetrachtung und -auswertung.
+
+\subsubsection{Hauptfunktionen}
+
+\begin{itemize}
+  \item \textbf{Live-Plot:} Im linken Bereich der GUI werden die aktuell aufgenommenen Messdaten als Signalverlauf angezeigt. Über die Navigationstoolbar unterhalb des Plots können spezifische Ausschnitte des Signals betrachtet, die Ansicht vergrößert und der Plot als Bild exportiert werden.
+  \item \textbf{Statusanzeige:} Unterhalb der Toolbar signalisiert die farbige „Overflow“-Anzeige (rot bei Überlauf) einen Buffer-Überlauf. Das danebenliegende grüne „Trig’d“-Label zeigt an, ob ein Triggerereignis vorliegt (erlischt, wenn keine neuen Daten vorliegen).
+  \item \textbf{Tastkopf-Einstellung:} Rechts unterhalb des Plots kann der Benutzer wählen, ob ein 10:1 Tastkopf angeschlossen ist.
+\end{itemize}
+
+\subsubsection{Bedienelemente und Einstellmöglichkeiten}
+
+\begin{itemize}
+  \item \textbf{Modus-Auswahl:} Oben rechts kann zwischen „Run-Modus“ (kontinuierliche Messung) und „Single-Shot-Modus“ (einmalige Messung) gewählt werden. Die Messung kann im Run-Modus jederzeit pausiert („Stop“-Button) oder wieder gestartet werden.
+  \item \textbf{Zeitbasis und Achsverschiebung:} Über zwei Drehregler wird die horizontale Zeitbasis (großer Regler) sowie die Verschiebung der X-Achse (kleiner Regler) eingestellt.
+  \item \textbf{Trigger-Einstellungen:} Mithilfe eines Auswahlfensters kann der Triggertyp (steigende oder fallende Flanke) gewählt werden.
+  \item \textbf{Interpolation:} Zusätzlich steht eine Auswahl zur Signalinterpolation bereit (z.\,B.\ linear, spline, steps, points).
+  \item \textbf{Messfunktion und Cursor:} Die Messfunktionen lassen sich mithilfe der „Measure“-Schaltfläche aktivieren. Die gewünschten Kennwerte (Amplitude, Mittelwert, Frequenz usw.) können über eine Checkbox ausgewählt werden; die berechneten Werte werden unmittelbar angezeigt. Mit dem Cursor-Button werden zwei Kreuzcursor aktiviert, deren Differenzen ($\Delta x$, $\Delta y$) links daneben angezeigt werden.
+  \item \textbf{Vertikale Achseneinstellung:} Zwei weitere Drehregler erlauben die Einstellung von Skalierung (Volt pro Kästchen) und Verschiebung der Y-Achse (Nullpunkt).
+  \item \textbf{Status-Label:} Das Status-Label informiert über den aktuellen Zustand der Zustandsmaschine (PC und Mikrocontroller) und gibt Hinweise zu Änderungen der Trigger- oder Interpolationsart, Verbindungsstatus oder Fehlern.
+  \item \textbf{Reset-Schaltfläche:} Damit kann die Zustandsmaschine zurückgesetzt werden, falls sie in einem ungültigen Zustand verharrt.
+\end{itemize}
+
+\subsection{Besonderheiten und Bedienhinweise}
+
+\begin{itemize}
+    \item Änderungen der Trigger- oder Interpolationsart sind ausschließlich im Idle-Zustand des Mikrocontrollers möglich. Die Messung muss zuvor gestoppt werden.
+    \item Die Einstellungen der horizontalen und vertikalen Achsen werden beim Schließen der GUI gespeichert und beim nächsten Öffnen wiederhergestellt.
+\end{itemize}
+
+\textbf{Zusammenfassend} bietet die GUI des USB-Oszilloskops eine nutzerfreundliche und praxisorientierte Oberfläche mit allen aus einem klassischen Tischoszilloskop bekannten Einstellungsmöglichkeiten, ergänzt um die Darstellung der Zustände.
 \pagebreak
 
 %%%%%%%%%%% Fazit und Ausblick %%%%%%%%%%%
