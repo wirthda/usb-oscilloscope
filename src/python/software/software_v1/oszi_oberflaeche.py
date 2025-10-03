@@ -1339,7 +1339,6 @@ if __name__ == "__main__":
     # Queues für die Kommunikation zwischen Threads
     command_queue = queue.Queue() # GUI -> USB-FSM
     status_queue = queue.Queue()  # USB-FSM -> GUI_General
-    debugging_queue =queue.Queue() #USB-FSM -> GUI_Debugging
     stop_event = threading.Event()
 
     # 1. USB-Kommunikations-FSM in einem separaten Thread starten
