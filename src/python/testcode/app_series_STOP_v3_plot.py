@@ -99,9 +99,9 @@ print('')
 print('--Signal readiness for data reception--')
 print("out: \"READY_FOR_DATA\"")
 ser.write(b'READY_FOR_DATA\n')
-# get acknoledgement (STATE:TRANSMISSION)
-line = ser.readline()
-print("in: {0}".format(line))
+# get acknoledgement (STATE:TRANSMISSION) !currently not sent by firmware!
+# line = ser.readline()
+# print("in: {0}".format(line))
 
 # Data reception (100000 values -> 200000 bytes)
 time1 = time.perf_counter()

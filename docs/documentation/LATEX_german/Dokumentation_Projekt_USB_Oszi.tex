@@ -724,6 +724,7 @@ Die Abstimmung innerhalb des Teams erfolgte in regelmäßigen Treffen, in denen 
 \pagebreak
 
 \subsection{Anforderungen}
+\label{subsec:requirements}
 Die Anforderungen an das Projekt wurden in Zusammenarbeit mit dem betreuenden Professor sowie dem Laboringenieur des MCT-Labors Hr. Lenkowski nach einer ersten Machbarkeitsanalyse im Hinblick auf die definierten Projektziele festgelegt. Neben den obligatorischen Grundfunktionen eines digitalen Speicheroszilloskops (siehe \autoref{subsec:oscilloscope_func} ``\nameref{subsec:oscilloscope_func}``) wurden folgende zentrale technische Parameter bestimmt:
 \begin{itemize}
 \item Bandbreite: 1 MHz (Grenzfrequenz des Anti-Aliasing-Filters)
@@ -740,16 +741,9 @@ Für die Schnittstelle zwischen ADC und Mikrocontroller wurde eine \emph{paralle
 Neben diesen zentralen Vorgaben wurden auch \emph{optionale Erweiterungen} definiert, die nicht als kritisch für den Projekterfolg eingestuft wurden oder den vorgesehenen Arbeitsumfang überschritten. Dazu zählten insbesondere die Implementierung eines \emph{Logikanalysators} mit Protokolldekodierung gängiger Schnittstellen (z. B. SPI, I²C, UART), die Realisierung einer \emph{Fast-Fourier-Transformation (FFT)} zur Spektrumanalyse, die Erweiterung um einen \emph{zweiten analogen Kanal}, die Integration von \emph{Mathematik- und Messfunktionen} sowie die Nutzung unterschiedlicher \emph{Triggerbedingungen}. Weitere Optionen im Hardwarebereich betrafen eine \emph{Optimierung hinsichtlich elektromagnetischer Verträglichkeit (EMV)}, eine \emph{Minimierung des Rauschverhaltens}, die \emph{Stromversorgung über USB} sowie die \emph{Integration des Mikrocontrollers direkt auf der Baugruppe}.
 
 \subsection{Konzept / Architektur}
-Parallel zu den Anforderungen wurde ein Konzept entwickelt, um die grundlegende Architektur und Aufgabenverteilung des Projekts festzulegen. Zu Beginn entstand ein grundlegendes, rein funktionales Übersichtsbild (siehe \autoref{fig:block_concept}). Dieses stellt die wesentlichen Signalflüsse und Verarbeitungsschritte dar, die für die Realisierung des USB-Oszilloskops erforderlich sind. Der Signalpfad führt dabei vom Device under Test (DUT) über die Signalerfassung zur Speicherung der Rohdaten und weiter zur Verarbeitung auf PC-Ebene. Dieses Schema diente als Orientierungshilfe für die weiteren konzeptionellen Schritte, ohne jedoch bereits konkrete Funktionseinheiten Bauteile oder Schnittstellen festzulegen.\\
+Parallel zu den Anforderungen wurde ein Konzept entwickelt, um die grundlegende Architektur und Aufgabenverteilung des Projekts festzulegen. Zu Beginn entstand ein grundlegendes, rein funktionales Übersichtsbild (siehe \autoref{fig:block_concept} in \autoref{sec:appendix_a}). Dieses stellt die wesentlichen Signalflüsse und Verarbeitungsschritte dar, die für die Realisierung des USB-Oszilloskops erforderlich sind. Der Signalpfad führt dabei vom Device under Test (DUT) über die Signalerfassung zur Speicherung der Rohdaten und weiter zur Verarbeitung auf PC-Ebene. Dieses Schema diente als Orientierungshilfe für die weiteren konzeptionellen Schritte, ohne jedoch bereits konkrete Funktionseinheiten Bauteile oder Schnittstellen festzulegen.\\
 
 Auf Basis dieser funktionalen Skizze sowie des in der Fachliteratur beschriebenen Grundaufbaus eines digitalen Speicheroszilloskops (siehe \autoref{subsec:oscilloscope_func}) wurde schließlich ein Gesamtkonzept entwickelt, das Funktionseinheiten definiert und den jeweiligen Bereichen Hardware, Firmware und Software zuordnet (siehe \autoref{fig:complete_concept}).
-
-\begin{figure}[H]
-	\centering
-    \includegraphics[scale=0.4]{Projektarbeit_Architektur.png} 
-	\caption{Übersichts-Blockschaltbild (erstellt für die Konzeptvorstellung)}
-	\label{fig:block_concept}
-\end{figure}
 
 \begin{figure}[H]
 	\centering
@@ -765,12 +759,35 @@ Ausgehend von diesem Konzept und der klaren Aufteilung in die Bereiche Hardware,
 %%%%%%%%%%% Realisierung %%%%%%%%%%%
 \section{Hardware (HW)}
 \subsection{Entwurf}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.1]{Prinzipschaltbild_AFE.png} 
+	\caption{Prinzipschaltbild des Analog-Frontends (AFE)}
+	\label{fig:afe_diagram}
+\end{figure}
 \subsection{Implementierung}
 \subsection{HW-Test}
+\label{subsec:hw_test}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.25]{aufbau_hardwaretest.jpg} 
+	\caption{Aufbau zum Test der Hardware}
+	\label{fig:afe_diagram}
+\end{figure}
+
 
 \pagebreak
 
 \section{Schnittstelle Hardware - Firmware}
+- Anforderungen HW-seitig und FW-seitig (wie gelöst?)\\
+- Explizite Erwähnung, dass das Routing der ADC-Datenpins zu einem Port des uC geschehen musste! Aufwand im Layout)\\
+- Pinbelegung\\
+- Komparator-Auswahl (LT1714)\\
+- Pegelwandlung: Trigger und Clock\\
+- Pegelwandlung: Pull-Ups+Open-Drain; Spannungsteiler\\
+- DAC-Ansteuerung
 
 \pagebreak
 
@@ -807,6 +824,7 @@ Nachdem die Entwicklungsboards in Absprache mit dem MCT-Labor beschafft worden w
 \pagebreak
 
 \subsubsection{Konzept des Abtastprozesses}
+\label{subsubsec:sampling_concept}
 Der mikrocontrollerseitige Abtastprozess gliedert sich in zwei Hauptaufgaben:
 
 \begin{itemize}
@@ -1162,8 +1180,8 @@ Zustandswechsel erfolgen durch die Funktion \texttt{fsm\_transition()}.
     \item Klare Trennung zwischen Zustandslogik und Event-Handling.
 \end{itemize}
 
-\emph{Abhängigkeiten:} Dieses Modul verwendet Funktionen aus \texttt{queue.c} zur Event-Verarbeitung
-sowie Funktionen aus \texttt{app.c} zur Hardwaresteuerung.\\
+\emph{Abhängigkeiten:} Dieses Modul verwendet Funktionen aus \texttt{queue.h} zur Event-Verarbeitung
+sowie Funktionen aus \texttt{app.h} zur Hardwaresteuerung.\\
 
 Eine nähere Erläuterung zum Modul findet sich in \autoref{subsubsec:fsm_impl}.\\
 
@@ -1266,7 +1284,7 @@ Ereignisse werden beim Auftreten erst einmal \emph{eingereiht} (\texttt{enqueueE
 \end{itemize}
 
 \subsubsection{Preprocessing}
-Der Algorithmus zur Umrechnung 12bit signed (ADC) in 16bit signed aus \autoref{lst:reverse_2s_compl_v2} wurde in der Funktion \texttt{preprocessData()} in \texttt{app.c} umgesetzt. Hier erfolgt auch die optionale Anwendung des gleitenden Mittelwertfilter durch Aufruf der Funktion\\ \texttt{applyMovingAverageFilter()} in \texttt{app.c}. Die Berechnung erfolgt in der aktuellen Implemetierung rekursiv nach dem Algorithmus in \autoref{lst:moving_avg_filter_algorithm_recursive}.\\
+Der Algorithmus zur Umrechnung 12bit signed (ADC) in 16bit signed aus \autoref{lst:reverse_2s_compl_v2} wurde in der Funktion \texttt{preprocessData()} in \texttt{app.c} umgesetzt. Hier erfolgt auch die optionale Anwendung des gleitenden Mittelwertfilter durch Aufruf der Funktion\\ \texttt{applyMovingAverageFilter()} in \texttt{app.c}. Die Berechnung erfolgt in der aktuellen Implementierung rekursiv nach dem Algorithmus in \autoref{lst:moving_avg_filter_algorithm_recursive}.\\
 
 \underline{Hinweis:}\\
 Aufgrund der späten Fertigstellung im Projektverlauf kann der Filter in der Benutzeroberfläche aktuell nicht aktiviert werden, da keine entsprechenden Interaktionselemente für die Konfiguration verfügbar sind. Ein Test des Filters konnte aber durchgeführt werden (siehe \autoref{subsubsec:test_mov_avg}).
@@ -1274,15 +1292,50 @@ Aufgrund der späten Fertigstellung im Projektverlauf kann der Filter in der Ben
 \pagebreak
 
 \subsection{FW-Test}
-\subsubsection{Integrierter Debugger}
+\subsubsection{Abtastung}
+Die Funktionsweise der Abtastung (gemäß \autoref{subsubsec:sampling_concept}) wurde zunächst mit dem integrierten Debugging-Tool der IDE überprüft. Ein wichtiger Schritt war die Überprüfung des konfigurierten DMA-Streams mit definiertem Start und Ende.\\
+
+Hierzu wurden die DMA-Transfers manuell gestartet und das Ergebnis in der ``Expressions``-Debug-Ansicht der IDE verifiziert. Mit dieser können die tatsächlich im SRAM abgelegten Werte betrachtet werden. Zunächst wurden durch Pull-Up- und Pull-Down-Widerstände definierte Pegel angelegt, um Testmuster am Eingangsdatenregister der GPIOs der parallelen Schnittstelle zwischen ADC und $\mu$C zu erzeugen.\\
+
+Nachdem die FSM implementiert wurde, konnte auch explizit im Zustand nach Beendigung der Abtastung (\texttt{STATE:ACQUISITION\_DONE}) ein Breakpoint gesetzt und die Abtastwerte auf Plausiblität überprüft werden (siehe \autoref{fig:cubeide_debug_view}).
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.26]{CubeIDE_Debug_View_Samples.png} 
+	\caption{Expression-Debug-Ansicht zur Überprüfung der Abtastwerte}
+	\label{fig:cubeide_debug_view}
+\end{figure}
 
 \pagebreak
 
-\subsubsection{Terminal Programm und Python-Testcode}
+\subsubsection{FSM}
+
+Bevor die Funktionsweise der State-Machine überprüft werden konnte, wurde das Kommunikationskonzept (siehe \autoref{subsec:communication_concept}) umgesetzt. Hierdurch war eine externe Steuerung der Firmware-FSM möglich, wie es auch in der Endanwendung vorgesehen war. Die Steuerung erfolgte mittels String-Befehlen, ein genauer Ablauf kann \autoref{fig:uml_sequence_communication} entnommen werden. Bei der USB-Spezifikation wurde sich für die USB Communication Device Class (CDC) entschieden (siehe \autoref{subsec:usb_cdc}), wodurch der $\mu$C einen virtuellen COM-Port (VCP) für die Kommunikation zur Verfügung stellt (als COM-Port auf dem Rechner sichtbar).\\
+
+Ausgehend von dieser Grundlage wurde der Ablauf zunächst durch manuelles Senden der einzelnen Befehle und das Empfangen der entsprechenden Antworten (Acknowledgement, Daten) überprüft. Hierzu wurde das Terminal-Programm \emph{hterm}\footnote{\url{www.der-hammer.info/pages/terminal.html} (benutzte Version: 0.8.9)} genutzt, welches die Verbindung mit einem COM-Port ermöglicht und einen zweckmäßigen Funktionsumfang bietet (siehe \autoref{fig:hterm_view}).
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.55]{hterm_view.png} 
+	\caption{Kommunikationsablauf im Terminal-Programm \emph{hterm}}
+	\label{fig:hterm_view}
+\end{figure}
 
 \pagebreak
 
-\subsubsection{Gleitender Mittelwertfilters}
+Nachdem die Auswahl des SW-Frameworks feststand (Python-Framework siehe \autoref{subsubsec:framework_selection}) und sich auf die Nutzung von USB CDC geeinigt wurde, wurde als rechnerseitige Schnittstelle, das \texttt{pyserial}-Paket ausgewählt, welches eine große Bandbreite an Funktionen für die serielle Kommunikation bereitstellt. Da durch das manuelle Senden von Einzelbefehlen mit \emph{hterm} keine realistischen Bedingungen bezüglich Timing gegeben waren, wurden mehrere Testskripts in Python angefertigt, mit denen die Funktion der FSM tiefergehend überprüft wurde. Eine beispielhafte Konsolenausgabe eines Testskripts kann \autoref{fig:console_out_python_test_scripts} entnommen werden. Anhand dieser Tests konnten bereits einzelne Fehler ausgebessert werden, bevor Software und Firmware zusammen getestet wurden.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.65]{python_test_script_console_out.png} 
+	\caption{Beispielhafte Konsolenausgabe bei Ablauf eines Python-Testskripts}
+	\label{fig:console_out_python_test_scripts}
+\end{figure}
+
+
+\pagebreak
+
+\subsubsection{Gleitender Mittelwertfilter}
 \label{subsubsec:test_mov_avg}
 Zum Test des gleitenden Mittelwertfilters wurden in einer vorläufigen Version der Benutzeranwendung die vorverarbeiteten übertragenen Daten geplottet. Der Filter wurde manuell durch Setzen einer Zustandsvariable in der Firmware aktiviert. Die \autoref{fig:mov_avg_test_no_filter} zeigt das empfangene Eingangssignal ohne Filter (Rechtecksignal mit überlagertem Rauschen). \autoref{fig:mov_avg_test_with_filter} zeigt das Signal nach Aktivierung des Filters.
 
@@ -1302,16 +1355,18 @@ Zum Test des gleitenden Mittelwertfilters wurden in einer vorläufigen Version d
 	\label{fig:mov_avg_test_with_filter}
 \end{figure}
 
-Den Abbildungen ist zu entnehmen, dass die Anwendung des Filters eine Rauschunterdrückung zur Folge hat. Des Weiteren wird aber auch die Flankensteilheit verringert.
+Es ist zu erkennen, dass die Anwendung des Filters, wie erwartet, eine Rauschunterdrückung bewirkt. Weiterhin wird aber auch die Flankensteilheit des Signals verringert.
 
 \pagebreak
 
 \section{Schnittstelle Firmware - Software}
 \subsection{USB Communication Device Class (CDC)}
+\label{subsec:usb_cdc}
 
 \pagebreak
 
 \subsection{Konzept der Kommunikation}
+\label{subsec:communication_concept}
 
 \begin{figure}[H]
 	\centering
@@ -1329,8 +1384,8 @@ Nachfolgend die Liste der Einzelkommandos, die das Kommunikationsprotokoll defin
 \subsubsection{Auswahl des Frameworks}
 \label{subsubsec:framework_selection}
 Die Programmiersprache Python wurde für die Umsetzung gewählt, da sie eine breite Unterstützung für wissenschaftliche und hardware-nahe Programmierung bietet. 
-Durch umfangreiche Bibliotheken wie \emph{numpy} für numerische Auswertung, \emph{pyserial} für Schnittstellenkommunikation sowie leistungsfähige Frameworks für GUI-Entwicklung wie \emph{PySide6},
-eignet sich Python besonders für prototypische Entwicklung. Python ist eine dynamische Sprache mit einfachen Syntax, so dass Funktionalitäten rasch entwickelt, geteste und iterativ verbessert werden können. Ein weiterer Vorteil ist die Portabilität und einfache Installation. Python ist auf allen wichtigen Betriebssystemen verfügbar und einfach zu installieren. Außerdem können Pakete einfach in einer virtuellen Umgebung gebündelt werden, um den eigenen PC nicht unnötig zu belasten. Alle für unser Projekt benötigten Pakete sind in der Datei \emph{requirements.txt} aufgelistet. Eine Installationsanleitung findet sich im ANHANG.
+Durch umfangreiche Bibliotheken wie \emph{numpy}\footnote{\href{https://numpy.org/doc/2.3/}{\emph{numpy}-Dokumentation der verwendeten Version 2.3}} für numerische Auswertung, \emph{matplotlib}\footnote{\href{https://matplotlib.org/3.10.3/index.html}{\emph{matplotlib}-Dokumentation für die verwendete Version 3.10.3}} für die grafische Darstellung der Daten, \emph{pyserial}\footnote{\href{https://pyserial.readthedocs.io/en/latest/pyserial.html}{\emph{pyserial}-Dokumentation (verwendete Version: 3.5)}} für Schnittstellenkommunikation sowie leistungsfähige Frameworks für GUI-Entwicklung wie \emph{PySide6}\footnote{\href{https://doc.qt.io/qtforpython-6/index.html}{\emph{PySide6}-Dokumentation (verwendete Version: 6.9.2)}},
+eignet sich Python besonders für prototypische Entwicklung. Python ist eine dynamische Sprache mit einfachen Syntax, so dass Funktionalitäten rasch entwickelt, geteste und iterativ verbessert werden können. Ein weiterer Vorteil ist die Portabilität und einfache Installation. Python ist auf allen wichtigen Betriebssystemen verfügbar und einfach zu installieren. Außerdem können Pakete einfach in einer virtuellen Umgebung gebündelt werden, um den eigenen PC nicht unnötig zu belasten. Alle für unser Projekt benötigten Pakete sind in der Datei \emph{requirements.txt} aufgelistet. Eine Installationsanleitung findet sich im \autoref{sec:appendix_a}.
 
 Die Benutzeroberfläche wurde mit dem Framework \emph{Pyside6} realisiert. Dies ist eine speziell für Python abgewandelte Version von Qt. \emph{PySide6} stellt viele Klassen und Objekte zur Verfügung, die es dem Nutzer einfach machen, ohne viel Erfahrung eine Benutzeroberfläche zu programmieren. Der Vorteil gegenüber der Nutzung von Qt für C++ liegt, darin, dass sich der Nutzer nicht selbst um die Speicherverwaltung kümmern muss. 
 
@@ -1339,14 +1394,14 @@ Zur Übersichtlichkeit wurde das Programm in mehrere Unterprogramme zerlegt. \au
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.6]{paketdiagramm.png}
+	\includegraphics[scale=0.55]{paket_diagramm.png}
 	\caption{Paketdiagramm zur Darstellung der Unterprogramme}
 	\label{fig:paktediagramm_sw}
 \end{figure}
 
 \subsection{Konzept Hardwareinterface}
 
-Um das Hardwareinterface zu realisieren wurde die Zustandsmaschine, die auf den Microcontroller läuft auf den PC abgebildet. Das Zustandsdiagramm des PCs befindet sich im ANHANG. Mit dem Unterprogramm \emph{find\_my\_device.py} wird der passende COM-Port automatisch gefunden. Mit \emph{serial\_interface.py} werden die Methoden der Python Klasse \emph{serial\_interface} überschrieben. Die Kommunikation zwischen PC und Microcontroller wird über diese Funktionen realisiert. Die Zustandsmaschine soll in einem seperaten Thread laufen, um die Benutzeroberfläche responsiv zu halten.
+Um das Hardwareinterface zu realisieren wurde die Zustandsmaschine, die auf den Microcontroller läuft auf den PC abgebildet. Das Zustandsdiagramm des PCs befindet sich im \autoref{sec:appendix_a}. Mit dem Unterprogramm \emph{find\_my\_device.py} wird der passende COM-Port automatisch gefunden. Mit \emph{serial\_interface.py} werden die Methoden der Python Klasse \emph{serial\_interface} überschrieben. Die Kommunikation zwischen PC und Microcontroller wird über diese Funktionen realisiert. Die Zustandsmaschine soll in einem seperaten Thread laufen, um die Benutzeroberfläche responsiv zu halten.
 
 \subsection{Konzept Benutzeroberfläche}
 
@@ -1364,29 +1419,213 @@ Um das Hardwareinterface zu realisieren wurde die Zustandsmaschine, die auf den 
 
 \pagebreak
 
+
 \section{Zusammenführung}
-\subsection{Entwurf}
-\subsection{Implementierung}
-\subsection{Test}
+
+Nachdem die Tests der Einzelkomponenten (HW, FW, SW) erfolgt war, konnte deren Zusammenführung durchgeführt werden.\\
+
+Hierbei wurden zunächst die Software mit der Firmware verbunden und die einwandfreie Kommunikation zwischen $\mu$C und der Rechner-Anwendung überprüft. Nachdem dies erfolgreich getestet wurde, konnte die Oszi-Baugruppe auf das NUCLEO-Board aufgesteckt werden. Der Gesamtaufbau kann \autoref{fig:test_setup} entnommen werden.
+
+\subsection{Testaufbau}
+\label{subsec:test_setup}
+
+Beim Anschluss sind die \autoref{tab:connections} und die darunterliegenden Hinweise zu beachten.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.6]{Übersichtsschaltbild_Testaufbau.png}
+	\caption{Übersichtsschaltbild für den Testaufbau des Projekts}
+	\label{fig:test_setup}
+\end{figure}
+
+\pagebreak
+
+\begin{table}[H]
+	\centering
+	\scriptsize
+	\begin{tabular}{|c|c|c|}
+	\hline 
+	\textbf{Oszi-Anschluss} & \textbf{externer Anschluss} & Beschreibung \\ 
+	\hline
+	\hline 
+	\emph{H1} (Baugruppe) & +5 V + $U_D$ & \\ 
+	\hline 
+	\emph{H2} (Baugruppe) & -5 V - $U_D$ & \\ 
+	\hline 
+	\emph{H3} (Baugruppe) & +12 V + $U_D$ & \\ 
+	\hline 
+	\emph{H4} (Baugruppe) & -12 V - $U_D$ & \\ 
+	\hline 
+	\emph{H5, H6} (Baugruppe) & 0V (GND) & \\ 
+	\hline 
+	\emph{J1} (Baugruppe, BNC) & DUT (Device Under Test) & \\ 
+	\hline
+	\emph{CN13} (NUCLEO, micro-USB) & PC (USB) & Kommunikationsanschluss \\ 
+	\hline
+	\hline
+	\multicolumn{3}{|c|}{optional:}\\
+	\hline
+	\emph{CN1} (NUCLEO, micro-USB) &  PC (USB) & Programmieranschluss \\ 
+	\hline 
+	\end{tabular} 
+	\caption{Verbindungstabelle}
+	\label{tab:connections}
+\end{table}
+
+\begin{footnotesize}
+	\underline{\emph{Hinweise:}}\\
+	\begin{itemize}
+		\item Aufgrund der eingebauten Verpolungsschutz-Diode ist jeweils eine zusätzliche Spannung von $U_D\approx 0.3\hspace{0.1cm}V$ zu berücksichtigen.
+		\item Zunächst müssen die Versorgungsspannungen $\pm$ 5 V eingeschaltet werden, danach die Versorgungsspannungen $\pm$ 12 V.
+		\item Anschließend kann die Kommunikationsleitung an CN13 angeschlossen und mit dem PC verbunden werden.
+		\item Als letztes wird das Signal an J1 eingespeist.
+	\end{itemize}
+\end{footnotesize}
+
+\pagebreak
+
+Um die Funktion des Oszilloskops zu überprüfen wurde eine Reihe an Testsignalen mittels Funktionsgenerator eingespeist. Dies sollten dazu dienen die Performanz der Baugruppe zu testen. Die resultierenden Signale sind den folgenden Abbildungen zu entnehmen.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sine_10khz_2vpp.png}
+	\caption{Testsignal: Sinus (f = 10 kHz, $V_{pp}$ = 2 V)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sine_100khz_2vpp.png}
+	\caption{Testsignal: Sinus (f = 100 kHz, $V_{pp}$ = 2 V)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sine_100khz_8vpp.png}
+	\caption{Testsignal: Sinus (f = 100 kHz, $V_{pp}$ = 8 V)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sine_500khz_2vpp.png}
+	\caption{Testsignal: Sinus (f = 500 kHz, $V_{pp}$ = 2 V)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sine_500khz_2vpp_interpolation_spline.png}
+	\caption{\centering Testsignal: Sinus (f = 500 kHz, $V_{pp}$ = 2 V)\\ \footnotesize Polynom-Interpolation}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sine_1Mhz_2vpp.png}
+	\caption{Testsignal: Sinus (f = 1 MHz, $V_{pp}$ = 2 V)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sine_1Mhz_2vpp_interpolation_spline.png}
+	\caption{\centering Testsignal: Sinus (f = 1 MHz, $V_{pp}$ = 2 V)\\ \footnotesize Polynom-Interpolation}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sine_100khz_4vpp_gui_measurements.png}
+	\caption{\centering Testsignal: Sinus (f = 1 MHz, $V_{pp}$ = 4 V)\\ \footnotesize Überprüfung mittels Measure-Funktionen}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sine_100khz_4vpp_1v_offset_gui_measurements.png}
+	\caption{\centering Testsignal: Sinus (f = 100 kHz, $V_{pp}$ = 4 V, $V_{offset}$ = 1 V)\\ \footnotesize Überprüfung mittels Measure-Funktionen}
+\end{figure}
+
+Rechnerische Überprüfung des Measure-Ergebnisses von \emph{AC-RMS} und \emph{DC-RMS}\\
+($V_1$: 1. Oberwelle, $V_0$: Gleichanteil):
+
+\begin{equation}
+	V_{AC-RMS} = \frac{\hat{V_1}}{\sqrt{2}} = \frac{2V}{\sqrt{2}} = 1.41 V
+\end{equation}
+
+\begin{equation}
+	V_{DC-RMS} = \sqrt{\left( \frac{\hat{V_1}}{\sqrt{2}}\right)^2 + V_0^2} = \sqrt{\left( \frac{2V}{\sqrt{2}}\right)^2 + (1V)^2} = 1.73 V
+\end{equation}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_square_10khz_2vpp_gui_measurements_cursors.png}
+	\caption{\centering Testsignal: Rechteck (f = 10 kHz, $V_{pp}$ = 2 V)\\ \footnotesize Überprüfung mittels Measure-Funktionen und Cursorn}
+\end{figure}
+
+Man beachte die Top- und Bottom-Messung, die ist top.
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_square_100khz_2vpp.png}
+	\caption{Testsignal: Rechteck (f = 100 kHz, $V_{pp}$ = 2 V)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_square_200khz_2vpp.png}
+	\caption{Testsignal: Rechteck (f = 200 kHz, $V_{pp}$ = 2 V)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_square_500khz_2vpp.png}
+	\caption{Testsignal: Rechteck (f = 500 kHz, $V_{pp}$ = 2 V)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_square_1Mhz_2vpp.png}
+	\caption{Testsignal: Rechteck (f = 1 MHz, $V_{pp}$ = 2 V)}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{test_sawtooth_10khz_4vpp.png}
+	\caption{Testsignal: Sägezahn (f = 10 kHz, $V_{pp}$ = 4 V)}
+\end{figure}
+
+
+
+
+
+
 
 \pagebreak
 
 %%%%%%%%%%% Schluss %%%%%%%%%
 
-\pagebreak
-
 %%%%%%%%%%% Ergebnisse %%%%%%%%%%%
 \section{Ergebnisse}
 
-\subsection{Benutzeroberfläche des USB-Oszilloskops}
+\subsection{Vergleich mit ursprünglichen Anforderungen}
+
+Zunächst erfolgt eine Vergleich mit den Anforderungen, welche zu Beginn des Projekts definiert wurden (siehe \autoref{subsec:requirements}). Der vorliegende Prototyp implementiert eine 1-kanaliges Messsystem, welches zusammen mit der programmierten PC-Anwendung als Oszilloskop verwendet werden kann. Die Verbindung zwischen PC und Baugruppe erfolgt über USB.
+
+Die angestrebte Bandbreite von 1 MHz wurde erreicht. Abweichungen vom eingespeisten Signal, sowie Maßnahmen zur Kompensation dieser Effekte wurden bereits im \autoref{subsec:hw_test} (\nameref{subsec:hw_test}) ausführlich beschrieben (merkliche Abweichungen bei Signalen mit Frequenzen ab 500 kHz).
+Die Abtastrate von 10 MS/s konnte durch die Auswahl der entsprechenden Bauelemente (ADC, $\mu$C, etc.) gewährleistet werden.
+
+Mit der vorliegenden Hardware (AFE und ADC) lässt sich ein Eingangsspannungsbereich $\pm$ 5 V mit einer Auflösung von 12 Bit betrachten.
+Mittels herkömmlicher 10:1 Tastköpfe lässt sich der Eingangsspannungsbereich auf $\pm$ 50 V vergrößern.
+Für die nach den Anforderungen festgelegte Verwendung eines Offsets wären Ergänzungen im Layout der Baugruppe notwendig (beschrieben in \autoref{subsec:hw_test}).
+\pagebreak
+
+\subsection{Benutzung des USB-Oszilloskops}
+
+Die Verwednung des Oszilloskops setzt den Aufbau gemäß \autoref{fig:test_setup} in \autoref{subsec:test_setup} voraus.\\
+
+Das Endergebnis der entwickelten Benutzeroberfläche ist in \autoref{fig:Benutzeroberflaeche} dargestellt. Die Bedienung und Einstellmöglichkeiten orientieren sich stark an einem klassischen Oszilloskop und bieten dem Anwender zahlreiche sinnvolle Funktionen für die Signalbetrachtung und -auswertung.
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.4]{Oszi_Oberflaeche.png}
 	\caption{Benutzeroberfläche}
 	\label{fig:Benutzeroberflaeche}
 \end{figure}
-
-Das Endergebnis der entwickelten Benutzeroberfläche ist in \autoref{fig:Benutzeroberflaeche} dargestellt. Die Bedienung und Einstellmöglichkeiten orientieren sich stark an einem klassischen Oszilloskop und bieten dem Anwender zahlreiche sinnvolle Funktionen für die Signalbetrachtung und -auswertung.
 
 \subsubsection{Hauptfunktionen}
 
@@ -1409,10 +1648,21 @@ Das Endergebnis der entwickelten Benutzeroberfläche ist in \autoref{fig:Benutze
   \item \textbf{Reset-Schaltfläche:} Damit kann die Zustandsmaschine zurückgesetzt werden, falls sie in einem ungültigen Zustand verharrt.
 \end{itemize}
 
+Debugfenster beschreiben:\\
+ - Variable Eingangsspannung\\
+ - Einstellbare Abtastrate
+ 
+ \begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.4]{GUI_debug_view.png}
+	\caption{Debug-Fenster der Benutzeroberfläche}
+	\label{fig:debug_Benutzeroberflaeche}
+\end{figure}
+
 \subsection{Besonderheiten und Bedienhinweise}
 
 \begin{itemize}
-    \item Änderungen der Trigger- oder Interpolationsart sind ausschließlich im Idle-Zustand des Mikrocontrollers möglich. Die Messung muss zuvor gestoppt werden.
+    \item Änderungen der Trigger- oder Interpolationsart und Einstellungen im Debug-Fenster sind \textbf{\emph{ausschließlich im Idle-Zustand}} des Mikrocontrollers möglich. Die Messung muss zuvor gestoppt werden.
     \item Die Einstellungen der horizontalen und vertikalen Achsen werden beim Schließen der GUI gespeichert und beim nächsten Öffnen wiederhergestellt.
 \end{itemize}
 
@@ -1421,6 +1671,8 @@ Das Endergebnis der entwickelten Benutzeroberfläche ist in \autoref{fig:Benutze
 
 %%%%%%%%%%% Fazit und Ausblick %%%%%%%%%%%
 \section{Fazit und Ausblick}
+
+Da das Ziel des Projekts die Validierung unseres Konzepts zur Signalerfassung, -konditionierung und -verarbeitung für ein USB-Oszilloskop war, wurden weitergehende Aspekte nicht behandelt. Hierbei handelt es sich um Aspekte, die für die Validierung des Konzeptes nicht selbst entwickelt werden mussten. Hierunter fällt vorwiegend die Verwendung externer Netzteile zur Versorgung der Baugruppe.
 
 \pagebreak
 
@@ -1447,6 +1699,14 @@ Das Endergebnis der entwickelten Benutzeroberfläche ist in \autoref{fig:Benutze
 \appendix
 \section{Anhang}
 \label{sec:appendix_a}
+\subsection{Blockschaltbilder}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.6]{Projektarbeit_Architektur.png} 
+	\caption{Übersichts-Blockschaltbild (erstellt für die Konzeptvorstellung)}
+	\label{fig:block_concept}
+\end{figure}
 
   
 \end{document}

@@ -10,7 +10,7 @@ def format_value(val, unit_base):
             return f"{val:.2f} s"
         
     if unit_base == 'V':
-        if val < 1:
+        if abs(val) < 1:
             return f"{val*1e3:.0f} mV"
         
         else:
