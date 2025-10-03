@@ -1483,7 +1483,7 @@ Die Funktionalität der einzelnen Seiten ist wie folgt aufgeteilt:
 \pagebreak
 
 \subsubsection{Auswahl und Definition der Messungen}
-Bei der Auswahl der Messungen wurde sich am Benutzerhandbuch des Agilent InfiniiVision 2000 X-Series Oszilloskop orientiert QUELLE. Folgende Messungen sollen mit dem USB-Oszilloskop möglich sein:
+Bei der Auswahl der Messungen wurde sich am Benutzerhandbuch des Agilent InfiniiVision 2000 X-Series Oszilloskop orientiert siehe \cite[ab S. 191]{Keysight2025}. Folgende Messungen sollen mit dem USB-Oszilloskop möglich sein:
 
 \begin{itemize}
 	\item \textbf{Maximum:} Höchste Wert des Signals.
@@ -1511,13 +1511,74 @@ Bei der Auswahl der Messungen wurde sich am Benutzerhandbuch des Agilent Infinii
 
 
 \pagebreak
-\subsection{Implementierung}
+\section{Implementierung}
+
+Die nachfolgende Beschreibung gibt einen Überblick über die Umsetzung der Software. Diese schließt sowohl das Hardwareinterface, zur Kommunikation mit dem $\mu$C ein, sowie die Benutzeroberfläche. Für genaue Informationen zur Implementierung sei auf die Quellcode-Dateien verwiesen.
+
+\subsection{Hardwareinterface}
+Die Implementierung der FSM auf dem PC erfolgte nach dem in \autoref{sec:appendix_a} dargestellten Zustandsdiagramm. Hierfür wurde das Python Paket \emph{python-statemachine} verwendet. Dieses ermöglicht es Zustände und Zustandstransitionen einfach zu erstellen. Der Zustandsautomat wurde folgendermaßen implementiert:
+
+\begin{lstlisting}[language=Python, caption={Implementierung der Zustandsmaschine \texttt{usbOsziPC} in Python}]
+class usbOsziPC(StateMachine):
+    init = State("Init", initial=True)
+    idle = State("Idle")
+    acquiring_start = State("Acquiring_Start")
+    acquiring_stop = State("Acquiring_Stop")
+    transmission = State("Transmission")
+    wait_for_ack = State("Wait_For_Ack")
+
+    app_started = init.to(idle)
+    run = idle.to(acquiring_start)
+    acquisition_done = acquiring_start.to(acquiring_stop)
+    ready_for_data = acquiring_stop.to(transmission)
+    data_transfer_complete = transmission.to(wait_for_ack)
+    processing_complete = wait_for_ack.to(acquiring_start)
+    stop_acquisition = wait_for_ack.to(idle)
+    reset = (
+        init.to(init) | idle.to(init) | acquiring_start.to(init) | acquiring_stop.to(init) |
+        transmission.to(init) | wait_for_ack.to(init)
+    )
+\end{lstlisting}
+
+Der Befehl zum Zustandswechsel wird dem $\mu$C immer am Ende des vorherigen Zustands gesendet. Beim Eintritt in den nächsten Zustand wird dann überprüft, ob der $\mu$C bereits in den nächsten Zustand gewechselt hat. Das heißt der $\mu$C wechselt immer zuerst in den nächsten Zustand und die PC FSM immer erst, wenn der $\mu$C bereits gewechselt hat. Eine Ausnahme besteht im Zustand \emph{transmission}, hier wird nicht auf die Information vom $\mu$C gewartet, da der Speicher sonst mit Daten überflutet wird und Daten verloren gehen würden.\\
+
+Nachdem alle Daten übertragen worden sind, sendet der $\mu$C ein weiteres Byte, dass einen Überlauf signalisiert. Dieses wird direkt ausgewertet und je nach Ergebnis eine Meldung in die \emph{status\_queue} geschoben, \emph{OVERFLOW} oder \emph{NO\_OVERFLOW}.
+
+Anschließend werden die Rohdaten mit der Funktion \emph{calculate\_voltage()} in Spannungswerte umgerechnet. Dafür wird folgende Formel verwendet:
+
+$$
+\frac{\text{raw\_value}}{4095} \cdot v_{\text{ref}} \cdot 10^{-3} \cdot v_{\text{div\_factor}}
+$$
+{\footnotesize Die 4095 ergeben sich aus der Auflösung des ADCs von 12 Bit. $v_ref$ ist die eingestellte Referenzspannung. Der div\_factor ergibt sich aus dem Spannungsteiler im AF.}
+
+\subsection{Kommunikation zwischen Hardwareinterface und Benutzeroberfläche}
+Die Kommunikation zwischen den beiden Threads wurde mit zwei Queues realisiert, die \emph{command\_queue} und die {status\_queue}. Um zu verhindern, dass Daten überschrieben werden oder verloren gehen, kann immer nur ein Thread schreibend zugreifen und der andere nur lesend. So schreibt der GUI-Thread Befehle in die \emph{command\_queue}, der FSM-Thread liest diese aus und führt basiert auf seinem aktuellen Zustand und den Befehlen die passende Codezeile aus. Dabei schreibt er bei Zustandswechsel oder im Fehlerfall eine Nachricht in die  \emph{status\_queue}, welche wiederrum vom Thread der \emph{StatusProvider} Klasse, die sich im Programm der Benutzeroberfläche befindet, ausgewertet wird.\\ 
+
+Die \emph{StatusProvider} Klasse liest die \emph{status\_queue} aus und sendet eine Nachricht an die jeweilige Funktion \emph{handle\_status}, die sich in den Klassen \emph{General} und \emph{Debugging} befindet. Hier wird entschieden, ob die Nachricht für die Seite der GUI bestimmt war. Hier wird dann die eigentliche Reaktion auf die Statusmeldung ausgeführt.\\
+
+Die \emph{StatusProvider} Klasse wird bei Programmstart als Thread instanziiert und fragt die \emph{status\_queue} alle 100~ms ab.
+
+\subsection{Benutzeroberfläche}
+
+- Umrechnung der Werte vom uC in Spannungswerte
+- Plot -> einmal aufbauen nur aktualisiert
+- Wie wurden Cursor realisiert
+- Queues 
+- FSM GUI
+- FSM PC
+- Erstellen der Threads
+- Implementierung der Messungen (Periode, Dach und Base)
+
 
 
 
 \pagebreak
 
 \subsection{SW-Test}
+
+- Zunächst wurde die Funktionalität der Zustandsmaschine auf dem PC unabhängig vom $\mu$C getestet, indem die Transitionen, die vom $\mu$C kommen, durch Tasten simuliert wurden. 
+- Weitere Tests wurden mit einem Programm auf den uC gemacht, das feste Werte an den PC überträgt.
+- Abschließend wurde die Funktionalität aller GUI-Elemente mit dem Gesamtsystem getestet, siehe \ref{subsec:integrationtest}
 
 \pagebreak
 
@@ -1586,6 +1647,9 @@ Beim Anschluss sind die \autoref{tab:connections} und die darunterliegenden Hinw
 \end{footnotesize}
 
 \pagebreak
+
+\subsection{Funktionstest}
+\label{subsec:integrationtest}
 
 Um die Funktion des Oszilloskops zu überprüfen wurde eine Reihe an Testsignalen mittels Funktionsgenerator eingespeist. Dies sollten dazu dienen die Performanz der Baugruppe zu testen. Die resultierenden Signale sind den folgenden Abbildungen zu entnehmen.
 
