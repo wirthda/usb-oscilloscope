@@ -659,7 +659,7 @@ Für das Projekt wurde der Filter kumulativ und rekursiv implementiert und nach 
 	kann zu einem Zeitpunkt immer nur ein Thread, Python-Bytecode ausführen. Das heißt, auch wenn für einen Job mehrere Threads gestartet werden, arbeitet immer nur ein Thread gleichzeitig.
 	Dieses Prinzip widersricht zwar der Idee von paralleler Ausführung, jedoch darf ein anderer Thread Programmcode ausführen, wenn der Thread gerade auf eine Eingabe wartet.
 	Das GIL wird in Python genutzt, da es die Verwaltung von Python-Objekten im Speicher vereinfacht. Dies ist vor allem wichtig, da der der Speicher in Python typischerweise
-	automatisch verwaltet wird. 
+	automatisch verwaltet wird (vgl. \cite{Lang2024} Abschnitt ``Was sind Threads in Python?``). 
 
 	Threading eignet sich vor allem für E/A-lastige Aufgaben, die mit Datenaustausch verbunden sind.
 
@@ -692,7 +692,7 @@ Für das Projekt wurde der Filter kumulativ und rekursiv implementiert und nach 
 
 In unserem Projekt wurden Threads verwendet, da die Anwendung hauptsächlich E/A-gebunden ist. Zusätzlich wird ein gemeinsamer Speicher benötigt, damit die Messdaten an die Benutzeroberfläche 
 übergeben werden können. Die Kommunikation wurde mit zwei Warteschlangen realisiert, eine dient zur Übergabe von Statusmeldungen von der FSM zur Benutzeroberfläche (GUI) und die andere zur
-Übergabe von Befehlen von der GUI an die FSM. 
+Übergabe von Befehlen von der GUI an die FSM (vgl. \cite{Lang2024} Abschnitt ``Was ist Multiprocessing in Python?``). 
 
 
 %%%%%%%%%%% Projektkonzeption %%%%%%%%%%%
@@ -1323,7 +1323,7 @@ Ausgehend von dieser Grundlage wurde der Ablauf zunächst durch manuelles Senden
 
 \pagebreak
 
-Nachdem die Auswahl des SW-Frameworks feststand (Python-Framework siehe \autoref{subsubsec:framework_selection}) und sich auf die Nutzung von USB CDC geeinigt wurde, wurde als rechnerseitige Schnittstelle, das \texttt{pyserial}-Paket ausgewählt, welches eine große Bandbreite an Funktionen für die serielle Kommunikation bereitstellt. Da durch das manuelle Senden von Einzelbefehlen mit \emph{hterm} keine realistischen Bedingungen bezüglich Timing gegeben waren, wurden mehrere Testskripts in Python angefertigt, mit denen die Funktion der FSM tiefergehend überprüft wurde. Eine beispielhafte Konsolenausgabe eines Testskripts kann \autoref{fig:console_out_python_test_scripts} entnommen werden. Anhand dieser Tests konnten bereits einzelne Fehler ausgebessert werden, bevor Software und Firmware zusammen getestet wurden.
+Nachdem die Auswahl des SW-Frameworks feststand (Python-Framework siehe \autoref{subsubsec:framework_selection}) und sich auf die Nutzung von USB CDC geeinigt wurde, wurde als rechnerseitige Schnittstelle, das \texttt{pyserial}-Paket ausgewählt, welches eine große Bandbreite an Funktionen für die serielle Kommunikation bereitstellt. Da durch das manuelle Senden von Einzelbefehlen mit \emph{hterm} keine realistischen Bedingungen bezüglich Timing gegeben waren, wurden mehrere Testskripts in Python angefertigt, mit denen die Funktion der FSM tiefergehend überprüft wurde. Eine beispielhafte Konsolenausgabe eines Testskripts kann \autoref{fig:console_out_python_test_scripts} entnommen werden. Anhand dieser Tests konnten bereits vor der Zusammenführung von Software und Firmware einzelne Fehler ausgebessert werden.
 
 \begin{figure}[H]
 	\centering
@@ -1362,11 +1362,57 @@ Es ist zu erkennen, dass die Anwendung des Filters, wie erwartet, eine Rauschunt
 \section{Schnittstelle Firmware - Software}
 \subsection{USB Communication Device Class (CDC)}
 \label{subsec:usb_cdc}
+\subsubsection{Grundlagen zu USB und den verwendeten Schnittstellen}
+\textbf{Universal Serial Bus (USB)} ist ein Host-gesteuertes Kommunikationsprotokoll, bei dem der Host (typischerweise ein PC) die Kommunikation initiiert und die Endgeräte („Devices“) auf Anfragen reagieren. Jedes USB-Gerät wird durch einen Device Descriptor beschrieben, der unter anderem Informationen wie die unterstützte USB-Version, die Hersteller- und Produkt-ID (VID und PID) sowie die verwendeten Klassen und Konfigurationen enthält \cite{USBIF2025}.\\
+
+Kommunikationskanäle werden in USB durch sogenannte Endpoints realisiert. Zwischen diesen Endpoints werden sogenannte virtuelle Datenkanäle aufgebaut, über die der Host mit dem Device Daten austauscht. Jeder Endpoint besitzt dabei eine Richtung (IN für Device $\rightarrow$ Host, OUT für Host $\rightarrow$ Device) und ist in einem Interface organisiert. Der Zugriff erfolgt nicht direkt, sondern über sogenannte Pipes, die auf Host-Seite eingerichtet werden \cite[Kap. 5]{USBIF2025}. Die Kommunikation ist beidseitig (Host und Device) in Schichten eingeteilt, die bestimmte Aufgaben haben (vgl. mit mit ISO-OSI-Modell\footnote{\href{https://www.iso.org/standard/20269.html}{ISO/IEC 7498-1:1994}}). In \autoref{fig:usb_host_device_view} ist die grobe Schichteneinteilung dargestellt.\\
+
+Beim verwendeten Mikrocontroller \emph{STM32F767ZI} wurden die von STMicroelectronics bereitgestellten \emph{USB-CDC-Treiber} verwendet, welche sich über das Konfigurationstool \emph{STM32CubeMX} automatisch generieren lassen. CubeMX erstellt hierbei die notwendigen Deskriptoren (z. B. Device Descriptor, Configuration Descriptor, Interface Descriptor), konfiguriert die Endpoints und bindet die Middleware der USB-Device-Library von ST ein \cite{STmicroelectronics2019}.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.7]{USB_Host_Device_Detailed_View.png} 
+	\caption{\centering Host- und Device-Ansicht aus der USB-Spezifikation\\	\footnotesize (Figure 5-9 aus \cite{USBIF2025})}
+	\label{fig:usb_host_device_view}
+\end{figure}
+
+\subsubsection{Auswahl und Begründung für USB CDC}
+
+Eine direkte Kommunikation über eigene Endpoints hätte die Entwicklung eines Protokolls und insbesondere die Implementierung eines benutzerdefinierten Gerätetreibers auf Host-Seite erforderlich gemacht. Dies ist aufwändig und fehleranfällig, da die USB-Spezifikation komplex ist und die Treiberentwicklung tiefes Wissen über Betriebssystem-APIs und Kernel-Schnittstellen erfordert \cite{USBIF2025a}.\\
+Stattdessen wurde die USB Communication Device Class (CDC) gewählt. Sie emuliert eine serielle Schnittstelle (``Virtual COM Port``) und erlaubt eine einfache Integration in bestehende PC-Software. Ein großer Vorteil ist, dass Windows (ab Windows 10) bereits den integrierten Treiber Usbser.sys für CDC/ACM-Geräte mitliefert und automatisch lädt, solange alle Daten korrekt im USB-Deskriptor gesetzt sind \cite{Microsoft2025}.
+\pagebreak
+
+Die Hauptvorteile der CDC-Auswahl sind:
+
+\begin{itemize}
+	\item Einfache Implementierung mit CubeMX (automatische Generierung von Middleware und Treibergerüst).
+	\item Keine Notwendigkeit eigener PC-Treiber.
+	\item Direkter Zugriff aus PC-Programmiersprachen über gängige serielle Schnittstellen-Bibliotheken.
+\end{itemize}
+
+Ein Nachteil dieser Wahl ist jedoch der zusätzliche Protokoll-Overhead. Die effektive Datenrate der USB-Full-Speed-Schnittstelle (12 Mbit/s) wird dadurch nicht erreicht. Eine speziell implementierte Endpoint-Kommunikation könnte eine höhere Performance ermöglichen, erfordert aber deutlich mehr Entwicklungsaufwand \cite{STmicroelectronics2019}.
+
+\subsubsection{Kommunikationssituation PC $\leftrightarrow$ Mikrocontroller}
+
+Die Kommunikation erfolgt in der Projektrealisierung wie folgt:\\
+\emph{PC-seitig} wird ein Python-Skript eingesetzt, das über das Package \emph{pyserial} mit dem virtuellen \emph{COM-Port} kommuniziert. Hierbei öffnet das Skript die \emph{CDC}-Schnittstelle, sendet Steuerkommandos und empfängt Messdaten.\\
+\emph{Mikrocontroller-seitig} wird die \texttt{USB-CDC-Klasse} der \emph{STM32Cube Middleware} genutzt. Die Konfiguration (z. B. Endpoints, Deskriptoren) erfolgte über \emph{STM32CubeMX}.\\
+Die generierte Middleware stellt die Funktionen \texttt{CDC\_Transmit\_FS()} und \texttt{CDC\_Receive\_FS()} bereit, die im Anwendungsprogramm (Dateien \texttt{app.c}/\texttt{app.h}) angepasst und aufgerufen wurden.\\
+Der \texttt{USB\_DEVICE}-Treiber übernimmt die Initialisierung und Verwaltung der USB-Schnittstelle. Das eigentliche Applikationsprogramm ruft diese Funktionen auf, um Daten an den Host zu senden bzw. von ihm zu empfangen.\\
+
+Damit ergibt sich eine klare Schichtentrennung:
+\begin{itemize}
+    \item \texttt{USB\_DEVICE-Treiber} und Middleware: Low-Level-USB-Verwaltung, Deskriptoren, Endpoints.
+    \item \emph{Applikationscode} (\texttt{app.c/.h}): Logik des Oszilloskops, Aufruf von \texttt{CDC\_Transmit\_FS} für Messdaten, Implementierung von Empfangslogik in \texttt{CDC\_Receive\_FS}.
+    \item \emph{PC-Seite} (Python): Verarbeitung der Datenströme über serielle Schnittstellen-Funktionen.
+\end{itemize}
 
 \pagebreak
 
 \subsection{Konzept der Kommunikation}
 \label{subsec:communication_concept}
+
+Der nachfolgenden \autoref{fig:uml_sequence_communication} lassen sich die definierten String-Befehle entnehmen, die für die Kommunikation notwendig sind. Weiterhin veranschaulicht das Diagramm einen typischen Kommunikationsablauf (ohne Konfiguration im Idle-Zustand).
 
 \begin{figure}[H]
 	\centering
@@ -1374,8 +1420,6 @@ Es ist zu erkennen, dass die Anwendung des Filters, wie erwartet, eine Rauschunt
 	\caption{UML-Sequenzdiagramm: Kommunikation ohne Konfiguration}
 	\label{fig:uml_sequence_communication}
 \end{figure}
-
-Nachfolgend die Liste der Einzelkommandos, die das Kommunikationsprotokoll definieren:
 
 \pagebreak
 
@@ -1433,7 +1477,7 @@ Beim Anschluss sind die \autoref{tab:connections} und die darunterliegenden Hinw
 
 \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.6]{Übersichtsschaltbild_Testaufbau.png}
+	\includegraphics[scale=0.15]{Übersichtsschaltbild_Testaufbau.png}
 	\caption{Übersichtsschaltbild für den Testaufbau des Projekts}
 	\label{fig:test_setup}
 \end{figure}
@@ -1452,9 +1496,9 @@ Beim Anschluss sind die \autoref{tab:connections} und die darunterliegenden Hinw
 	\hline 
 	\emph{H2} (Baugruppe) & -5 V - $U_D$ & \\ 
 	\hline 
-	\emph{H3} (Baugruppe) & +12 V + $U_D$ & \\ 
+	\emph{H3} (Baugruppe) & V+ = +12 V + $U_D$ & \\ 
 	\hline 
-	\emph{H4} (Baugruppe) & -12 V - $U_D$ & \\ 
+	\emph{H4} (Baugruppe) & V- = -12 V - $U_D$ & \\ 
 	\hline 
 	\emph{H5, H6} (Baugruppe) & 0V (GND) & \\ 
 	\hline 
@@ -1473,12 +1517,13 @@ Beim Anschluss sind die \autoref{tab:connections} und die darunterliegenden Hinw
 \end{table}
 
 \begin{footnotesize}
-	\underline{\emph{Hinweise:}}\\
+	\underline{\emph{Hinweise:}}
 	\begin{itemize}
-		\item Aufgrund der eingebauten Verpolungsschutz-Diode ist jeweils eine zusätzliche Spannung von $U_D\approx 0.3\hspace{0.1cm}V$ zu berücksichtigen.
+		\item Aufgrund der eingebauten Verpolungsschutz-Dioden ist jeweils eine zusätzliche Spannung von $U_D\approx 0.3\hspace{0.1cm}V$ zu berücksichtigen.
 		\item Zunächst müssen die Versorgungsspannungen $\pm$ 5 V eingeschaltet werden, danach die Versorgungsspannungen $\pm$ 12 V.
 		\item Anschließend kann die Kommunikationsleitung an CN13 angeschlossen und mit dem PC verbunden werden.
 		\item Als letztes wird das Signal an J1 eingespeist.
+		\item Über den USB-Port CN1 kann optional die Programmierung des Mikrocontrollers und/oder der Aufbau einer Debug-Verbindung erfolgen.
 	\end{itemize}
 \end{footnotesize}
 
