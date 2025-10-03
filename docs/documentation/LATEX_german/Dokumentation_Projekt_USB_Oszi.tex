@@ -789,6 +789,8 @@ Ausgehend von diesem Konzept und der klaren Aufteilung in die Bereiche Hardware,
 - Pegelwandlung: Pull-Ups+Open-Drain; Spannungsteiler\\
 - DAC-Ansteuerung
 
+\subsection{Auswahl des Komparators}
+
 \pagebreak
 
 
@@ -1602,7 +1604,7 @@ Rechnerische Überprüfung des Measure-Ergebnisses von \emph{AC-RMS} und \emph{D
 	\caption{\centering Testsignal: Rechteck (f = 10 kHz, $V_{pp}$ = 2 V)\\ \footnotesize Überprüfung mittels Measure-Funktionen und Cursorn}
 \end{figure}
 
-Man beachte die Top- und Bottom-Messung, die ist top.
+Man beachte die Top- und Base-Messung, die ist top.
 
 \begin{figure}[H]
 	\centering
@@ -1649,7 +1651,9 @@ Man beachte die Top- und Bottom-Messung, die ist top.
 
 \subsection{Vergleich mit ursprünglichen Anforderungen}
 
-Zunächst erfolgt eine Vergleich mit den Anforderungen, welche zu Beginn des Projekts definiert wurden (siehe \autoref{subsec:requirements}). Der vorliegende Prototyp implementiert eine 1-kanaliges Messsystem, welches zusammen mit der programmierten PC-Anwendung als Oszilloskop verwendet werden kann. Die Verbindung zwischen PC und Baugruppe erfolgt über USB.
+Zunächst erfolgt eine Vergleich mit den Anforderungen, welche zu Beginn des Projekts definiert wurden (siehe \autoref{subsec:requirements}).\\
+
+Der vorliegende Prototyp implementiert eine 1-kanaliges Messsystem, welches zusammen mit der programmierten PC-Anwendung als Oszilloskop verwendet werden kann. Die Verbindung zwischen PC und Baugruppe erfolgt über USB.
 
 Die angestrebte Bandbreite von 1 MHz wurde erreicht. Abweichungen vom eingespeisten Signal, sowie Maßnahmen zur Kompensation dieser Effekte wurden bereits im \autoref{subsec:hw_test} (\nameref{subsec:hw_test}) ausführlich beschrieben (merkliche Abweichungen bei Signalen mit Frequenzen ab 500 kHz).
 Die Abtastrate von 10 MS/s konnte durch die Auswahl der entsprechenden Bauelemente (ADC, $\mu$C, etc.) gewährleistet werden.
