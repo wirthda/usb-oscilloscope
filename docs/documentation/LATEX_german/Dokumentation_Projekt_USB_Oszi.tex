@@ -651,6 +651,7 @@ Damit entspricht der Moving Average Filter einer Faltung des Eingangssignals mit
 Für das Projekt wurde der Filter kumulativ und rekursiv implementiert und nach dem Algorithmus in \autoref{fig:moving_avg_filter_algorithm_cumulative} im \autoref{subsubsec:preprocessing_concept} umgesetzt.
 
 \subsection{Parallele Prozesse und Nebenläufigkeiten in Python}
+Die folgenden Ausführungen orientieren sich maßgeblich auf den Erkentnissen von Niklas Lang ...
 \subsubsection{Threads in Python}
 	
 	Ein Thread ist ein paralleler Ausführungsstrang innerhalb eines Programms. Alle Threads teilen sich den selben Speicherbereich. 
@@ -673,7 +674,7 @@ Für das Projekt wurde der Filter kumulativ und rekursiv implementiert und nach 
 \subsubsection{Multiprocessing in Python}	
 	
 	Beim multiprocessing werden mehrere, vollständig unabhängige Prozesse gestartet. Jeder Prozess ist eine eigene Instanz des Programms mit eigenem Speicherbereich. Dies führt dazu, dass die
-	Kommunikation zwischen den jeweiligen Prozessen komplexer ist. Hierfür stellt das Python-Modul multiprocessing Funktionen und Klassen bereit. 
+	Kommunikation zwischen den jeweiligen Prozessen komplexer ist. Hierfür stellt das Python-Modul multiprocessing Funktionen und Klassen bereit.
 
 	Multiprocessing kann die Leistungsfähigkeit bei rechenintensiven Aufgaben deutlich steigern, bringt aber auch Overhead durch Speicherbedarf und zusätzliche Komplexität in der Verwaltung mit.
 
@@ -693,6 +694,7 @@ Für das Projekt wurde der Filter kumulativ und rekursiv implementiert und nach 
 In unserem Projekt wurden Threads verwendet, da die Anwendung hauptsächlich E/A-gebunden ist. Zusätzlich wird ein gemeinsamer Speicher benötigt, damit die Messdaten an die Benutzeroberfläche 
 übergeben werden können. Die Kommunikation wurde mit zwei Warteschlangen realisiert, eine dient zur Übergabe von Statusmeldungen von der FSM zur Benutzeroberfläche (GUI) und die andere zur
 Übergabe von Befehlen von der GUI an die FSM (vgl. \cite{Lang2024} Abschnitt ``Was ist Multiprocessing in Python?``). 
+
 
 
 %%%%%%%%%%% Projektkonzeption %%%%%%%%%%%
@@ -1443,13 +1445,67 @@ Zur Übersichtlichkeit wurde das Programm in mehrere Unterprogramme zerlegt. \au
 	\label{fig:paktediagramm_sw}
 \end{figure}
 
-\subsection{Konzept Hardwareinterface}
+\subsubsection{Konzept Hardwareinterface}
 
 Um das Hardwareinterface zu realisieren wurde die Zustandsmaschine, die auf den Microcontroller läuft auf den PC abgebildet. Das Zustandsdiagramm des PCs befindet sich im \autoref{sec:appendix_a}. Mit dem Unterprogramm \emph{find\_my\_device.py} wird der passende COM-Port automatisch gefunden. Mit \emph{serial\_interface.py} werden die Methoden der Python Klasse \emph{serial\_interface} überschrieben. Die Kommunikation zwischen PC und Microcontroller wird über diese Funktionen realisiert. Die Zustandsmaschine soll in einem seperaten Thread laufen, um die Benutzeroberfläche responsiv zu halten.
 
-\subsection{Konzept Benutzeroberfläche}
+\pagebreak
+
+\subsubsection{Konzept Benutzeroberfläche}
+
+Die Benutzeroberfläche ist objektorientiert konzipiert und basiert auf einer modularen Aufteilung in mehrere Klassen, die jeweils spezifische Teilfunktionen realisieren. Abbildung~\ref{fig:klassendiagramm_gui} zeigt die wichtigsten Klassen sowie deren Beziehungen untereinander.
 
 
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.6]{Klassendiagramm_GUI.png}
+	\caption{Übersicht der Klassen der Benutzeroberfläche}
+	\label{fig:klassendiagramm_gui}
+\end{figure}
+
+Das Hauptfenster der Anwendung wird durch die Klasse \emph{StackedWidgetApp} repräsentiert. Sie instanziiert die drei Hauptseiten \emph{General}, \emph{Info} und \emph{Debugging} und verbindet diese über eine Seiten-Navigation. Zusätzlich wird eine Instanz der Klasse \emph{StatusProvider} erzeugt, welche den gezielten Austausch von Statusmeldungen zwischen PC bzw. $\mu$C und GUI ermöglicht und somit sowohl der \emph{General}- als auch der \emph{Debugging}-Seite zur Verfügung steht.
+
+Die Funktionalität der einzelnen Seiten ist wie folgt aufgeteilt:
+\begin{itemize}
+    \item \textbf{Info:} Stellt dem Anwender eine kompakte Bedienungsanleitung zur Verfügung.
+    \item \textbf{Debugging:} Ermöglicht das manuelle Konfigurieren von Abtastfrequenz und Referenzspannung zu Test- und Analysezwecken.
+    \item \textbf{General:} Beinhaltet die Hauptbenutzeroberfläche. Hier werden sämtliche grafische Elemente erzeugt und die zugehörige Logik implementiert. Innerhalb dieser Klasse werden die folgenden Komponenten initialisiert:
+    \begin{itemize}
+        \item \emph{UsbOsziGUI} Synchronisiert die Benutzeroberfläche mit der Zustandsmaschine (FSM) auf PC- und Mikrocontroller-Seite.
+        \item \emph{MatplotlibWidget} Kümmert sich um die Visualisierung der Messdaten sowie um die Implementierung von Achseneinstellungen und Cursorfunktionen.
+        \item \emph{MeasureWorker} Verwaltet die Ausführung der Messfunktionen und stellt deren Ergebnisse zur Anzeige bereit.
+        \item \emph{CustomStepSpinBox} Realisiert benutzerdefinierte Drehregler zur komfortablen Parametereinstellung (nicht im Klassendiagramm dargestellt).
+    \end{itemize}
+\end{itemize}
+
+\pagebreak
+
+\subsubsection{Auswahl und Definition der Messungen}
+Bei der Auswahl der Messungen wurde sich am Benutzerhandbuch des Agilent InfiniiVision 2000 X-Series Oszilloskop orientiert QUELLE. Folgende Messungen sollen mit dem USB-Oszilloskop möglich sein:
+
+\begin{itemize}
+	\item \textbf{Maximum:} Höchste Wert des Signals.
+	\item \textbf{Minimum:} Niedrigste Wert des Signals.
+	\item \textbf{Dach:} Häufigste Wert im oberen Wellenformteil. Falls dieser nicht eindeutig bestimmt werden kann ist der Dach Wert gleich dem Maximum.
+	\item \textbf{Base:} Häufigste Wert im unteren Wellenformteil. Falls dieser nicht eindeutig bestimmt werden kann ist der Base wert gleich dem Minimum.
+	\item \textbf{Amplitude:} Differenz zwischen Dach und Base.
+	\item \textbf{Spitze Spitze:} Differenz zwischen Maximum und Minimum.
+	\item \textbf{Mittelwert:} Mittelwert über vollständige Perioden. Dieser ergibt sich folgendermaßen:
+	$$ \mathrm{Mittelwert} = \frac{\Sigma x_i}{n} $$ 
+	{\footnotesize mit $x_i$ = Wert am Punkt i und n = Anzahl der Messwerte.}
+	\item \textbf{DC RMS:} Quadratischer Mittelwert über vollständige Perioden. Dieser ergibt sich folgendermaßen:
+	$$ 
+	\mathrm{RMS_{DC}} = \sqrt{\frac{\sum_{i=1}^{n} x_i^2}{n}} 
+	$$
+	{\footnotesize mit $x_i$ = Wert am Punkt i und n = Anzahl der Messwerte.}
+	\item \textbf{AC RMS:} Quadratischer Mittelwert, mit entfernter DC-Komponente über vollständige Perioden. Dieser ergibt sich folgendermaßen:
+	$$ 
+	\mathrm{RMS_{DC}} = \sqrt{\frac{\sum_{i=1}^{n} (x_i-\bar{x})^2}{n}} 
+	$$
+	{\footnotesize mit $x_i$ = Wert am Punkt i und n = Anzahl der Messwerte und $\bar{x}$ = Mittelwert über vollständige Periode.}
+	\item \textbf{Periode:} Zeit zwischen den mittleren Schwellenpunkten zweier aufeinanderfolgender Flanken.
+	\item \textbf{Frequenz:} Ist als Kehrwert der Periode definiert.
+\end{itemize}
 
 
 \pagebreak
@@ -1466,7 +1522,7 @@ Um das Hardwareinterface zu realisieren wurde die Zustandsmaschine, die auf den 
 
 \section{Zusammenführung}
 
-Nachdem die Tests der Einzelkomponenten (HW, FW, SW) erfolgt war, konnte deren Zusammenführung durchgeführt werden.\\
+Nachdem die Tests der Einzelkomponenten (HW, FW, SW) erfolgt waren, konnte deren Zusammenführung durchgeführt werden.\\
 
 Hierbei wurden zunächst die Software mit der Firmware verbunden und die einwandfreie Kommunikation zwischen $\mu$C und der Rechner-Anwendung überprüft. Nachdem dies erfolgreich getestet wurde, konnte die Oszi-Baugruppe auf das NUCLEO-Board aufgesteckt werden. Der Gesamtaufbau kann \autoref{fig:test_setup} entnommen werden.
 
@@ -1693,25 +1749,29 @@ Das Endergebnis der entwickelten Benutzeroberfläche ist in \autoref{fig:Benutze
   \item \textbf{Reset-Schaltfläche:} Damit kann die Zustandsmaschine zurückgesetzt werden, falls sie in einem ungültigen Zustand verharrt.
 \end{itemize}
 
-Debugfenster beschreiben:\\
- - Variable Eingangsspannung\\
- - Einstellbare Abtastrate
+Durch das Wechseln auf die Seite \emph{Debugging} bieten sich dem Benutzer noch weitere Einstellmöglichkeiten, siehe \autoref{fig:debug_Benutzeroberflaeche}.
+
+\begin{itemize}
+\item \textbf{Einstellen der Abtastfrequenz:} Eine Spinbox erlaubt die Einstellung der Abtastfrequenz zwischen 20 kHz und 10 MHz. Unter dieser wird die vom $\mu$C tatsächlich eingestellte Abtastfrequenz angezeigt.
+\item \textbf{Einstellen der Referenzspannung:} Eine weitere Spinbox erlaubt die Einstellung der Referenzspannung in 1 mV Schritten.
+\item \textbf{Timing Informationen:} Zusätzlich wird die Übertragungszeit und die Zeit, die zur Umwandlung der Rohdaten in Spannungswerte benötigt wird, angezeigt.
+\end{itemize}
  
  \begin{figure}[H]
 	\centering
-	\includegraphics[scale=0.4]{GUI_debug_view.png}
+	\includegraphics[scale=1]{GUI_debug_view.png}
 	\caption{Debug-Fenster der Benutzeroberfläche}
 	\label{fig:debug_Benutzeroberflaeche}
 \end{figure}
 
-\subsection{Besonderheiten und Bedienhinweise}
+\subsubsection{Besonderheiten und Bedienhinweise}
 
 \begin{itemize}
     \item Änderungen der Trigger- oder Interpolationsart und Einstellungen im Debug-Fenster sind \textbf{\emph{ausschließlich im Idle-Zustand}} des Mikrocontrollers möglich. Die Messung muss zuvor gestoppt werden.
     \item Die Einstellungen der horizontalen und vertikalen Achsen werden beim Schließen der GUI gespeichert und beim nächsten Öffnen wiederhergestellt.
 \end{itemize}
 
-\textbf{Zusammenfassend} bietet die GUI des USB-Oszilloskops eine nutzerfreundliche und praxisorientierte Oberfläche mit allen aus einem klassischen Tischoszilloskop bekannten Einstellungsmöglichkeiten, ergänzt um die Darstellung der Zustände.
+\textbf{Zusammenfassend} bietet die GUI des USB-Oszilloskops eine nutzerfreundliche und praxisorientierte Oberfläche mit allen aus einem klassischen Tischoszilloskop bekannten Einstellungsmöglichkeiten.
 \pagebreak
 
 %%%%%%%%%%% Fazit und Ausblick %%%%%%%%%%%

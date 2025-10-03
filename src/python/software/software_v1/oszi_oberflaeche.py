@@ -601,7 +601,7 @@ class General(QWidget):
         self.measure_amplitude = QCheckBox('amplitude')
         self.measure_max = QCheckBox('max')
         self.measure_min = QCheckBox('min')
-        self.measure_top = QCheckBox('top')
+        self.measure_dach = QCheckBox('dach')
         self.measure_base = QCheckBox('base')
         self.measure_mean = QCheckBox('mean')
         self.measure_peak_peak = QCheckBox('peak-peak')
@@ -613,7 +613,7 @@ class General(QWidget):
         self.checkbox_layout.addWidget(self.measure_amplitude)
         self.checkbox_layout.addWidget(self.measure_max)
         self.checkbox_layout.addWidget(self.measure_min)
-        self.checkbox_layout.addWidget(self.measure_top)
+        self.checkbox_layout.addWidget(self.measure_dach)
         self.checkbox_layout.addWidget(self.measure_base)
         self.checkbox_layout.addWidget(self.measure_mean)
         self.checkbox_layout.addWidget(self.measure_peak_peak)
@@ -760,7 +760,7 @@ class General(QWidget):
         self.measure_amplitude.stateChanged.connect(self.on_measure_changed)
         self.measure_max.stateChanged.connect(self.on_measure_changed)
         self.measure_min.stateChanged.connect(self.on_measure_changed)
-        self.measure_top.stateChanged.connect(self.on_measure_changed)
+        self.measure_dach.stateChanged.connect(self.on_measure_changed)
         self.measure_base.stateChanged.connect(self.on_measure_changed)
         self.measure_mean.stateChanged.connect(self.on_measure_changed)
         self.measure_peak_peak.stateChanged.connect(self.on_measure_changed)
@@ -969,7 +969,7 @@ class General(QWidget):
         self.status_label.setText("Status: application reset")
         self.status_clear_timer.start(3000) # 3 Sekunden anzeigen
         for cb in [
-            self.measure_amplitude, self.measure_max, self.measure_min, self.measure_top, self.measure_base,
+            self.measure_amplitude, self.measure_max, self.measure_min, self.measure_dach, self.measure_base,
             self.measure_mean, self.measure_peak_peak, self.measure_DCrms, self.measure_ACrms,
             self.measure_period, self.measure_frequency
         ]:
@@ -1078,7 +1078,7 @@ class General(QWidget):
             (self.measure_amplitude,    ("Amplitude", amplitude)),
             (self.measure_max,          ("Max", maximum)),
             (self.measure_min,          ("Min", minimum)),
-            (self.measure_top,          ("Top", dach)),
+            (self.measure_dach,          ("Top", dach)),
             (self.measure_base,         ("Base", base)),
             (self.measure_mean,         ("Mittelwert", mean)),
             (self.measure_peak_peak,    ("Peak-Peak", peak_peak)),
@@ -1339,7 +1339,6 @@ if __name__ == "__main__":
     # Queues für die Kommunikation zwischen Threads
     command_queue = queue.Queue() # GUI -> USB-FSM
     status_queue = queue.Queue()  # USB-FSM -> GUI_General
-    debugging_queue =queue.Queue() #USB-FSM -> GUI_Debugging
     stop_event = threading.Event()
 
     # 1. USB-Kommunikations-FSM in einem separaten Thread starten
