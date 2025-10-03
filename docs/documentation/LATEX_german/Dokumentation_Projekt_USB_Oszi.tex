@@ -651,6 +651,7 @@ Damit entspricht der Moving Average Filter einer Faltung des Eingangssignals mit
 Für das Projekt wurde der Filter kumulativ und rekursiv implementiert und nach dem Algorithmus in \autoref{fig:moving_avg_filter_algorithm_cumulative} im \autoref{subsubsec:preprocessing_concept} umgesetzt.
 
 \subsection{Parallele Prozesse und Nebenläufigkeiten in Python}
+Die folgenden Ausführungen orientieren sich maßgeblich auf den Erkentnissen von Niklas Lang ...
 \subsubsection{Threads in Python}
 	
 	Ein Thread ist ein paralleler Ausführungsstrang innerhalb eines Programms. Alle Threads teilen sich den selben Speicherbereich. 
@@ -673,7 +674,7 @@ Für das Projekt wurde der Filter kumulativ und rekursiv implementiert und nach 
 \subsubsection{Multiprocessing in Python}	
 	
 	Beim multiprocessing werden mehrere, vollständig unabhängige Prozesse gestartet. Jeder Prozess ist eine eigene Instanz des Programms mit eigenem Speicherbereich. Dies führt dazu, dass die
-	Kommunikation zwischen den jeweiligen Prozessen komplexer ist. Hierfür stellt das Python-Modul multiprocessing Funktionen und Klassen bereit. 
+	Kommunikation zwischen den jeweiligen Prozessen komplexer ist. Hierfür stellt das Python-Modul multiprocessing Funktionen und Klassen bereit.
 
 	Multiprocessing kann die Leistungsfähigkeit bei rechenintensiven Aufgaben deutlich steigern, bringt aber auch Overhead durch Speicherbedarf und zusätzliche Komplexität in der Verwaltung mit.
 
@@ -691,8 +692,8 @@ Für das Projekt wurde der Filter kumulativ und rekursiv implementiert und nach 
 \end{figure}
 
 In unserem Projekt wurden Threads verwendet, da die Anwendung hauptsächlich E/A-gebunden ist. Zusätzlich wird ein gemeinsamer Speicher benötigt, damit die Messdaten an die Benutzeroberfläche 
-übergeben werden können. Die Kommunikation wurde mit zwei Warteschlangen realisiert, eine dient zur Übergabe von Statusmeldungen von der FSM zur Benutzeroberfläche (GUI) und die andere zur
-Übergabe von Befehlen von der GUI an die FSM. 
+übergeben werden können. Die Kommunikation wurde mit zwei Warteschlangen realisiert, eine dient zur Übergabe von Statusmeldungen von der  PC FSM zur Benutzeroberfläche (GUI) und die andere zur
+Übergabe von Befehlen von der GUI an die PC FSM. 
 
 
 %%%%%%%%%%% Projektkonzeption %%%%%%%%%%%
@@ -1405,7 +1406,7 @@ Um das Hardwareinterface zu realisieren wurde die Zustandsmaschine, die auf den 
 
 \pagebreak
 
-\subsubsection{Konzept der Benutzeroberfläche}
+\subsubsection{Konzept Benutzeroberfläche}
 
 Die Benutzeroberfläche ist objektorientiert konzipiert und basiert auf einer modularen Aufteilung in mehrere Klassen, die jeweils spezifische Teilfunktionen realisieren. Abbildung~\ref{fig:klassendiagramm_gui} zeigt die wichtigsten Klassen sowie deren Beziehungen untereinander.
 
@@ -1430,6 +1431,35 @@ Die Funktionalität der einzelnen Seiten ist wie folgt aufgeteilt:
         \item \emph{MeasureWorker} Verwaltet die Ausführung der Messfunktionen und stellt deren Ergebnisse zur Anzeige bereit.
         \item \emph{CustomStepSpinBox} Realisiert benutzerdefinierte Drehregler zur komfortablen Parametereinstellung (nicht im Klassendiagramm dargestellt).
     \end{itemize}
+\end{itemize}
+
+\pagebreak
+
+\subsubsection{Auswahl und Definition der Messungen}
+Bei der Auswahl der Messungen wurde sich am Benutzerhandbuch des Agilent InfiniiVision 2000 X-Series Oszilloskop orientiert QUELLE. Folgende Messungen sollen mit dem USB-Oszilloskop möglich sein:
+
+\begin{itemize}
+	\item \textbf{Maximum:} Höchste Wert des Signals.
+	\item \textbf{Minimum:} Niedrigste Wert des Signals.
+	\item \textbf{Dach:} Häufigste Wert im oberen Wellenformteil. Falls dieser nicht eindeutig bestimmt werden kann ist der Dach Wert gleich dem Maximum.
+	\item \textbf{Base:} Häufigste Wert im unteren Wellenformteil. Falls dieser nicht eindeutig bestimmt werden kann ist der Base wert gleich dem Minimum.
+	\item \textbf{Amplitude:} Differenz zwischen Dach und Base.
+	\item \textbf{Spitze Spitze:} Differenz zwischen Maximum und Minimum.
+	\item \textbf{Mittelwert:} Mittelwert über vollständige Perioden. Dieser ergibt sich folgendermaßen:
+	$$ \mathrm{Mittelwert} = \frac{\Sigma x_i}{n} $$ 
+	{\footnotesize mit $x_i$ = Wert am Punkt i und n = Anzahl der Messwerte.}
+	\item \textbf{DC RMS:} Quadratischer Mittelwert über vollständige Perioden. Dieser ergibt sich folgendermaßen:
+	$$ 
+	\mathrm{RMS_{DC}} = \sqrt{\frac{\sum_{i=1}^{n} x_i^2}{n}} 
+	$$
+	{\footnotesize mit $x_i$ = Wert am Punkt i und n = Anzahl der Messwerte.}
+	\item \textbf{AC RMS:} Quadratischer Mittelwert, mit entfernter DC-Komponente über vollständige Perioden. Dieser ergibt sich folgendermaßen:
+	$$ 
+	\mathrm{RMS_{DC}} = \sqrt{\frac{\sum_{i=1}^{n} (x_i-\bar{x})^2}{n}} 
+	$$
+	{\footnotesize mit $x_i$ = Wert am Punkt i und n = Anzahl der Messwerte und $\bar{x}$ = Mittelwert über vollständige Periode.}
+	\item \textbf{Periode:} Zeit zwischen den mittleren Schwellenpunkten zweier aufeinanderfolgender Flanken.
+	\item \textbf{Frequenz:} Ist als Kehrwert der Periode definiert.
 \end{itemize}
 
 
@@ -1688,7 +1718,7 @@ Durch das Wechseln auf die Seite \emph{Debugging} bieten sich dem Benutzer noch 
 	\label{fig:debug_Benutzeroberflaeche}
 \end{figure}
 
-\subsection{Besonderheiten und Bedienhinweise}
+\subsubsection{Besonderheiten und Bedienhinweise}
 
 \begin{itemize}
     \item Änderungen der Trigger- oder Interpolationsart und Einstellungen im Debug-Fenster sind \textbf{\emph{ausschließlich im Idle-Zustand}} des Mikrocontrollers möglich. Die Messung muss zuvor gestoppt werden.
