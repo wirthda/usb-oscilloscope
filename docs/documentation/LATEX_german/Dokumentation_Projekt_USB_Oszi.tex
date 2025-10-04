@@ -760,7 +760,41 @@ Ausgehend von diesem Konzept und der klaren Aufteilung in die Bereiche Hardware,
 
 %%%%%%%%%%% Realisierung %%%%%%%%%%%
 \section{Hardware (HW)}
+
+Die Entwicklung der Hardware umfasste im Wesentlichen den \emph{Schaltplanentwurf, das Leiterplattenlayout, die Fertigung sowie den anschließenden Test} eines Aufsteckmoduls für den eingesetzten Mikrocontroller bzw. das zugehörige Nucleo-Board. Kernaufgabe dieser Baugruppe war die \emph{Signalaufnahme und -konditionierung} sowie die \emph{Wandlung des analogen Eingangssignals in ein digitales Signal}.
+
 \subsection{Entwurf}
+
+In der Entwurfsphase wurden Konzepte für die einzelnen Funktionaltäten erstellt und in einen Schaltplan umgesetzt, sowie die entsprechenden Bauelemente gewählt.
+
+\subsubsection{Auswahl des ADCs}
+
+Die zentrale Entscheidung im Hardwareentwurf war die Auswahl eines geeigneten \emph{Analog-Digital-Umsetzers (ADC)}. Grundlage hierfür bildeten die zuvor definierten Projektanforderungen, insbesondere die \emph{Signalbandbreite von 1 MHz} und die daraus abgeleitete Abtastrate von 10 MS/s (vgl. \autoref{subsec:aaf_nyquist}). Darüber hinaus wurde eine \emph{Auflösung von mindestens 10 Bit} sowie ein \emph{analoger Eingangsspannungsbereich von $\pm$ 5 V} gefordert, wobei letzterer bei Bedarf über einen Spannungsteiler realisiert werden konnte. Da im Projekt lediglich ein einzelner Kanal vorgesehen war, genügte ein einkanaliger ADC. Trotz der deutlich geringeren Komplexität einer Anbindung über SPI wurde eine parallele Schnittstelle gewählt, da diese auf Grund der seriellen Übertragung einen deutlich höheren Takt erfordert hätte.\\
+
+Neben diesen grundlegenden Anforderungen wurden weitere Parameter berücksichtigt, unter anderem das Rauschverhalten (SINAD, THD, ENOB…) sowie die Linearitätseigenschaften (INL, DNL). Um eine hohe Flexibilität im Entwicklungsprozess zu gewährleisten, fiel die Wahl auf einen Baustein, der sowohl im single-ended- als auch im differenziellen Betrieb eingesetzt werden kann. Zusätzlich sollte er im Dual-Supply- wie auch im Single-Supply-Betrieb einsetzbar sein und auf der digitalen Seite sowohl mit 3,3 V als auch mit 5 V betrieben werden können. Auch die Option zur Verwendung einer internen oder externen Referenzspannung war ein relevantes Kriterium, um die Anpassungsfähigkeit im späteren Entwicklungsverlauf zu erhöhen. Da die Wandlungslatenz nicht die primäre Einschränkung darstellte und vielmehr die Übertragungsgeschwindigkeit zwischen Mikrocontroller und PC der begrenzende Faktor war, wurde hinsichtlich der Architektur ein Pipeline-ADC ausgewählt. Dies ermöglichte im Vergleich zum Flash ADC eine höhere Auflösung (10 oder 12 Bit), bei gleichzeitiger Einhaltung eines annehmbaren Preisrahmens. Auch die Verfügbarkeit von SMD-Bauformen war ein wichtiges Kriterium.\\
+
+Nach eingehender Recherche und Vergleichen bei verschiedenen Bauteillieferanten konnte mit dem \href{https://www.analog.com/en/products/ltc1420.html}{LTC1420} von Linear Technology ein ADC identifiziert werden, der alle definierten Anforderungen erfüllt. Er bietet mit \emph{12 Bit} eine höhere Auflösung als ursprünglich gefordert, zeichnet sich durch eine hohe Flexibilität im Betrieb (Single- oder Dual-Supply, differentiell oder single-ended, interner oder externer Referenzbetrieb) aus und weist zugleich ein \emph{sehr gutes Rauschverhalten} auf. Dieses zeigt sich insbesondere darin, dass die \emph{effektive Auflösung (ENOB)} nahe an der nominalen Bitzahl liegt (siehe Datenblatt \cite{LinearTechnology1420}, Rechnung ENOB).
+
+\subsubsection{Anforderungen an die Signalaufnahme und -konditionierung}
+
+
+Nach der Auswahl des ADC mussten die Anforderungen an die \emph{Signalkonditionierung} sowie an die \emph{Signalaufnahme} spezifiziert werden. Für die Signalaufnahme war vorgesehen, dass diese ebenfalls über einen \emph{Tastkopf} möglich sein sollte. Daraus ergaben sich die Notwendigkeit einer \emph{BNC-Buchse} als Eingangsschnittstelle sowie ein \emph{Eingangswiderstand von 1 M$\Omega$}. Eine Anpassung der Eingangs- oder Leitungsimpedanz war aufgrund der im Projekt relevanten Frequenzen nicht erforderlich.\\
+
+Der \emph{LTC1420} weist eine durch die Versorgungsspannung begrenzte maximale absolute Eingangsspannung auf. Im \emph{Single-Supply-Betrieb} liegt der Eingangsbereich zwischen 0 V und VDD (typisch 5 V), während er im \emph{Dual-Supply-Betrieb} durch VDD und VSS definiert wird. Der \emph{differenzielle Eingangsspannungsbereich} ist direkt proportional zur \emph{Referenzspannung (VREF)} und beträgt bei \emph{VREF = 5 V (maximal zulässig laut Datenblatt)} $\pm$2,5 V (entspricht 5 Vpp zwischen VIN+ und VIN–). Zur Realisierung eines Oszilloskop-Eingangsbereichs von $\pm$5 V (10 Vpp) war daher eine \emph{Pegelabsenkung} am Eingang vorzusehen. Entsprechend wurde eine \emph{maximale absolute Eingangsspannung von $\pm$10 V} an der BNC-Buchse festgelegt \cite{LinearTechnology1420}.\\
+
+Um auch bei Eingangssignalen mit geringerer Amplitude die \emph{volle Auflösung des ADC} zu nutzen, wurde eine \emph{variable Eingangsspannungsskalierung} vorgesehen. Zusätzlich war ein \emph{einstellbarer DC-Offset} erforderlich, um Signale mit Gleichanteil in den nutzbaren Wandlungsbereich zu verschieben. Darüber hinaus sollte eine \emph{umschaltbare AC-Kopplung} über einen Längskondensator die Unterdrückung von Gleichanteilen ermöglichen. Außerdem war ein \emph{Anti-Aliasing-Filter} mit Grenzfrequenz und Sperrbanddämpfung nach dem \emph{Nyquist-Kriterium} auszulegen, um Alias-Effekte und daraus resultierende Signalverzerrungen bei der Digitalisierung zu vermeiden (siehe \autoref{subsec:aaf_nyquist}).\\
+
+\textbf{+Trigger}
+
+\subsubsection{Konzept der Signalaufnahme und- konditionierung}
+
+Auf Basis der Anforderungen an Signalaufnahme und Konditionierung wurde zunächst ein Gesamtkonzept für den Hardwareteil erarbeitet. Diese Vorarbeit war notwendig, weil sich die Funktionsblöcke des Hardwareteils gegenseitig beeinflussen und zentrale Architekturentscheidungen früh zu treffen sind. Zwei Fragen standen dabei zu Beginn im Vordergrund. Erstens die Wahl zwischen Single-Ended und differenzieller Signalführung im analogen Frontend. Zweitens die Versorgung des Analogteils mit Single- oder Dualsupply. Trotz der Vorteile eines differenziellen Frontends wie Gleichtaktunterdrückung und Messung gegen ein vom Gerätemassepunkt unabhängiges Bezugspotenzial fiel die Entscheidung zugunsten einer Single-Ended-Lösung. Ausschlaggebend waren die deutlich größere Bauteilauswahl, der geringere Schaltungsaufwand und die vermiedene doppelte Signalführung. Für die Versorgung wurde eine Dual-Supply-Variante vorgesehen. Eine reine Single-Supply-Auslegung hätte einen virtuellen Massepunkt durch eine Offsetschaltung im analogen Frontend und geringe Aussteuerungsreserven erfordert und wäre damit näher an den Grenzwerten von Operationsverstärkern und ADC gelegen.\\
+
+Im nächsten Schritt wurde der nutzbare Eingangsspannungsbereich des ADC festgelegt. Da der gewählte Umsetzer eine Anpassung über die Referenzspannung erlaubt, wird der Bereich über VREF in Verbindung mit einem DAC gesetzt. Diese Lösung ist im Datenblatt vorgesehen und ersetzt einen variablen analogen Verstärker im Frontend, womit eine Aufwendige OPV-Schaltung oder Bauteilrecherche vermieden werden konnten. Zusätzlich verringert sich damit die Komplexität des Signalpfads. Es entfallen zusätzliche Rausch- und Stabilitätsrisiken, die bei verstellbaren Verstärkungsstufen erfahrungsgemäß auftreten. Aus demselben Grund wird der notwendige Gleichspannungs-Offset nicht durch eine separate OPV-Schaltung erzeugt, sondern über den negativen Analogeingang des ADC eingebracht. Das analoge Frontend stellt damit nur die Funktionen bereit, die unmittelbar für Impedanz, Pegelanpassung, Kopplung, Pufferung, Triggerabgriff und Bandbegrenzung erforderlich sind.\\
+
+Das Analoge Frontend beginnt unmittelbar nach der BNC-Buchse mit einer Eingangsimpedanz von 1 Megaohm. Dieser Widerstand ist Teil eines Spannungsteilers, der die Pegel auf den zuvor definierten ADC-Bereich absenkt. Um den Teiler nicht zu belasten, folgt ein hochohmiger Spannungsfolger als Impedanzwandler. Zwischen Teilerknoten und OPV-Eingang ist eine schaltbare Kopplung vorgesehen. Durch den hohen Eingangswiderstand des Puffers entsteht bereits mit kleinen Kapazitäten ein Hochpass mit niedriger Grenzfrequenz, sodass im AC-Betrieb auch langsame Signalanteile kaum beeinflusst werden. Hinter dem Impedanzwandler wird das Triggersignal abgegriffen und einer eigenen Auswertestufe zugeführt, die ein digitales Triggerereignis an den Mikrocontroller weitergibt. Vor dem positiven Analogeingang des ADC liegt das Anti-Aliasing-Filter, dessen Auslegung im entsprechenden Kapitel beschrieben ist und das die erforderliche Bandbegrenzung sicherstellt. Den Abschluss des Konzepts bilden die Versorgungsblöcke. Sie stellen die duale Versorgung für Operationsverstärker und Peripherie bereit.\\
+
+Das beschriebene Konzept reduziert den Schaltungsaufwand auf das notwendige Minimum, nutzt die Stärken des ADC bei Bereichs- und Offseteinstellung und minimiert zugleich Empfindlichkeit gegen Rauschen, Schwingen und Toleranzen. Es schafft damit eine belastbare Grundlage für die nachfolgenden Teilschaltungen. Das Konzept ist in dem in \autoref{fig:afe_diagram} skizzierten Blockschaltbild dargestellt.
 
 \begin{figure}[H]
 	\centering
@@ -768,6 +802,72 @@ Ausgehend von diesem Konzept und der klaren Aufteilung in die Bereiche Hardware,
 	\caption{Prinzipschaltbild des Analog-Frontends (AFE)}
 	\label{fig:afe_diagram}
 \end{figure}
+
+Nach Abschluss des Gesamtkonzepts für die Hardwareschaltung wurden die einzelnen Funktionsbereiche in sinnvoller Reihenfolge ausgearbeitet und schrittweise in einen Schaltplan überführt. Als Werkzeug diente KiCad\footnote{\href{https://docs.kicad.org/}{KiCad Dokumentation}}, das später auch für die Erstellung des Platinenlayouts verwendet wurde. Die Entscheidung für KiCad fiel aufgrund der offenen Lizenz und der niedrigen Einstiegshürde.
+
+\subsubsection{Anpassung des Spannungsbereichs}
+
+Zunächst wurde die Methode zur Einstellung des Spannungsbereichs festgelegt, weil diese die Auslegung von Teilerverhältnis, Offset und maximal möglicher Eingangsspannung bestimmt. Gewählt wurde die Einstellung über einen Digital-Analog-Umsetzer, da diese Vorgehensweise im Datenblatt beschrieben ist und bereits eine entsprechende Schaltung vorgegeben wird. Der ADC-Eingangsbereich wird ohne Vorverstärkung durch $\frac{V_{ref}}{2}$ bestimmt. Die im Datenblatt gezeigte Beschaltung nutzt den im LTC1420 integrierten Operationsverstärker in einer invertierenden Konfiguration mit Bezugspotenzial am nichtinvertierenden Eingang. Über die externe Verschaltung ergibt sich ein invertierender Verstärker mit einer Verstärkung von 1, dessen Bezugspotenzial um 2.048 V angehoben ist. Die Beziehung zu $V_{ref}$ lässt sich wie folgt herleiten:\\
+
+Unter der Annahme, dass die Differenzspannung der OPV-Eingänge und die Eingangsströme jeweils Null sind, gelten die Gleichungen\\
+
+\begin{equation}
+	I_1 = I_2
+\end{equation}
+
+und damit
+
+\begin{equation}
+	\frac{U_1}{R_1} = \frac{U_2}{R_2}
+\end{equation}
+
+\begin{equation}
+	U1 = U_{DAC} - U_{int}
+\end{equation}
+
+\begin{equation}
+	U2 = U_{int} - V_{ref}
+\end{equation}
+
+daraus folgt
+
+\begin{equation}
+	\frac{U_{DAC} - U_{int}}{R_1} = \frac{U_{int} - V_{ref}}{R_2}
+\end{equation}
+
+umgestellt nach $V_{ref}$
+
+\begin{equation}
+	V_{ref} = -\frac{R_2}{R_1} \cdot (U_{int} - V_{ref}) + U_{int}
+\end{equation}
+
+Für $R_1 = R_2 = 5 k\Omega$ und $U_{int} = 2.048V$ ergibt sich
+
+\begin{equation}
+	V_{ref} = -U_{DAC} + 4.096V
+\end{equation}
+
+Auf Basis dieser Formel ist in der gezeigten Beschaltung ein theoretischer Einstellbereich von $V_{ref}$ zwischen 0 V und 4.096 V möglich, was einem differentiellen Eingangsspannungsbereich von $\pm$ 2.048V entspricht. Als DAC wird, wie im Datenblatt beschrieben, der LTC1450 eingesetzt. Die Auflösung beträgt 1 mV bezogen auf den ADC-Eingang, entsprechend den 12 Bit des DAC. Die Beschaltung des DAC wird aus dem Datenblatt abgeleitet. Zur Nutzung der internen Referenz des DAC sind REFOUT und REFHI verbunden. An diesen beiden Knoten liegt ein RC-Glied zur Reduzierung des Referenzrauschens, ausgeführt nach den Empfehlungen des Datenblatts. REFLO ist an die analoge Masse geführt.\\
+
+Die digitale Ansteuerung des LTC1450 folgt der im Datenblatt erläuterten Logik. Die Eingänge CSLSB, CSMSB und WR sind low-aktiv und schalten die Input-Latches transparent, wobei WR zum Schreiben aktiv sein muss und die beiden anderen jeweils die unteren acht beziehungsweise die oberen vier Bit ansteuern.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.5]{ltc1450_block_diagram.png} 
+	\caption{Blockschaltbild des LTC1450 aus \cite[S. 1]{LinearTechnology1450}}
+	\label{fig:ltc1450_block_diagram}
+\end{figure}
+
+Da die ausgegebenen Werte in diesem Projekt direkt in die Input-Latches geschrieben werden, sind alle drei Signale dauerhaft auf Low gelegt, sodass immer alle zwölf Bit in die Latches übernommen werden. Das Update des Ausgangs erfolgt ausschließlich über den LDAC-Eingang, der die Inhalte der Input-Latches in die DAC-Latches übernimmt und damit die Ausgangsspannung aktualisiert. Der CLR-Eingang setzt alle Latches auf Null und damit den Ausgang des invertierenden Verstärkers sofort auf den höchsten möglichen Wert für $V_{ref}$, also den größtmöglichen Eingangsspannungsbereich. Die Ausgangsverstärkung des DAC-Puffers wird über X1/X2 bestimmt und ist hier durch Verbindung nach GND auf zwei gesetzt, wodurch eine Full-Scale-Spannung von 4.095 V erreicht wird. Zusätzlich werden die Versorgungsspannung von 5 V sowie der digitale Ground angeschlossen. Zwischen $V_{CC}$ und GND ist gemäß Datenblatt ein 0,1 $\mu$F-Kondensator vorzusehen. Mit diesen Festlegungen ließ sich die Referenzschaltung im Schaltplan umsetzen. Die Datenleitungen wurden über Bussymbole geführt, um sie im Schaltplan eindeutig und übersichtlich den nachfolgenden Verarbeitungsschritten zuzuordnen.\\
+
+Der zuegehörige Schaltplanteil findet sich auf Seite 3 des Schematics im \autoref{appendix_a}.
+
+\subsubsection{Offset und Eingangsbeschaltung des ADCs}
+
+
+
+
+
 \subsection{Implementierung}
 \subsection{HW-Test}
 \label{subsec:hw_test}
@@ -1406,7 +1506,7 @@ Der \texttt{USB\_DEVICE}-Treiber übernimmt die Initialisierung und Verwaltung d
 
 Damit ergibt sich eine klare Schichtentrennung:
 \begin{itemize}
-    \item \texttt{USB\_DEVICE-Treiber} und Middleware: Low-Level-USB-Verwaltung, Deskriptoren, Endpoints.
+    \item \texttt{USB\_DEVICE}-Treiber und Middleware: Low-Level-USB-Verwaltung, Deskriptoren, Endpoints.
     \item \emph{Applikationscode} (\texttt{app.c/.h}): Logik des Oszilloskops, Aufruf von \texttt{CDC\_Transmit\_FS} für Messdaten, Implementierung von Empfangslogik in \texttt{CDC\_Receive\_FS}.
     \item \emph{PC-Seite} (Python): Verarbeitung der Datenströme über serielle Schnittstellen-Funktionen.
 \end{itemize}
@@ -1651,7 +1751,9 @@ Beim Anschluss sind die \autoref{tab:connections} und die darunterliegenden Hinw
 \subsection{Funktionstest}
 \label{subsec:integrationtest}
 
-Um die Funktion des Oszilloskops zu überprüfen wurde eine Reihe an Testsignalen mittels Funktionsgenerator eingespeist. Dies sollten dazu dienen die Performanz der Baugruppe zu testen. Die resultierenden Signale sind den folgenden Abbildungen zu entnehmen.
+Um die Funktion des Oszilloskops zu überprüfen wurde eine Reihe an Testsignalen mittels Funktionsgenerator eingespeist. Dies sollten dazu dienen die Performanz der Baugruppe zu testen. Die resultierenden Signale sind den folgenden Abbildungen zu entnehmen.\\
+
+Zu Beginn wurden sinusförmiger Wechselspannungen mit kleiner Amplitude eingespeist, um die generelle Darstellung zu überprüfen.
 
 \begin{figure}[H]
 	\centering
@@ -1664,6 +1766,9 @@ Um die Funktion des Oszilloskops zu überprüfen wurde eine Reihe an Testsignale
 	\includegraphics[scale=0.4]{test_sine_100khz_2vpp.png}
 	\caption{Testsignal: Sinus (f = 100 kHz, $V_{pp}$ = 2 V)}
 \end{figure}
+
+Die dargestellten Signale decken sich mit den Erwartungen.
+\pagebreak
 
 \begin{figure}[H]
 	\centering
