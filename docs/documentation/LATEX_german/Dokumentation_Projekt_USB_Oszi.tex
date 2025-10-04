@@ -864,6 +864,12 @@ Der zuegehörige Schaltplanteil findet sich auf Seite 3 des Schematics im \autor
 
 \subsubsection{Offset und Eingangsbeschaltung des ADCs}
 
+\subsubsection{Eingangsimpedanz und Kopplung}
+
+\subsubsection{Anti-Aliasing-Filter}
+\label{subsubsec:aaf_concept}
+
+
 
 
 
@@ -1532,7 +1538,7 @@ Der nachfolgenden \autoref{fig:uml_sequence_communication} lassen sich die defin
 \subsubsection{Auswahl des Frameworks}
 \label{subsubsec:framework_selection}
 Die Programmiersprache Python wurde für die Umsetzung gewählt, da sie eine breite Unterstützung für wissenschaftliche und hardware-nahe Programmierung bietet. 
-Durch umfangreiche Bibliotheken wie \emph{numpy}\footnote{\href{https://numpy.org/doc/2.3/}{\emph{numpy}-Dokumentation der verwendeten Version 2.3}} für numerische Auswertung, \emph{matplotlib}\footnote{\href{https://matplotlib.org/3.10.3/index.html}{\emph{matplotlib}-Dokumentation für die verwendete Version 3.10.3}} für die grafische Darstellung der Daten, \emph{pyserial}\footnote{\href{https://pyserial.readthedocs.io/en/latest/pyserial.html}{\emph{pyserial}-Dokumentation (verwendete Version: 3.5)}} für Schnittstellenkommunikation sowie leistungsfähige Frameworks für GUI-Entwicklung wie \emph{PySide6}\footnote{\href{https://doc.qt.io/qtforpython-6/index.html}{\emph{PySide6}-Dokumentation (verwendete Version: 6.9.2)}},
+Durch umfangreiche Bibliotheken wie \emph{numpy}\footnote{\href{https://numpy.org/doc/2.3/}{\emph{numpy}-Dokumentation der verwendeten Version 2.3}} und \emph{scipy}\footnote{\href{https://docs.scipy.org/doc/numpy-1.16.1/reference/}{\emph{scipy}-Dokumentation für die verwendete Version 1.16.1}} für numerische Auswertung, \emph{matplotlib}\footnote{\href{https://matplotlib.org/3.10.3/index.html}{\emph{matplotlib}-Dokumentation für die verwendete Version 3.10.3}} für die grafische Darstellung der Daten, \emph{pyserial}\footnote{\href{https://pyserial.readthedocs.io/en/latest/pyserial.html}{\emph{pyserial}-Dokumentation (verwendete Version: 3.5)}} für Schnittstellenkommunikation sowie leistungsfähige Frameworks für GUI-Entwicklung wie \emph{PySide6}\footnote{\href{https://doc.qt.io/qtforpython-6/index.html}{\emph{PySide6}-Dokumentation (verwendete Version: 6.9.2)}},
 eignet sich Python besonders für prototypische Entwicklung. Python ist eine dynamische Sprache mit einfachen Syntax, so dass Funktionalitäten rasch entwickelt, geteste und iterativ verbessert werden können. Ein weiterer Vorteil ist die Portabilität und einfache Installation. Python ist auf allen wichtigen Betriebssystemen verfügbar und einfach zu installieren. Außerdem können Pakete einfach in einer virtuellen Umgebung gebündelt werden, um den eigenen PC nicht unnötig zu belasten. Alle für unser Projekt benötigten Pakete sind in der Datei \emph{requirements.txt} aufgelistet. Eine Installationsanleitung findet sich im \autoref{sec:appendix_a}.
 
 Die Benutzeroberfläche wurde mit dem Framework \emph{Pyside6} realisiert. Dies ist eine speziell für Python abgewandelte Version von Qt. \emph{PySide6} stellt viele Klassen und Objekte zur Verfügung, die es dem Nutzer einfach machen, ohne viel Erfahrung eine Benutzeroberfläche zu programmieren. Der Vorteil gegenüber der Nutzung von Qt für C++ liegt, darin, dass sich der Nutzer nicht selbst um die Speicherverwaltung kümmern muss. 
@@ -1770,17 +1776,24 @@ Zu Beginn wurden sinusförmiger Wechselspannungen mit kleiner Amplitude eingespe
 Die dargestellten Signale decken sich mit den Erwartungen.
 \pagebreak
 
+Anschließend wurde die Amplitude etwas erhöht.
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.4]{test_sine_100khz_8vpp.png}
 	\caption{Testsignal: Sinus (f = 100 kHz, $V_{pp}$ = 8 V)}
 \end{figure}
 
+Hier zeigte sich, dass das Signal einen leichten Offset erhält. In Anbetracht der Umstände, dass vor allem die Prüfung der Konzepte eines Oszilloskops im Vordergrund stand, ist das Ergebnis auch hier zufriedenstellend.
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.4]{test_sine_500khz_2vpp.png}
 	\caption{Testsignal: Sinus (f = 500 kHz, $V_{pp}$ = 2 V)}
+	\label{fig:test_sine_500khz_2vpp}
 \end{figure}
+
+Bei der weiteren Erhöhung der Frequenz wurde die lineare Interpolation zwischen den Abtastwerten sichtbar (siehe \autoref{fig:test_sine_500khz_2vpp}). Aus diesem Grund wurde hier nun die Interpolations-Funktion der PC-Anwendung getestet.
 
 \begin{figure}[H]
 	\centering
@@ -1792,18 +1805,28 @@ Die dargestellten Signale decken sich mit den Erwartungen.
 	\centering
 	\includegraphics[scale=0.4]{test_sine_1Mhz_2vpp.png}
 	\caption{Testsignal: Sinus (f = 1 MHz, $V_{pp}$ = 2 V)}
+	\label{fig:test_sine_1mhz_2vpp}
 \end{figure}
+
+Bei Erreichen der Grenzfrequenz (Bandbreite: 1 MHz) zeigt sich bereits eine leichte Dämpfung des Signals (siehe \autoref{fig:test_sine_1mhz_2vpp}). Diese ist jedoch auch zu erwarten, da beim Entwurf des Anti-Aliasing-Filters (siehe \autoref{subsubsec:aaf_concept}) eine Dämpfung von etwa -1 dB ($a_V\approx 0.89$) in Kauf genommen wurde, damit u.a. ein steiler Übergang zwischen Pass- und Stopband des Filters erreicht werden konnte.
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.4]{test_sine_1Mhz_2vpp_interpolation_spline.png}
 	\caption{\centering Testsignal: Sinus (f = 1 MHz, $V_{pp}$ = 2 V)\\ \footnotesize Polynom-Interpolation}
+	\label{fig:test_sine_1Mhz_2vpp_interpolate}
 \end{figure}
+
+Als Interpolationsalgorithmus wurde eine spezielle Form der Polynom-Interpolation verwendet. Es handelt sich um eine Annäherung durch an das Signal mittels Spline (dt. Polynomzug), eine abschnittsweise definierte Funktion, die aus Polynomen zusammengestezt ist (\emph{scipy}: \href{https://docs.scipy.org/doc/scipy-1.16.1/reference/generated/scipy.interpolate.make_interp_spline.html}{\texttt{make\_interp\_spline}}). Da stets eine Annäherung mit Polynomen erfolgt, können an den Rändern der interpolierten Datenreihe (Anfang und Ende der Signalaufzeichnung) Verzerrungen auftreten (siehe \autoref{fig:test_sine_1Mhz_2vpp_interpolate}).\\
+
+Nachdem die grundlegende Signaldarstellung und auch die Interpolation in der PC-Anwendung überprüft wurde, konnten weitere Funktionalitäten, wie die Messungs-Funktionen und Cursor getestet werden.\\
+
+Das Ergebnis der Messungen entspricht den händisch berechneten Werten für das jeweilig eingespeiste Signal (beispielhafte Rechnung siehe \autoref{eq:ac_rms} und \autoref{eq:dc_rms}).
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.4]{test_sine_100khz_4vpp_gui_measurements.png}
-	\caption{\centering Testsignal: Sinus (f = 1 MHz, $V_{pp}$ = 4 V)\\ \footnotesize Überprüfung mittels Measure-Funktionen}
+	\caption{\centering Testsignal: Sinus (f = 100 kHz, $V_{pp}$ = 4 V)\\ \footnotesize Überprüfung mittels Measure-Funktionen}
 \end{figure}
 
 \begin{figure}[H]
@@ -1817,19 +1840,27 @@ Rechnerische Überprüfung des Measure-Ergebnisses von \emph{AC-RMS} und \emph{D
 
 \begin{equation}
 	V_{AC-RMS} = \frac{\hat{V_1}}{\sqrt{2}} = \frac{2V}{\sqrt{2}} = 1.41 V
+	\label{eq:ac_rms}
 \end{equation}
 
 \begin{equation}
 	V_{DC-RMS} = \sqrt{\left( \frac{\hat{V_1}}{\sqrt{2}}\right)^2 + V_0^2} = \sqrt{\left( \frac{2V}{\sqrt{2}}\right)^2 + (1V)^2} = 1.73 V
+	\label{eq:dc_rms}
 \end{equation}
+
+Als Nächstes wurden Rechteck-Wechselsignal eingespeist.
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.4]{test_square_10khz_2vpp_gui_measurements_cursors.png}
 	\caption{\centering Testsignal: Rechteck (f = 10 kHz, $V_{pp}$ = 2 V)\\ \footnotesize Überprüfung mittels Measure-Funktionen und Cursorn}
+	\label{fig:test_square_10khz_2vpp}
 \end{figure}
 
-Man beachte die Top- und Base-Messung, die ist top.
+Anhand der Messung, die in \autoref{fig:test_square_10khz_2vpp} zu sehen ist, konnte überprüft werden, ob die Top und Base Messung funktionieren. Eingespeist wurde ein Rechtecksignal mit einer Amplitude von 2 V. Somit wurde für Top und Base ein Wert von 1 V erwartet. Wie \autoref{fig:test_square_10khz_2vpp} entnommen werden kann, misst das USB-Oszi: Top = 1.00 V und Base = -0,99 V. Dieses Ergebnis war zufriedenstellend. 
+\pagebreak
+
+Auch waren bei den Rechtecksignal-Messungen stets Überschwinger an den Flanken bzw. Übergängen zu beobachten. Dies lässt sich aber auch mit dem Entwurf des AAF erklären (siehe \autoref{subsubsec:aaf_concept}).
 
 \begin{figure}[H]
 	\centering
@@ -1849,17 +1880,54 @@ Man beachte die Top- und Base-Messung, die ist top.
 	\caption{Testsignal: Rechteck (f = 500 kHz, $V_{pp}$ = 2 V)}
 \end{figure}
 
+Beim weiteren Erhöhen der Frequnz, entfallen durch den AAF die hochfrequenten Anteile an den Flanken, sodass die Flanken immer flacher werden und die Wellenform immer sinusähnlicher wird.\\ Beim Erreichen der Grenzfrequenz ist nur noch die Grundschwingung (1 MHz Sinus) zu sehen (siehe \autoref{fig:test_square_1Mhz_2vpp}).
+
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.4]{test_square_1Mhz_2vpp.png}
 	\caption{Testsignal: Rechteck (f = 1 MHz, $V_{pp}$ = 2 V)}
+	\label{fig:test_square_1Mhz_2vpp}
 \end{figure}
+
+\pagebreak
+
+Der Vollständigkeit halber wurde auch ein sägezahnförmiges Testsignal eingespeist (siehe \autoref{fig:test_sawtooth_20khz_2vpp}). Auch hier treten Überschwinger an steilen Flanken auf.
 
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.4]{test_sawtooth_10khz_4vpp.png}
 	\caption{Testsignal: Sägezahn (f = 10 kHz, $V_{pp}$ = 4 V)}
+	\label{fig:test_sawtooth_20khz_2vpp}
 \end{figure}
+
+Da sich der Test der Hardware-Offset-Einstellung (Trimm-Potentiometer \texttt{RVoff1}) alleine mit der Hardware als schwierig erweist, wurde diese erst bei der Zusammenführung überprüft.\\
+
+Zunächst wurde ein Rechtecksignal eingespeist und das Offset-Potentiometer so eingestellt, dass am negativen Eingang des ADCs (Bezugspotential $V_{offset}$) 0V anliegen (siehe \autoref{fig:test_offset_none}).\\
+Bei der Einspeisung eines negativen Bezugspotentials (siehe \autoref{fig:test_offset_negative}) verschiebt sich das resultierende Signal bei unverändertem Eingangssignal nach oben, dies entspricht dem erwarteten Verhalten. Es scheint dann so, als wäre eine positive Offset-Spannung überlagert.\\
+Bei der Einspeisung eines positiven Bezugspotentials (siehe \autoref{fig:test_offset_positive}) verschiebt sich das resultierende Signal bei unverändertem Eingangssignal nach unten, dies entspricht dem erwarteten Verhalten. Es scheint dann so, als wäre eine negative Offset-Spannung überlagert.
+
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.3]{Offset_0V_4Vpp_100kHz.png}
+	\caption{\centering Testsignal: Rechteck (f = 100 kHz, $V_{pp}$ = 4 V)\\			\footnotesize $V_{offset}$ = 0 V}
+	\label{fig:test_offset_none}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.3]{Offset_-0,77V_4Vpp_100kHz.png}
+	\caption{\centering Testsignal: Rechteck (f = 100 kHz, $V_{pp}$ = 4 V)\\			\footnotesize $V_{offset}$ = -0.77 V}
+	\label{fig:test_offset_negative}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+	\includegraphics[scale=0.3]{Offset_0,79V_4Vpp_100kHz.png}
+	\caption{\centering Testsignal: Rechteck (f = 100 kHz, $V_{pp}$ = 4 V)\\			\footnotesize $V_{offset}$ = +0.79 V}
+	\label{fig:test_offset_positive}
+\end{figure}
+
 
 
 
