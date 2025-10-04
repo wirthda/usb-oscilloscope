@@ -1500,7 +1500,7 @@ Bei der Auswahl der Messungen wurde sich am Benutzerhandbuch des Agilent Infinii
 	{\footnotesize mit $x_i$ = Wert am Punkt i und n = Anzahl der Messwerte.}
 	\item \textbf{AC RMS:} Quadratischer Mittelwert, mit entfernter DC-Komponente über vollständige Perioden. Dieser ergibt sich folgendermaßen:
 	$$ 
-	\mathrm{RMS_{DC}} = \sqrt{\frac{\sum_{i=1}^{n} (x_i-\bar{x})^2}{n}} 
+	\mathrm{RMS_{AC}} = \sqrt{\frac{\sum_{i=1}^{n} (x_i-\bar{x})^2}{n}} 
 	$$
 	{\footnotesize mit $x_i$ = Wert am Punkt i und n = Anzahl der Messwerte und $\bar{x}$ = Mittelwert über vollständige Periode.}
 	\item \textbf{Periode:} Zeit zwischen den mittleren Schwellenpunkten zweier aufeinanderfolgender Flanken.
@@ -1509,11 +1509,11 @@ Bei der Auswahl der Messungen wurde sich am Benutzerhandbuch des Agilent Infinii
 
 
 \pagebreak
-\section{Implementierung}
+\subsection{Implementierung}
 
 Die nachfolgende Beschreibung gibt einen Überblick über die Umsetzung der Software. Diese schließt sowohl das Hardwareinterface, zur Kommunikation mit dem $\mu$C ein, sowie die Benutzeroberfläche. Für genaue Informationen zur Implementierung sei auf die Quellcode-Dateien verwiesen.
 
-\subsection{Hardwareinterface}
+\subsubsection{Hardwareinterface}
 Die Implementierung der FSM auf dem PC erfolgte nach dem in \autoref{sec:appendix_a} dargestellten Zustandsdiagramm. Hierfür wurde das Python Paket \emph{python-statemachine} verwendet. Dieses ermöglicht es Zustände und Zustandstransitionen einfach zu erstellen. Der Zustandsautomat wurde folgendermaßen implementiert:
 
 \begin{lstlisting}[language=Python, caption={Implementierung der Zustandsmaschine \texttt{usbOsziPC} in Python}]
@@ -1547,24 +1547,25 @@ Anschließend werden die Rohdaten mit der Funktion \emph{calculate\_voltage()} i
 $$
 \frac{\text{raw\_value}}{4095} \cdot v_{\text{ref}} \cdot 10^{-3} \cdot v_{\text{div\_factor}}
 $$
-{\footnotesize Die 4095 ergeben sich aus der Auflösung des ADCs von 12 Bit. $v_ref$ ist die eingestellte Referenzspannung. Der div\_factor ergibt sich aus dem Spannungsteiler im AF.}
+{\footnotesize Die 4095 ergeben sich aus der Auflösung des ADCs von 12 Bit. $v_{ref}$ ist die eingestellte Referenzspannung. Der div\_factor ergibt sich aus dem Spannungsteiler im AF.}
 
-\subsection{Kommunikation zwischen Hardwareinterface und Benutzeroberfläche}
+\subsubsection{Kommunikation zwischen Hardwareinterface und Benutzeroberfläche}
 Die Kommunikation zwischen den beiden Threads wurde mit zwei Queues realisiert, die \emph{command\_queue} und die {status\_queue}. Um zu verhindern, dass Daten überschrieben werden oder verloren gehen, kann immer nur ein Thread schreibend zugreifen und der andere nur lesend. So schreibt der GUI-Thread Befehle in die \emph{command\_queue}, der FSM-Thread liest diese aus und führt basiert auf seinem aktuellen Zustand und den Befehlen die passende Codezeile aus. Dabei schreibt er bei Zustandswechsel oder im Fehlerfall eine Nachricht in die  \emph{status\_queue}, welche wiederrum vom Thread der \emph{StatusProvider} Klasse, die sich im Programm der Benutzeroberfläche befindet, ausgewertet wird.\\ 
 
 Die \emph{StatusProvider} Klasse liest die \emph{status\_queue} aus und sendet eine Nachricht an die jeweilige Funktion \emph{handle\_status}, die sich in den Klassen \emph{General} und \emph{Debugging} befindet. Hier wird entschieden, ob die Nachricht für die Seite der GUI bestimmt war. Hier wird dann die eigentliche Reaktion auf die Statusmeldung ausgeführt.\\
 
 Die \emph{StatusProvider} Klasse wird bei Programmstart als Thread instanziiert und fragt die \emph{status\_queue} alle 100~ms ab.
 
-\subsection{Benutzeroberfläche}
+\subsubsection{Benutzeroberfläche}
 
 - Umrechnung der Werte vom uC in Spannungswerte
 - Plot -> einmal aufbauen nur aktualisiert
 - Wie wurden Cursor realisiert
-- Queues 
 - FSM GUI
 - FSM PC
 - Erstellen der Threads
+
+\subsubsection{Messfunktionen}
 - Implementierung der Messungen (Periode, Dach und Base)
 
 
@@ -1573,10 +1574,15 @@ Die \emph{StatusProvider} Klasse wird bei Programmstart als Thread instanziiert 
 \pagebreak
 
 \subsection{SW-Test}
+Die Entwicklung der Software war ein iterativer Prozess. Somit wurde eine Funktionalität programmiert und getestet, bevor eine neue Funktionalität dazu kam.\\
 
-- Zunächst wurde die Funktionalität der Zustandsmaschine auf dem PC unabhängig vom $\mu$C getestet, indem die Transitionen, die vom $\mu$C kommen, durch Tasten simuliert wurden. 
-- Weitere Tests wurden mit einem Programm auf den uC gemacht, das feste Werte an den PC überträgt.
-- Abschließend wurde die Funktionalität aller GUI-Elemente mit dem Gesamtsystem getestet, siehe \ref{subsec:integrationtest}
+Im ersten Schritt wurde überprüft, ob sich die PC FSM wie gewünscht verhält. Dies wurde unabhängig vom $\mu$C getestet, indem die Transtitionen, die vom $\mu$C kommen, durch Tastatureingaben simuliert wurden.
+\\
+
+Nachdem die Kommunikation zwischen $\mu$C und PC implementiert war, wurden weitere Test mit Dummy-Daten, die vom $\mu$C auf den PC übertragen wurden, durchgeführt. Mit diesem Testaufbau konnten alle Funktionalitäten der Benutzeroberflaeche Schritt für Schritt getestet werden.
+\\
+
+Abschließend wurde die Funktionalität aller GUI-Elemente mit dem Gesamtsystem getestet. Dies war vor allem für den Test der Messungen notwendig, siehe \ref{subsec:integrationtest}.
 
 \pagebreak
 
@@ -1696,7 +1702,7 @@ Um die Funktion des Oszilloskops zu überprüfen wurde eine Reihe an Testsignale
 \begin{figure}[H]
 	\centering
 	\includegraphics[scale=0.4]{test_sine_100khz_4vpp_gui_measurements.png}
-	\caption{\centering Testsignal: Sinus (f = 1 MHz, $V_{pp}$ = 4 V)\\ \footnotesize Überprüfung mittels Measure-Funktionen}
+	\caption{\centering Testsignal: Sinus (f = 100 kHz, $V_{pp}$ = 4 V)\\ \footnotesize Überprüfung mittels Measure-Funktionen}
 \end{figure}
 
 \begin{figure}[H]
@@ -1721,8 +1727,6 @@ Rechnerische Überprüfung des Measure-Ergebnisses von \emph{AC-RMS} und \emph{D
 	\includegraphics[scale=0.4]{test_square_10khz_2vpp_gui_measurements_cursors.png}
 	\caption{\centering Testsignal: Rechteck (f = 10 kHz, $V_{pp}$ = 2 V)\\ \footnotesize Überprüfung mittels Measure-Funktionen und Cursorn}
 \end{figure}
-
-Man beachte die Top- und Bottom-Messung, die ist top.
 
 \begin{figure}[H]
 	\centering
