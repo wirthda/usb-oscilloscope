@@ -86,17 +86,17 @@ def base(signal_data, lower_part_threshold_percentage=0.9, mode_uniqueness_ratio
     if min_val == max_val:
         return min_val
 
-    # 1. Den "oberen Wellenformteil" definieren
+    # 1. Den "unteren Wellenformteil" definieren
     # Schwellenwert: min_val + Prozentsatz des Peak-to-Peak-Bereichs
-    threshold = min_val + lower_part_threshold_percentage * (max_val - min_val)
+    threshold = min_val + (1-lower_part_threshold_percentage) * (max_val - min_val)
     lower_waveform_part = signal_data[signal_data <= threshold]
 
-    # Wenn keine Datenpunkte im oberen Teil sind (z.B. sehr verrauschtes Signal oder Schwellenwert zu hoch)
+    # Wenn keine Datenpunkte im unteren Teil sind (z.B. sehr verrauschtes Signal oder Schwellenwert zu hoch)
     if len(lower_waveform_part) == 0:
         # Fallback auf das Maximum, da kein "oberer Teil" vorhanden ist, um einen Modus zu finden.
         return min_val
 
-    # 2. Den Modus des oberen Wellenformteils berechnen
+    # 2. Den Modus des unteren Wellenformteils berechnen
     # `stats.mode` gibt ein ModeResult-Objekt mit .mode und .count zurück
     mode_result = stats.mode(lower_waveform_part, keepdims=False) # keepdims=False für skalaren Modus
 
