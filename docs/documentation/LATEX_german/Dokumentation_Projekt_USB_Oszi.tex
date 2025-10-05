@@ -866,7 +866,7 @@ Die digitale Ansteuerung des LTC1450 folgt der im Datenblatt erläuterten Logik.
 
 Da die ausgegebenen Werte in diesem Projekt direkt in die Input-Latches geschrieben werden, sind alle drei Signale dauerhaft auf Low gelegt, sodass immer alle zwölf Bit in die Latches übernommen werden. Das Update des Ausgangs erfolgt ausschließlich über den LDAC-Eingang, der die Inhalte der Input-Latches in die DAC-Latches übernimmt und damit die Ausgangsspannung aktualisiert. Der CLR-Eingang setzt alle Latches auf Null und damit den Ausgang des invertierenden Verstärkers sofort auf den höchsten möglichen Wert für $V_{ref}$, also den größtmöglichen Eingangsspannungsbereich. Die Ausgangsverstärkung des DAC-Puffers wird über X1/X2 bestimmt und ist hier durch Verbindung nach GND auf zwei gesetzt, wodurch eine Full-Scale-Spannung von 4.095 V erreicht wird. Zusätzlich werden die Versorgungsspannung von 5 V sowie der digitale Ground angeschlossen. Zwischen $V_{CC}$ und GND ist gemäß Datenblatt ein 0,1 $\mu$F-Kondensator vorzusehen \cite[S. 1,7 u. 10]{LinearTechnology1450}. Mit diesen Festlegungen ließ sich die Referenzschaltung im Schaltplan umsetzen. Die Datenleitungen wurden über Bussymbole geführt, um sie im Schaltplan eindeutig und übersichtlich den nachfolgenden Verarbeitungsschritten zuzuordnen.\\
 
-Der zuegehörige Schaltplanteil findet sich auf Seite 3 des Schematics im \autoref{sec:appendix_a}.
+Der zugehörige Schaltplanteil findet sich auf Seite 3 des Schematics im \autoref{sec:appendix_a}.
 
 \subsubsection{Offset und Eingangsbeschaltung des ADCs}
 
@@ -887,7 +887,7 @@ Der am Eingang des AD-Umsetzers nutzbare Bereich liegt differenziell bei $\pm$ 2
 
 Die Offsetschaltung besteht aus einem Potentiometer $R_{Voff1}$ = 5 k$\Omega$, das zwischen +5 V und -5 V liegt. An den Enden des Potentiometers befinden sich symmetrische Vorwiderstände $R_{off1}$ = $R_{off2}$ = 2.7 k$\Omega$. Der Schleifer stellt den Offset bereit und speist über einen Jumper den Knoten -AIN. Nachgeschaltet sind zwei Glättungskondensatoren mit 1 $\mu$F und 100 nF gegen analoge Masse, die Versorgungsschwankungen und Spannungsspitzen dämpfen. Der Jumper ermöglicht bei Bedarf die Trennung des Offsets vom Eingangspfad, durch Überbrücken eines der Kondensatoren ist eine Festlegung des Signals auf 0 V möglich. Ein zusätzlicher Spannungsfolger oder eine Referenzquelle wurde bewusst vermieden, da das Datenblatt für DC-Kopplung einen einfachen Widerstandsteiler zulässt und damit der Schaltungsaufwand reduziert wird.\\
 
-Der zuegehörige Schaltplanteil findet sich auf Seite 3 des Schematics im \autoref{sec:appendix_a}.
+Der zugehörige Schaltplanteil findet sich auf Seite 3 des Schematics im \autoref{sec:appendix_a}.
 
 Mit dieser Wahl der Bauelemente ergibt sich folgender Einstellbereich.
 
@@ -931,14 +931,14 @@ Deshalb wurde – analog zum Prinzip des Oszilloskop-Tastkopfs (siehe \autoref{s
 Ein einstellbarer Trimmkondensator parallel zu $R_1$ zur Feineinstellung, ergänzt um einen parallelen Festwertkondensator zur Grobeinstellung, erlaubt den Abgleich der Zeitkonstante und damit eine frequenzunabhängigere Abschwächung.\\  
 Hierdurch werden die durch Eingangs- und Leitungskapazitäten verursachten Pegel- und Phasenfehler wirkungsvoll reduziert.\\
 
-Der zuegehörige Schaltplanteil findet sich auf Seite 2 des Schematics im \autoref{sec:appendix_a}.\\
+Der zugehörige Schaltplanteil findet sich auf Seite 2 des Schematics im \autoref{sec:appendix_a}.\\
 
 Für Messungen an 50-$\Omega$-Systemen ist optional ein Widerstand zur Eingangs-Anpassung vorgesehen. Damit kann der Eingang bei Bedarf auf 50 $\Omega$ umgeschaltet werden, ohne dass im Normalbetrieb die hohe 1-M$\Omega$-Eingangsimpedanz beeinträchtigt wird. Für den OPV wurden entsprechend des Datenblatts je Versorgungspannung zwei Bypass Kondensatoren mit 0.1$\mu$F und 100pF eingeplant. Ein weiterer größerer Kondensator im uF-Bereich, war ebenfalls gefordert. Da dieser laut Datenblatt allerdings nicht direkt am Device gefordert ist und mit anderen Bausteinen geteilt werden kann, wurde auf Grund der weiteren OPV in nahe des Spannungsfolgers auf diesen verzichtet.
 
 \subsubsection{Anti-Aliasing-Filter}
 \label{subsubsec:aaf_concept}
 
-Der zuegehörige Schaltplanteil findet sich auf Seite 2 des Schematics im \autoref{sec:appendix_a}.\\
+Der zugehörige Schaltplanteil findet sich auf Seite 2 des Schematics im \autoref{sec:appendix_a}.\\
 
 Der Entwurf des Anti-Aliasing-Filters erfolgte mit dem Analog Filter Wizard\footnote{\url{https://tools.analog.com/en/filterwizard/}} von Analog Devices und orientierte sich an den im Kapitel zum Filterentwurf festgelegten Kriterien (\autoref{subsec:aaf_nyquist}). Für die Synthese wurden die 3-dB-Grenzfrequenz, die geforderte Sperrbanddämpfung und der Beginn des Sperrbands vorgegeben. Außerdem wurde ein Spannungsbereich von $\pm$5 V festgelegt. Die 3-dB-Grenzfrequenz wurde auf 1,5 MHz festgelegt, um die Zielbandbreite von 1 MHz sicher zu erreichen. Der Beginn des Sperrbands wurde mit der Nyquist-Frequenz gleichgesetzt, die bei der halben Abtastrate liegt und hier 5 MHz beträgt. Die notwendige Sperrbanddämpfung wurde aus der Auflösung des AD-Umsetzers hergeleitet, da das SINAD ebenfalls bei rund 72 dB liegt.
 
@@ -1031,7 +1031,7 @@ Auch diese Stufe wurde zur Stabilisierung mit 0.1 $\mu$F und 4.7 $\mu$F beschalt
 
 Als Abgriff für das Triggersignal wurden ein Jumper direkt am Eingang des AD-Umsetzers und ein weiterer Jumper unmittelbar hinter dem Spannungsfolger vorgesehen. Über einen zusätzlichen Jumper wird die gewünschte Triggerquelle ausgewählt. Der Abgriff hinter dem Spannungsfolger ist aufgrund der niedrigen Ausgangsimpedanz grundsätzlich vorteilhaft. Bei höheren Frequenzen kann er jedoch durch die Lage vor dem Anti-Aliasing-Filter dazu führen, dass der Trigger nicht exakt dem im Oszilloskop dargestellten Signal entspricht.\\
 
-Der zuegehörige Schaltplanteil findet sich auf Seite 6 des Schematics im \autoref{sec:appendix_a}.
+Der zugehörige Schaltplanteil findet sich auf Seite 6 des Schematics im \autoref{sec:appendix_a}.
 
 
 \subsubsection{Simulation des AFEs}
@@ -1062,10 +1062,95 @@ Die Daten- und Steuerleitungen des fertiggestellten Interfaceblocks (siehe Seite
 
 \subsubsection{Spannungsversorgung}
 
+Die Spannungsversorgung wurde bewusst auf Labornetzteile ausgelagert, da der Entwicklungsfokus auf Signalverarbeitung, Erfassung und Konditionierung liegen sollte und dadurch eine freiere Bauteilwahl sowie Schaltungsentwicklung möglich war. Das analoge Frontend erhielt eine eigene Versorgung. ADC, DAC und sämtliche digitalen Schaltungsteile wurden über eine weitere Versorgung gespeist. \\
+
+Für das analoge Frontend wurde eine Versorgungsspannung von $\pm$12 V gewählt. Die höhere Betriebsspannung schafft Reserven, da nach dem Eingangsteiler Signale bis zu 4.096 V am Frontend zulässig sind. Die eingesetzten Operationsverstärker arbeiten nicht rail-to-rail, daher erhöht die Wahl von $\pm$12 V die Aussteuerungsreserve und vermindert Klippgefahr. Außerdem liefern die OPVs bei dieser Versorgungsspannung die beste Gesamtperformance \cite[S. 1 u. 13]{AnalogDevices2011}. Der ADC und der Komparator erfordern eine Versorgung von $\pm$5 V. Für den Digitalteil einschließlich Mikrocontroller werden +5 V benötigt. Die +5-V-Schiene wurde gemeinsam mit den $\pm$5 V bereitgestellt, wodurch die Anzahl externer Netzteile reduziert wird und die Verteilung im Aufbau vereinfacht.\\
+Zur Spannungsstabilisierung sind pro Schiene Elektrolytkondensatoren mit 100 $\mu$F vorgesehen. Als Verpolschutz werden Schottky-Dioden in die Zuleitungen eingesetzt. Die Versorgungseinspeisung erfolgt über Löt-Vias.\\
+Der zugehörige Schaltplanteil findet sich auf Seite 5 des Schematics im \autoref{sec:appendix_a}.
+
+\subsubsection{Schaltplan / Zusammenführung}
+
+Die einzelnen Funktionsteile wurden in KiCad zu einem mehrseitigen Schaltplan zusammengeführt. Der Entwurf ist hierarchisch aufgebaut und umfasst eine Root-Page, die eine Blockübersicht bereitstellt (siehe Seite 1 des Schemtaics in \autoref{sec:appendix_a}), sowie untergeordnete Seiten mit den jeweiligen Funktionsgruppen. Die Seiten gliedern sich in das analoge Frontend mit Eingangsimpedanz, Kopplung und Anti-Aliasing-Filter. Hinzu kommt die Beschaltung des ADCs mit dem DAC für die Referenz, der Offsetschaltung und den weiteren Beschaltungen des ADCs. Das Interface zum Mikrocontroller gewährleistet die notwendigen Pegel und Betriebsbedingungen für die Kommunikation. Der Trigger- und Clock-Block wandelt den Taktpegel und stellt die Triggersignale bereit. Ein weiterer Block bildet den Mikrocontroller-Connector ab. Die Verbindung zu den Konnektoren des Mikrocontrollers folgt der im Kapitel zur Schnittstelle zwischen Hardware und Firmware beschriebenen Zuordnung (\autoref{subsec:pin_mapping_levels}). Die Spannungsversorgung ist als eigener Abschnitt realisiert. Ein Block für einen Logic-Analyzer wurde vorbereitet, jedoch aus Zeitgründen nicht implementiert.\\
+
+Die Blöcke wurden entsprechend des Gesamtkonzepts verschaltet. Zur Erhöhung der Testbarkeit wurden gezielt Jumper und Testpunkte eingefügt, sodass einzelne Funktionsbereiche isoliert geprüft werden können. Testpunkte an Eingängen wurden vermieden, um parasitäre Kapazitäten zu vermeiden. Die Trennung in digitale und analoge Masse ist vorgesehen und wird im Layout an geeigneter Stelle zusammengeführt.\\
+
+Der Electric Rule Check wurde durchgeführt und alle vorhandenen Fehler und Warnungen behoben oder als unkritisch eingestuft.
 
 
 \subsection{Implementierung}
 \label{subsec:hw_implementation}
+
+\subsubsection{Footprints und Bauteileauswahl}
+
+Nach Abschluss des Schaltplans wurde die Umsetzung in eine Baugruppe begonnen. Zunächst erhielten alle Bauelemente passende Gehäuseformen bzw. Footprints. Die 3D-Bibliotheken wurden gepflegt, damit ein entsprechendes 3D-Modell der Baugruppe vorliegt. Für die Steckleisten des Nucleoboards war ein geeigneter Footprint vorhanden und konnte direkt übernommen werden. Bei den integrierten Schaltungen wurden gut lötbare SMD-Gehäuse mit guter Verfügbarkeit bevorzugt. Footprints und 3D-Modelle wurden dabei aus vom Hersteller bezogen. Für die BNC-Buchse kam eine horizontal ausgeführte Variante zum Einsatz. Die Potentiometer wurden in der Bauform 3314G vertical gewählt und es wurde ein Trimmkondensator der JR-Serie vorgesehen. Beide Bauteilarten wurden so dimensioniert, dass sie trotz kompakter Abmessungen gut einstellbar sind. Für große Stützkondensatoren wurden Elektrolytkondensatoren in der Bauform 6.3 × 7.7 mm eingesetzt. Als Schottky-Dioden für den Verpolschutz wurden SS14-Typen mit einem Nennstrom von 1 A vorgesehen. Keramikkondensatoren ab 1 $\mu$F wurden in 0805 umgesetzt, kleinere Werte in 0603. Als Dielektrikum wurde C0G beziehungsweise NP0 festgelegt, um einen geringen Temperaturkoeffizienten sowie hohe Stabilität und Präzision insbesondere im Filterpfad zu erreichen. Widerstände wurden als Metallschicht in 0603 ausgeführt. Für alle Bauteile wurden Spannungs-, Strom- und Verlustleistungsgrenzen überprüft. Für die Spannungsversorgung kamen THT-Pads mit 2.5 mm Landdurchmesser und 1.2 mm Bohrung zum Einsatz. Jumper wurden als Lötjumper ausgeführt. Testpunkte erhielten einen Durchmesser von 1 mm. Die Materialliste enthält weitere Details. Widerstandsnetzwerke wurden für die zum Mikrocontroller geführten Interface-Widerstände bewusst nicht verwendet, um spätere Varianten mit abweichenden Widerstandswerten ohne Layoutänderungen oder erneute Bauteilbestellung zu ermöglichen.
+
+\subsubsection{Routing, Layout und Fertigung}
+
+
+Nach Einbindung aller Footprints und 3D-Modelle sowie Aktualisierung der Bibliotheken begann die Platzierung. Die Außenabmessungen der Baugruppe wurden an das Mikrocontrollerboard angepasst. Zuerst wurde der Mikrocontroller-Connector positioniert und die Schaltung wurde ausschließlich zwischen den beiden Konnektoren des Mikrocontrollers aufgebaut. Die BNC-Buchse wurde an der oberen Kante der Leiterplatte platziert. Unmittelbar dahinter erfolgte die grobe Anordnung des analogen Frontends. Unter dem Analogteil, in Verlängerung des Signalflusses, wurden die digitalen Steuer- und Datensignale geführt und die digitalen Funktionsblöcke platziert. Der Erstentwurf sah eine zweilagige Leiterplatte vor. Als Standard-Leiterbahnbreite wurden 0.3 mm verwendet. Durchkontaktierungen erfolgten im gängigen Standard. Dabei wurden die Kosten und Möglichkeiten der entsprechenden Zulieferer beachtet. (Quelle Aisler Designregeln) Ausschließlich die Versorgungsleitungen erhielten größere Querschnitte auf Basis erfahrungsbasierter Strombelastbarkeit. Das Routing begann im analogen Frontend ausgehend von der BNC-Buchse, wobei die genaue Platzierung der Bauteile iterativ mit der Signalführung abgestimmt wurde.\\
+
+Für das Layout waren insbesondere im Analogteil gewisse Layoutvorgaben einzuhalten, dazu wurde in den Datenblätter folgendes für uns relevante recherchiert:
+
+\textbf{LTC1420 – ADC}
+
+\begin{itemize}
+    \item Getrennte Analog- und Digital-Masseflächen, Verbindung an genau einem Punkt nahe OGND. Digitale und analoge Leitungen möglichst separieren, keine parallele Führung \cite[S. 13]{LinearTechnology1420}.
+    \item Keine Unterbrechungen der Analog-Ground-Plane unter/um den ADC; Vias für Power/Signals außerhalb des Bereichs von Bauteil und Bypass-Kondensatoren platzieren \cite[S. 13]{LinearTechnology1420}.
+    \item Keramik 1 $\mu$F direkt an VDD-Pins, VCM und VREF; bei $-5$ V an VSS ebenfalls 1 $\mu$F nach GND. Wenn OVDD $\neq$ VDD, dann 1 $\mu$F an OVDD. Kurze, breite Leiterzüge zu den Kondensatoren; empfohlen: 0805 Keramikkondensatoren \cite[S. 13 u. 14]{LinearTechnology1420}.
+\end{itemize}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.6]{ltc1420_layout_suggestions.png} 
+	\caption{Querschnitt einer Baugruppe mit LTC1420 aus \cite[S. 13]{LinearTechnology1420}}
+	\label{fig:ltc1420_layout_suggestions}
+\end{figure}
+
+\textbf{LTC1450 – DAC}
+
+\begin{itemize}
+    \item RC-Filter zur Rauschreduktion, nahe an Referenz \cite[S. 10]{LinearTechnology1450}.
+    \item Bypass-Kondensator nahe Vcc \cite[S. 7]{LinearTechnology1450}.
+\end{itemize}
+
+\textbf{AD8022 – Filter-OPVs}
+
+\begin{itemize}
+    \item 10 $\mu$F nahe am Baustein je Versorgung, plus 0.1 $\mu$F direkt an den Pins ($\leq$ 1/8 inch) \cite[S. 13]{AnalogDevices8022}.
+    \item Ground-Plane auf ungenutzten Bereichen der Bauteilseite; Ground-Plane um die Eingangssignale aussparen, um Streukapazitäten zu senken. Feedback-/Gain-Widerstände mit möglichst kurzen Leitungen verbinden; Widerstände möglichst nah an Eingängen \cite[S. 15]{AnalogDevices8022}.
+\end{itemize}
+
+\textbf{THS4631 – Spannungsfolger}
+
+\begin{itemize}
+    \item Parasitäre Kapazitäten an Signal-I/Os minimieren; Fenster in Ground/Power-Planes um I/O-Pins öffnen, sonst durchgehende Planes \cite[S. 20]{TexasInstruments4631}.
+    \item 0.1 $\mu$F und 100 pF sehr nahe an die Versorgungspins; induktive, schmale GND/VCC-Züge vermeiden; zusätzlich $\geq$ 6.8 $\mu$F als niederfrequentes Decoupling etwas weiter entfernt \cite[S. 20]{TexasInstruments4631}.
+    \item SMD-Widerstände niedriger Reaktanz, keine Drahtwiderstände. Feedback-/Serien-Widerstände so nah wie möglich an invertierendem Eingang/Ausgang. Kurze, breite Verbindungen, ggf. Transmission Lines; Quell-/Last-Terminierung beachten. Keine Sockel verwenden \cite[S. 20]{TexasInstruments4631}.
+\end{itemize}
+
+\textbf{LT1714 – Komparator}
+
+\begin{itemize}
+    \item $\mu$F so nahe wie möglich an die Versorgungspins, parallel mit 4.7 $\mu$F.
+    \item Kurze Leiterzüge, keine Ausgangs- neben Eingangstraces wegen Übersprechen.
+\end{itemize}
+
+Anhand dieser Design Vorgaben wurde mit dem Routing begonnen. Generell galt es, Leiterschleifen möglichst klein zu halten und eine klare räumliche Trennung zwischen Analog- und Digitalbereich zu erreichen. Im gesamten Analogbereich wurden weitgehend durchgängige Masseflächen vorgesehen. Sternpunkte sollten vermieden werden. Im Massebereich wurden zahlreiche Durchkontaktierungen gesetzt. Leiterwege sollten kurz bleiben und das Layout insgesamt kompakt ausfallen. Auf allen ungenutzten Leiterplattenflächen wurde eine Massefläche angeordnet. Diese stellt niederimpedante Rückstrompfade bereit, verbessert die elektromagnetische Verträglichkeit und wirkt als Schirmfläche.\\
+
+Für den AD-Umsetzer war eine getrennte analoge Massefläche mit einem einzelnen Verbindungspunkt zum digitalen Massebezug gefordert. Umgesetzt wurde deshalb eine gemeinsame analoge Massefläche, die \textbf{ausschließlich} nahe am AD-Umsetzer mit der digitalen Masse verbunden ist. Diese Verbindung ist durch ein breites Leiterstück ausgeführt. Auch der DAC wurde mit dieser Massefläche verbunden, allerdings nahe der Verbindung zum Digitalen GND, um Rückströme durch den Analogteil zu vermeiden. Der analoge Teil wurde entsprechend den Vorgaben der Datenblätter ausgeführt. Unter den empfindlichen Eingangskreisen wurde die Massefläche gezielt ausgespart, um parasitäre Kapazitäten zu minimieren. Leiterwege wurden so kurz wie möglich gehalten. Widerstände in den Eingangspfaden wurden unmittelbar an den zugehörigen Pins platziert.\\
+
+Nach der Platzierung des analogen Frontends erfolgte die Auslegung des Digitalteils. Aufgrund der festgelegten Pinbelegungen und der begrenzten Fläche war eine kreuzungsfreie Leitungsführung nicht in allen Bereichen realisierbar. Wo immer möglich wurde eine konfliktfreie Führung dennoch angestrebt. Die Versorgungsschienen wurden so positioniert, dass ihre Anschlüsse funktional in das Routing integriert werden konnten. Ein zentraler Sammelpunkt für alle Anschlüsse wurde nicht erzwungen.\\
+
+Nach Fertigstellung des Layouts wurde der Design Rule Check durchgeführt und alle vorhandenen Fehler und Warnungen behoben oder als unkritisch eingestuft. Zusätzlich wurden die Beschriftungen sinnvoll platziert und anschließend die Fertigungsdaten an den gewählten Zulieferer übermittelt. Nach Erhalt der Leiterplatte wurde die Baugruppe von Hand bestückt. Als Versorgung wurden 4mm Leitungen über Lötfahnen an die entsprechenden VIAs gelötet. Aus den 3D-Modellen der Bibliothek wurde ein Modell der Baugruppe erstellt (siehe \autoref{fig:3dmodel_pcb_assembly}).
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.8]{3dmodel_pcb_assembly.png} 
+	\caption{3D-Modell der Baugruppe}
+	\label{fig:3dmodel_pcb_assembly}
+\end{figure} 
+
+
 
 \subsection{HW-Test}
 \label{subsec:hw_test}
@@ -1093,6 +1178,7 @@ Die Daten- und Steuerleitungen des fertiggestellten Interfaceblocks (siehe Seite
 \label{subsec:requirements_hw_fw_interface}
 
 \subsection{Festlegung der Pins und Pegelwandlung}
+\label{subsec:pin_mapping_levels}
 
 \subsection{Schnittstellen-Test HW-FW}
 
