@@ -1328,10 +1328,46 @@ Da bereits relativ große Glättungskondensatoren eingesetzt wurden und unklar w
 
 \subsection{Festlegung der Pins und Pegelwandlung}
 \label{subsec:pin_mapping_levels}
+Zunächst erfolgte die Pinverteilung nach den genannten Kriterien. Ein erhöhter Layoutaufwand wurde in Kauf genommen, um die Pins zusammenhängend ihren Funktionsgruppen geeigneten Ports zuzuordnen, was insbesondere für die DMA-Anbindung erforderlich war. Zugleich wurde auf eine für das Layout verträgliche Pinwahl geachtet. Eine Übersicht der zugeordneten Pins sowie der notwendigen Daten- und Steuersignale findet sich in der Pinbelegungstabelle \autoref{sec:appendix_a}. Ein großer Teil der Anforderungen ließ sich ohne Probleme in Hardware oder Firmware umsetzen. Für einige Punkte bestand jedoch erweiterter Klärungsbedarf. Dies betraf vor allem die unterschiedlichen Logikpegel zwischen Hardware und Firmware.\\
+
+Die Daten- und Steuerleitungen zur Konfiguration des Digital-Analog-Umsetzers waren hinsichtlich der Geschwindigkeit unkritisch, da es sich um eine einmalige Initialisierung der Referenzspannung handelt und nicht um einen pro Abtastschritt wiederkehrenden Vorgang. Eine vergleichsweise langsame Lösung kam daher in Betracht. Da sämtliche DAC-Steuersignale vom Mikrocontroller zum DAC führen und somit eine Pegelwandlung von 3,3 V auf 5 V erfordern, schied ein einfacher Spannungsteiler aus. Aufgrund der geringen Geschwindigkeitsanforderungen wurde die Open-Drain-Funktion der Mikrocontroller-GPIOs genutzt. Die Leitungen schalten ausschließlich gegen Masse und realisieren mit Pull-up auf 5 V den erforderlichen High-Pegel. Zu beachten ist die begrenzte Eignung dieser Lösung für schnelle Signale wegen der hohen Pull-up-Widerstände. Daher ist zwischen dem Schalten der Datenausgänge und dem Laden der Werte in die DAC-Latches eine geeignete zeitliche Verzögerung vorzusehen.\\ 
+
+Für die Datenleitung des AD-Umsetzers waren höhere Geschwindigkeiten notwendig. Da in diesem Fall der Signalfluss vom AD-Umsetzer zum Mikrocontroller verläuft, handelt es sich um eine Pegelwandlung von 5 V auf 3,3 V. Diese Umsetzung ist mit einem Spannungsteiler möglich und wurde so realisiert. Im Vergleich zu einem aktiven Pegelwandler ist mit einer Verzögerung der Anstiegszeit zu rechnen. Deshalb werden die Daten auf der negativen Taktflanke eingelesen, um eine zusätzliche zeitliche Reserve zu erhalten und ein robustes Sampling zu ermöglichen.\\ 
+
+Das Taktsignal für den AD-Umsetzer wird vom Mikrocontroller erzeugt und zum AD-Umsetzer geführt, sodass eine Wandlung von 3,3 V auf 5 V erforderlich ist. Da das Datenblatt enge Anforderungen an die Anstiegszeit des Takts stellt, wurde hier eine aktive Pegelwandlung vorgesehen. Realisiert wurde dies mit einem Komparator, der zugleich als Triggereinrichtung dient. Der Trigger benötigt positive und negative Versorgungsspannungen von ±5 V, um den Eingangsspannungsbereich des Oszilloskops vollständig abzudecken und auf beliebige Pegel triggern zu können. In diesem Zusammenhang wird durch die 5-V-Versorgung zusätzlich ein Spannungsteiler benötigt.\\ 
+
 
 \subsection{Schnittstellen-Test HW-FW}
+Nach Abschluss der Baugruppe und der initialen Hardwaretests erfolgte die erste Inbetriebnahme im Verbund mit dem Mikrocontroller. An der Schnittstelle wurden gezielte Prüfungen und Messungen durchgeführt, um die korrekte Funktion sicherzustellen und auszuschließen, dass spätere Abweichungen auf Kommunikations- oder Hardwareaspekte zurückzuführen sind. Geprüft wurden die Signalqualität von Takt und Datenleitungen des ADCs.\\ 
+
+\textbf{Überprüfung des Clocks}\\ 
+
+Da die grundsätzliche Funktion der Pegelwandlung des Takts bereits verifiziert war, musste nur noch sichergestellt werden, dass dies auch mit dem Mikrocontroller gilt. Hierzu wurde das 3,3-V-Taktsignal des Mikrocontrollers aufgezeichnet (CH1) und gleichzeitig das daraus abgeleitete ADC-Taktsignal erfasst (CH2). Die Messungen zeigten, dass die Pegelwandlung auch im Zusammenspiel mit dem Mikrocontroller zuverlässig funktioniert. Verzögerung und Anstiegszeiten blieben im tolerierbaren Bereich.\\
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.4]{schnittstelle_hw_fw_vergleich_uC_Clock_ADC_Clock.png} 
+	\caption{Vergleich $mu$C-Clock und ADC-Clock}
+\end{figure}
+
+\textbf{Überprüfung der Signalqualität}\\
+
+Zur Bewertung der Signalqualität der Pegelwandlung über Spannungsteiler wurde exemplarisch das Signal des LSB aufgezeichnet. Dazu erfolgte eine Messung sowohl auf der 5-V-Seite als auch auf der 3,3-V-Seite. Die Auswertung zeigt eine deutlich verringerte Anstiegszeit auf der 3,3-V-Seite. Im Vergleich mit dem Taktsignal wurde geprüft, ob ein sicheres Einlesen zur negativen Taktflanke weiterhin gewährleistet ist. Dies war der Fall. Weder kleinere Widerstandswerte noch ein alternatives Pegelwandlungskonzept waren daher erforderlich.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.4]{schnittstelle_hw_fw_aufzeichnung_lsb_ADC_BUS.png} 
+	\caption{Aufzeichnung LSB ADC-BUS}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.4]{schnittstelle_hw_fw_aufzeichnung_lsb_ADC_BUS_Clocksignal.png} 
+	\caption{Aufzeichnung LSB ADC-BUS inkl. Clocksignal}
+\end{figure}
 
 \subsection{Zusammenfassung der Ergebnisse}
+Zusammenfassend ist das erarbeitete Kommunikationskonzept funktional und für die vorgesehenen Abtastraten geeignet. Die Pegelwandlung über Spannungsteiler stößt jedoch bei höheren Abtastraten an Grenzen. Die Komparatorlösung bleibt unkritisch, solange Verzögerung und Anstiegszeiten im einstelligen Nanosekundenbereich noch hinnehmbar sind.
 
 \pagebreak
 
@@ -2718,6 +2754,10 @@ Da das Ziel des Projekts die Validierung unseres Konzepts zur Signalerfassung, -
 	\caption{Übersichts-Blockschaltbild (erstellt für die Konzeptvorstellung)}
 	\label{fig:block_concept}
 \end{figure}
+
+\subsection{Tabelle Pinbelegung}
+
+
 
 \subsection{Installation und Ersteinrichtung}
 \label{subsec:appendix_a_installation}
