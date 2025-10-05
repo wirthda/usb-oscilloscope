@@ -214,7 +214,7 @@ Für eine gut auswertbare Darstellung sind etwa zehn Stützstellen je Periode zw
 	\label{fig:linear_si_display}
 \end{figure}
 
-In der Praxis werden für die Digitalisierung schnelle Flash-ADUs sowie mehrstufige Sub-ranging- / Pipeline‑Varianten eingesetzt. Diese ermöglichen hohe Raten bei moderater vertikaler Auflösung. Übliche Geräte arbeiten mit acht Bit vertikaler Auflösung. Je nach Architektur sind höhere Auflösungen möglich (vgl. \cite[S. 114-119]{Bernstein2023}). Für die Datenaufnahme stehen verschiedene Acquisition-Modi zur Verfügung. Der direkte Modus liefert äquidistante Samples. Min-Max oder Peak-Detect erfasst Extremwerte innerhalb eines Abtastintervalls und macht kurze Spikes sichtbar. Average reduziert Rauschen durch wiederholtes Mitteln. Single Shot zeichnet einmalige Ereignisse auf und der Roll-Modus zeigt sehr langsame Verläufe kontinuierlich an (vgl. \cite[S. 220f]{Muehl2020}). Die Genauigkeit wird wesentlich durch die Abtastrate und Abtaststrategie, Interpolation und Quantisierung sowie durch die Eingangsbeschaltung bestimmt. Bei Unterabtastung droht Aliasing und die Rekonstruktion wird unzuverlässig (vgl. \cite[S. ??]{Muehl2020}, Grundlagen zur Abtastung und Quantisierung). Wichtige Kenngrößen von DSOs sind analoge Bandbreite, Abtastrate, vertikale Auflösung, Speichertiefe, Triggerfunktionen, Eingangsimpedanz, analoge Eingangsspannung sowie Anzeige und Darstellungsoptionen. Über die Kurvendarstellung hinaus gehören auch automatische Messfunktionen zum Grundumfang.
+In der Praxis werden für die Digitalisierung schnelle Flash-ADUs sowie mehrstufige Sub-ranging- / Pipeline‑Varianten eingesetzt. Diese ermöglichen hohe Raten bei moderater vertikaler Auflösung. Übliche Geräte arbeiten mit acht Bit vertikaler Auflösung. Je nach Architektur sind höhere Auflösungen möglich (vgl. \cite[S. 114-119]{Bernstein2023}). Für die Datenaufnahme stehen verschiedene Acquisition-Modi zur Verfügung. Der direkte Modus liefert äquidistante Samples. Min-Max oder Peak-Detect erfasst Extremwerte innerhalb eines Abtastintervalls und macht kurze Spikes sichtbar. Average reduziert Rauschen durch wiederholtes Mitteln. Single Shot zeichnet einmalige Ereignisse auf und der Roll-Modus zeigt sehr langsame Verläufe kontinuierlich an (vgl. \cite[S. 220f]{Muehl2020}). Die Genauigkeit wird wesentlich durch die Abtastrate und Abtaststrategie, Interpolation und Quantisierung sowie durch die Eingangsbeschaltung bestimmt. Bei Unterabtastung droht Aliasing und die Rekonstruktion wird unzuverlässig (vgl. \cite{Muehl2020}, Grundlagen zur Abtastung und Quantisierung). Wichtige Kenngrößen von DSOs sind analoge Bandbreite, Abtastrate, vertikale Auflösung, Speichertiefe, Triggerfunktionen, Eingangsimpedanz, analoge Eingangsspannung sowie Anzeige und Darstellungsoptionen. Über die Kurvendarstellung hinaus gehören auch automatische Messfunktionen zum Grundumfang.
 
 \subsubsection{Trigger}
 
@@ -237,6 +237,7 @@ Die analoge Triggerkette umfasst Quelle, Kopplung DC oder AC, einstellbare Trigg
 \end{figure}
 
 \subsubsection{Frequenzkompensierter Tastkopf / Spannungsteiler}
+\label{subsubsec:freq_comp_vdiv}
 
 In der Praxis existieren verschiedene Arten von Tastköpfen wie passive, aktive und differenzielle Tastköpfe. Im Folgenden wird ausschließlich der frequenzkompensierte passive Tastkopf betrachtet, da er für das Projekt relevant ist (vgl. \cite[Kap. 15]{Muehl2020}). Dieser Tastkopf basiert auf einem frequenzkompensierten Spannungsteiler (seihe \autoref{fig:freq_compensated_vdiv}), realisiert als RC Teiler mit zu den Widerständen parallel geschalteten Kapazitäten und mit einer Anpassung an die Summe aus Bauteil- und Leitungskapazitäten. Die Kompensation mit Trimmkondensator (in \autoref{fig:freq_compensated_vdiv}: $C_T$) wird so abgeglichen, dass das Teilungsverhältnis im Nutz-Frequenzband annähernd konstant bleibt. Der Abgleich erfolgt mit einem Rechtecksignal. Unterkompensation zeigt sich durch eine nach unten geneigte Oberkante (\autoref{fig:freq_compensated_time}a), Überkompensation durch eine nach oben geneigte Oberkante (\autoref{fig:freq_compensated_time}c) und bei korrekter Kompensation bleibt die Oberkante über die Pulsbreite hinweg horizontal (\autoref{fig:freq_compensated_time}b) (vgl. \cite[S. 104-106]{Schruefer2022}).
 
@@ -773,26 +774,24 @@ Die zentrale Entscheidung im Hardwareentwurf war die Auswahl eines geeigneten \e
 
 Neben diesen grundlegenden Anforderungen wurden weitere Parameter berücksichtigt, unter anderem das Rauschverhalten (SINAD, THD, ENOB…) sowie die Linearitätseigenschaften (INL, DNL). Um eine hohe Flexibilität im Entwicklungsprozess zu gewährleisten, fiel die Wahl auf einen Baustein, der sowohl im single-ended- als auch im differenziellen Betrieb eingesetzt werden kann. Zusätzlich sollte er im Dual-Supply- wie auch im Single-Supply-Betrieb einsetzbar sein und auf der digitalen Seite sowohl mit 3,3 V als auch mit 5 V betrieben werden können. Auch die Option zur Verwendung einer internen oder externen Referenzspannung war ein relevantes Kriterium, um die Anpassungsfähigkeit im späteren Entwicklungsverlauf zu erhöhen. Da die Wandlungslatenz nicht die primäre Einschränkung darstellte und vielmehr die Übertragungsgeschwindigkeit zwischen Mikrocontroller und PC der begrenzende Faktor war, wurde hinsichtlich der Architektur ein Pipeline-ADC ausgewählt. Dies ermöglichte im Vergleich zum Flash ADC eine höhere Auflösung (10 oder 12 Bit), bei gleichzeitiger Einhaltung eines annehmbaren Preisrahmens. Auch die Verfügbarkeit von SMD-Bauformen war ein wichtiges Kriterium.\\
 
-Nach eingehender Recherche und Vergleichen bei verschiedenen Bauteillieferanten konnte mit dem \href{https://www.analog.com/en/products/ltc1420.html}{LTC1420} von Linear Technology ein ADC identifiziert werden, der alle definierten Anforderungen erfüllt. Er bietet mit \emph{12 Bit} eine höhere Auflösung als ursprünglich gefordert, zeichnet sich durch eine hohe Flexibilität im Betrieb (Single- oder Dual-Supply, differentiell oder single-ended, interner oder externer Referenzbetrieb) aus und weist zugleich ein \emph{sehr gutes Rauschverhalten} auf. Dieses zeigt sich insbesondere darin, dass die \emph{effektive Auflösung (ENOB)} nahe an der nominalen Bitzahl liegt (siehe Datenblatt \cite{LinearTechnology1420}, Rechnung ENOB).
+Nach eingehender Recherche und Vergleichen bei verschiedenen Bauteillieferanten konnte mit dem \href{https://www.analog.com/en/products/ltc1420.html}{LTC1420} von Linear Technology ein ADC identifiziert werden, der alle definierten Anforderungen erfüllt. Er bietet mit \emph{12 Bit} eine höhere Auflösung als ursprünglich gefordert, zeichnet sich durch eine hohe Flexibilität im Betrieb (Single- oder Dual-Supply, differentiell oder single-ended, interner oder externer Referenzbetrieb) aus und weist zugleich ein \emph{sehr gutes Rauschverhalten} auf. Dieses zeigt sich insbesondere darin, dass die \emph{effektive Auflösung (ENOB)} nahe an der nominalen Bitzahl liegt (siehe Datenblatt \cite{LinearTechnology1420}, Berechnung von ENOB aus SINAD).
 
 \subsubsection{Anforderungen an die Signalaufnahme und -konditionierung}
 
 
 Nach der Auswahl des ADC mussten die Anforderungen an die \emph{Signalkonditionierung} sowie an die \emph{Signalaufnahme} spezifiziert werden. Für die Signalaufnahme war vorgesehen, dass diese ebenfalls über einen \emph{Tastkopf} möglich sein sollte. Daraus ergaben sich die Notwendigkeit einer \emph{BNC-Buchse} als Eingangsschnittstelle sowie ein \emph{Eingangswiderstand von 1 M$\Omega$}. Eine Anpassung der Eingangs- oder Leitungsimpedanz war aufgrund der im Projekt relevanten Frequenzen nicht erforderlich.\\
 
-Der \emph{LTC1420} weist eine durch die Versorgungsspannung begrenzte maximale absolute Eingangsspannung auf. Im \emph{Single-Supply-Betrieb} liegt der Eingangsbereich zwischen 0 V und VDD (typisch 5 V), während er im \emph{Dual-Supply-Betrieb} durch VDD und VSS definiert wird. Der \emph{differenzielle Eingangsspannungsbereich} ist direkt proportional zur \emph{Referenzspannung (VREF)} und beträgt bei \emph{VREF = 5 V (maximal zulässig laut Datenblatt)} $\pm$2,5 V (entspricht 5 Vpp zwischen VIN+ und VIN–). Zur Realisierung eines Oszilloskop-Eingangsbereichs von $\pm$5 V (10 Vpp) war daher eine \emph{Pegelabsenkung} am Eingang vorzusehen. Entsprechend wurde eine \emph{maximale absolute Eingangsspannung von $\pm$10 V} an der BNC-Buchse festgelegt \cite{LinearTechnology1420}.\\
+Der \emph{LTC1420} weist eine durch die Versorgungsspannung begrenzte maximale absolute Eingangsspannung auf. Im \emph{Single-Supply-Betrieb} liegt der Eingangsbereich zwischen 0 V und VDD (typisch 5 V), während er im \emph{Dual-Supply-Betrieb} durch VDD und VSS definiert wird. Der \emph{differenzielle Eingangsspannungsbereich} ist direkt proportional zur \emph{Referenzspannung (VREF)} und beträgt bei \emph{VREF = 5 V (maximal zulässig laut Datenblatt)} $\pm$2,5 V (entspricht 5 Vpp zwischen VIN+ und VIN–). Zur Realisierung eines Oszilloskop-Eingangsbereichs von $\pm$5 V (10 Vpp) war daher eine \emph{Pegelabsenkung} am Eingang vorzusehen. Entsprechend wurde eine \emph{maximale absolute Eingangsspannung von $\pm$10 V} an der BNC-Buchse festgelegt \cite[S. 1f]{LinearTechnology1420}.\\
 
-Um auch bei Eingangssignalen mit geringerer Amplitude die \emph{volle Auflösung des ADC} zu nutzen, wurde eine \emph{variable Eingangsspannungsskalierung} vorgesehen. Zusätzlich war ein \emph{einstellbarer DC-Offset} erforderlich, um Signale mit Gleichanteil in den nutzbaren Wandlungsbereich zu verschieben. Darüber hinaus sollte eine \emph{umschaltbare AC-Kopplung} über einen Längskondensator die Unterdrückung von Gleichanteilen ermöglichen. Außerdem war ein \emph{Anti-Aliasing-Filter} mit Grenzfrequenz und Sperrbanddämpfung nach dem \emph{Nyquist-Kriterium} auszulegen, um Alias-Effekte und daraus resultierende Signalverzerrungen bei der Digitalisierung zu vermeiden (siehe \autoref{subsec:aaf_nyquist}).\\
-
-\textbf{+Trigger}
+Um auch bei Eingangssignalen mit geringerer Amplitude die \emph{volle Auflösung des ADC} zu nutzen, wurde eine \emph{variable Eingangsspannungsskalierung} vorgesehen. Zusätzlich war ein \emph{einstellbarer DC-Offset} erforderlich, um Signale mit Gleichanteil in den nutzbaren Wandlungsbereich zu verschieben. Darüber hinaus sollte eine \emph{umschaltbare AC-Kopplung} über einen Längskondensator die Unterdrückung von Gleichanteilen ermöglichen. Außerdem war ein \emph{Anti-Aliasing-Filter} mit Grenzfrequenz und Sperrbanddämpfung nach dem \emph{Nyquist-Kriterium} auszulegen, um Alias-Effekte und daraus resultierende Signalverzerrungen bei der Digitalisierung zu vermeiden (siehe \autoref{subsec:aaf_nyquist}). Außerdem war eine analoge Triggereinrichtung vorgesehen.
 
 \subsubsection{Konzept der Signalaufnahme und- konditionierung}
 
-Auf Basis der Anforderungen an Signalaufnahme und Konditionierung wurde zunächst ein Gesamtkonzept für den Hardwareteil erarbeitet. Diese Vorarbeit war notwendig, weil sich die Funktionsblöcke des Hardwareteils gegenseitig beeinflussen und zentrale Architekturentscheidungen früh zu treffen sind. Zwei Fragen standen dabei zu Beginn im Vordergrund. Erstens die Wahl zwischen Single-Ended und differenzieller Signalführung im analogen Frontend. Zweitens die Versorgung des Analogteils mit Single- oder Dualsupply. Trotz der Vorteile eines differenziellen Frontends wie Gleichtaktunterdrückung und Messung gegen ein vom Gerätemassepunkt unabhängiges Bezugspotenzial fiel die Entscheidung zugunsten einer Single-Ended-Lösung. Ausschlaggebend waren die deutlich größere Bauteilauswahl, der geringere Schaltungsaufwand und die vermiedene doppelte Signalführung. Für die Versorgung wurde eine Dual-Supply-Variante vorgesehen. Eine reine Single-Supply-Auslegung hätte einen virtuellen Massepunkt durch eine Offsetschaltung im analogen Frontend und geringe Aussteuerungsreserven erfordert und wäre damit näher an den Grenzwerten von Operationsverstärkern und ADC gelegen.\\
+Auf Basis der Anforderungen an Signalaufnahme und -konditionierung wurde zunächst ein Gesamtkonzept für den Hardwareteil erarbeitet. Diese Vorarbeit war notwendig, weil sich die Funktionsblöcke des Hardwareteils gegenseitig beeinflussen und zentrale Architekturentscheidungen früh zu treffen waren. Zwei Fragen standen dabei zu Beginn im Vordergrund. Erstens die Wahl zwischen Single-Ended und differenzieller Signalführung im analogen Frontend. Zweitens die Versorgung des Analogteils mit Single- oder Dualsupply. Trotz der Vorteile eines differenziellen Frontends wie Gleichtaktunterdrückung und Messung gegen ein vom Gerätemassepunkt unabhängiges Bezugspotenzial fiel die Entscheidung zugunsten einer Single-Ended-Lösung. Ausschlaggebend waren die deutlich größere Bauteilauswahl, der geringere Schaltungsaufwand und die vermiedene doppelte Signalführung. Für die Versorgung wurde eine Dual-Supply-Variante vorgesehen. Eine reine Single-Supply-Auslegung hätte einen virtuellen Massepunkt durch eine Offsetschaltung im analogen Frontend und geringe Aussteuerungsreserven erfordert und wäre damit näher an den Grenzwerten von Operationsverstärkern und ADC gelegen.\\
 
-Im nächsten Schritt wurde der nutzbare Eingangsspannungsbereich des ADC festgelegt. Da der gewählte Umsetzer eine Anpassung über die Referenzspannung erlaubt, wird der Bereich über VREF in Verbindung mit einem DAC gesetzt. Diese Lösung ist im Datenblatt vorgesehen und ersetzt einen variablen analogen Verstärker im Frontend, womit eine Aufwendige OPV-Schaltung oder Bauteilrecherche vermieden werden konnten. Zusätzlich verringert sich damit die Komplexität des Signalpfads. Es entfallen zusätzliche Rausch- und Stabilitätsrisiken, die bei verstellbaren Verstärkungsstufen erfahrungsgemäß auftreten. Aus demselben Grund wird der notwendige Gleichspannungs-Offset nicht durch eine separate OPV-Schaltung erzeugt, sondern über den negativen Analogeingang des ADC eingebracht. Das analoge Frontend stellt damit nur die Funktionen bereit, die unmittelbar für Impedanz, Pegelanpassung, Kopplung, Pufferung, Triggerabgriff und Bandbegrenzung erforderlich sind.\\
+Im nächsten Schritt wurde der nutzbare Eingangsspannungsbereich des ADC festgelegt. Da der gewählte Umsetzer eine Anpassung über die Referenzspannung erlaubt, wird der Bereich über VREF in Verbindung mit einem DAC gesetzt. Diese Lösung ist im Datenblatt vorgesehen und ersetzt einen variablen analogen Verstärker im Frontend, womit eine aufwendige OPV-Schaltung oder Bauteilrecherche vermieden werden konnten. Zusätzlich verringert sich damit die Komplexität des Signalpfads. Es entfallen zusätzliche Rausch- und Stabilitätsrisiken, die bei verstellbaren Verstärkungsstufen erfahrungsgemäß auftreten. Aus demselben Grund wird der notwendige Gleichspannungs-Offset nicht durch eine separate OPV-Schaltung erzeugt, sondern über den negativen Analogeingang des ADC eingebracht. Das analoge Frontend stellt damit nur die Funktionen bereit, die unmittelbar für Impedanz, Pegelanpassung, Kopplung, Pufferung, Triggerabgriff und Bandbegrenzung erforderlich sind.\\
 
-Das Analoge Frontend beginnt unmittelbar nach der BNC-Buchse mit einer Eingangsimpedanz von 1 Megaohm. Dieser Widerstand ist Teil eines Spannungsteilers, der die Pegel auf den zuvor definierten ADC-Bereich absenkt. Um den Teiler nicht zu belasten, folgt ein hochohmiger Spannungsfolger als Impedanzwandler. Zwischen Teilerknoten und OPV-Eingang ist eine schaltbare Kopplung vorgesehen. Durch den hohen Eingangswiderstand des Puffers entsteht bereits mit kleinen Kapazitäten ein Hochpass mit niedriger Grenzfrequenz, sodass im AC-Betrieb auch langsame Signalanteile kaum beeinflusst werden. Hinter dem Impedanzwandler wird das Triggersignal abgegriffen und einer eigenen Auswertestufe zugeführt, die ein digitales Triggerereignis an den Mikrocontroller weitergibt. Vor dem positiven Analogeingang des ADC liegt das Anti-Aliasing-Filter, dessen Auslegung im entsprechenden Kapitel beschrieben ist und das die erforderliche Bandbegrenzung sicherstellt. Den Abschluss des Konzepts bilden die Versorgungsblöcke. Sie stellen die duale Versorgung für Operationsverstärker und Peripherie bereit.\\
+Das Analoge Frontend beginnt unmittelbar nach der BNC-Buchse mit einer Eingangsimpedanz von 1 Megaohm. Dieser Widerstand ist Teil eines Spannungsteilers, der die Pegel auf den zuvor definierten ADC-Bereich absenkt. Um den Teiler nicht zu belasten, folgt ein hochohmiger Spannungsfolger als Impedanzwandler. Zwischen Teilerknoten und OPV-Eingang ist eine schaltbare Kopplung vorgesehen. Durch den hohen Eingangswiderstand des Puffers entsteht bereits mit kleinen Kapazitäten ein Hochpass mit niedriger Grenzfrequenz, sodass im AC-Betrieb auch langsame Signalanteile kaum beeinflusst werden. Hinter dem Impedanzwandler wird das Triggersignal abgegriffen und einer eigenen Auswertestufe zugeführt, die ein digitales Triggerereignis an den Mikrocontroller weitergibt. Vor dem positiven Analogeingang des ADC liegt das Anti-Aliasing-Filter, dessen Auslegung im entsprechenden Kapitel (\autoref{subsubsec:aaf_concept}) beschrieben ist und das die erforderliche Bandbegrenzung sicherstellt. Den Abschluss des Konzepts bilden die Versorgungsblöcke. Sie stellen die duale Versorgung für Operationsverstärker und Peripherie bereit.\\
 
 Das beschriebene Konzept reduziert den Schaltungsaufwand auf das notwendige Minimum, nutzt die Stärken des ADC bei Bereichs- und Offseteinstellung und minimiert zugleich Empfindlichkeit gegen Rauschen, Schwingen und Toleranzen. Es schafft damit eine belastbare Grundlage für die nachfolgenden Teilschaltungen. Das Konzept ist in dem in \autoref{fig:afe_diagram} skizzierten Blockschaltbild dargestellt.
 
@@ -807,7 +806,7 @@ Nach Abschluss des Gesamtkonzepts für die Hardwareschaltung wurden die einzelne
 
 \subsubsection{Anpassung des Spannungsbereichs}
 
-Zunächst wurde die Methode zur Einstellung des Spannungsbereichs festgelegt, weil diese die Auslegung von Teilerverhältnis, Offset und maximal möglicher Eingangsspannung bestimmt. Gewählt wurde die Einstellung über einen Digital-Analog-Umsetzer, da diese Vorgehensweise im Datenblatt beschrieben ist und bereits eine entsprechende Schaltung vorgegeben wird. Der ADC-Eingangsbereich wird ohne Vorverstärkung durch $\frac{V_{ref}}{2}$ bestimmt. Die im Datenblatt gezeigte Beschaltung nutzt den im LTC1420 integrierten Operationsverstärker in einer invertierenden Konfiguration mit Bezugspotenzial am nichtinvertierenden Eingang. Über die externe Verschaltung ergibt sich ein invertierender Verstärker mit einer Verstärkung von 1, dessen Bezugspotenzial um 2.048 V angehoben ist. Die Beziehung zu $V_{ref}$ lässt sich wie folgt herleiten:\\
+Zunächst wurde die Methode zur Einstellung des Spannungsbereichs festgelegt, weil diese die Auslegung von Teilerverhältnis, Offset und maximal möglicher Eingangsspannung bestimmt. Gewählt wurde die Einstellung über einen Digital-Analog-Umsetzer, da diese Vorgehensweise im Datenblatt beschrieben ist und bereits eine entsprechende Schaltung vorgegeben wird. Der ADC-Eingangsbereich wird ohne Vorverstärkung durch $\frac{V_{ref}}{2}$ bestimmt \cite[S. 8]{LinearTechnology1420}. Die im Datenblatt gezeigte Beschaltung (siehe \autoref{fig:adc_reference_circuit}) nutzt den im LTC1420 integrierten Operationsverstärker in einer invertierenden Konfiguration mit Bezugspotenzial am nichtinvertierenden Eingang. Über die externe Verschaltung ergibt sich ein invertierender Verstärker mit einer Verstärkung von 1, dessen Bezugspotenzial um 2.048 V angehoben ist. Die Beziehung zu $V_{ref}$ lässt sich wie folgt herleiten:\\
 
 Unter der Annahme, dass die Differenzspannung der OPV-Eingänge und die Eingangsströme jeweils Null sind, gelten die Gleichungen\\
 
@@ -847,9 +846,16 @@ Für $R_1 = R_2 = 5 k\Omega$ und $U_{int} = 2.048V$ ergibt sich
 	V_{ref} = -U_{DAC} + 4.096V
 \end{equation}
 
-Auf Basis dieser Formel ist in der gezeigten Beschaltung ein theoretischer Einstellbereich von $V_{ref}$ zwischen 0 V und 4.096 V möglich, was einem differentiellen Eingangsspannungsbereich von $\pm$ 2.048V entspricht. Als DAC wird, wie im Datenblatt beschrieben, der LTC1450 eingesetzt. Die Auflösung beträgt 1 mV bezogen auf den ADC-Eingang, entsprechend den 12 Bit des DAC. Die Beschaltung des DAC wird aus dem Datenblatt abgeleitet. Zur Nutzung der internen Referenz des DAC sind REFOUT und REFHI verbunden. An diesen beiden Knoten liegt ein RC-Glied zur Reduzierung des Referenzrauschens, ausgeführt nach den Empfehlungen des Datenblatts. REFLO ist an die analoge Masse geführt.\\
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.3]{adc_reference_circuit_with_dac.png} 
+	\caption{Ansteuerung von $V_{ref}$ mittels DAC (aus \cite[S. 8]{LinearTechnology1420})}
+	\label{fig:adc_reference_circuit}
+\end{figure}
 
-Die digitale Ansteuerung des LTC1450 folgt der im Datenblatt erläuterten Logik. Die Eingänge CSLSB, CSMSB und WR sind low-aktiv und schalten die Input-Latches transparent, wobei WR zum Schreiben aktiv sein muss und die beiden anderen jeweils die unteren acht beziehungsweise die oberen vier Bit ansteuern.
+Auf Basis dieser Formel ist in der gezeigten Beschaltung ein theoretischer Einstellbereich von $V_{ref}$ zwischen 0 V und 4.096 V möglich, was einem differentiellen Eingangsspannungsbereich von $\pm$ 2.048V entspricht. Als DAC wird, wie im Datenblatt beschrieben, der LTC1450 eingesetzt (siehe \autoref{fig:adc_reference_circuit}). Die Auflösung beträgt 1 mV bezogen auf den ADC-Eingang, entsprechend den 12 Bit des DAC. Die Beschaltung des DAC wird aus dem Datenblatt abgeleitet. Zur Nutzung der internen Referenz des DAC sind REFOUT und REFHI verbunden. An diesen beiden Knoten liegt ein RC-Glied zur Reduzierung des Referenzrauschens, ausgeführt nach den Empfehlungen des Datenblatts. REFLO ist an die analoge Masse geführt (siehe \autoref{fig:ltc1450_block_diagram}) \cite[S. 1 u.7]{LinearTechnology1450}.\\
+
+Die digitale Ansteuerung des LTC1450 folgt der im Datenblatt erläuterten Logik. Die Eingänge CSLSB, CSMSB und WR sind low-aktiv und schalten die Input-Latches transparent, wobei WR zum Schreiben aktiv sein muss und die beiden anderen jeweils die unteren acht beziehungsweise die oberen vier Bit ansteuern \cite[S. 1,7 u. 10]{LinearTechnology1450}.
 
 \begin{figure}[H]
 	\centering
@@ -858,23 +864,209 @@ Die digitale Ansteuerung des LTC1450 folgt der im Datenblatt erläuterten Logik.
 	\label{fig:ltc1450_block_diagram}
 \end{figure}
 
-Da die ausgegebenen Werte in diesem Projekt direkt in die Input-Latches geschrieben werden, sind alle drei Signale dauerhaft auf Low gelegt, sodass immer alle zwölf Bit in die Latches übernommen werden. Das Update des Ausgangs erfolgt ausschließlich über den LDAC-Eingang, der die Inhalte der Input-Latches in die DAC-Latches übernimmt und damit die Ausgangsspannung aktualisiert. Der CLR-Eingang setzt alle Latches auf Null und damit den Ausgang des invertierenden Verstärkers sofort auf den höchsten möglichen Wert für $V_{ref}$, also den größtmöglichen Eingangsspannungsbereich. Die Ausgangsverstärkung des DAC-Puffers wird über X1/X2 bestimmt und ist hier durch Verbindung nach GND auf zwei gesetzt, wodurch eine Full-Scale-Spannung von 4.095 V erreicht wird. Zusätzlich werden die Versorgungsspannung von 5 V sowie der digitale Ground angeschlossen. Zwischen $V_{CC}$ und GND ist gemäß Datenblatt ein 0,1 $\mu$F-Kondensator vorzusehen. Mit diesen Festlegungen ließ sich die Referenzschaltung im Schaltplan umsetzen. Die Datenleitungen wurden über Bussymbole geführt, um sie im Schaltplan eindeutig und übersichtlich den nachfolgenden Verarbeitungsschritten zuzuordnen.\\
+Da die ausgegebenen Werte in diesem Projekt direkt in die Input-Latches geschrieben werden, sind alle drei Signale dauerhaft auf Low gelegt, sodass immer alle zwölf Bit in die Latches übernommen werden. Das Update des Ausgangs erfolgt ausschließlich über den LDAC-Eingang, der die Inhalte der Input-Latches in die DAC-Latches übernimmt und damit die Ausgangsspannung aktualisiert. Der CLR-Eingang setzt alle Latches auf Null und damit den Ausgang des invertierenden Verstärkers sofort auf den höchsten möglichen Wert für $V_{ref}$, also den größtmöglichen Eingangsspannungsbereich. Die Ausgangsverstärkung des DAC-Puffers wird über X1/X2 bestimmt und ist hier durch Verbindung nach GND auf zwei gesetzt, wodurch eine Full-Scale-Spannung von 4.095 V erreicht wird. Zusätzlich werden die Versorgungsspannung von 5 V sowie der digitale Ground angeschlossen. Zwischen $V_{CC}$ und GND ist gemäß Datenblatt ein 0,1 $\mu$F-Kondensator vorzusehen \cite[S. 1,7 u. 10]{LinearTechnology1450}. Mit diesen Festlegungen ließ sich die Referenzschaltung im Schaltplan umsetzen. Die Datenleitungen wurden über Bussymbole geführt, um sie im Schaltplan eindeutig und übersichtlich den nachfolgenden Verarbeitungsschritten zuzuordnen.\\
 
-Der zuegehörige Schaltplanteil findet sich auf Seite 3 des Schematics im \autoref{appendix_a}.
+Der zuegehörige Schaltplanteil findet sich auf Seite 3 des Schematics im \autoref{sec:appendix_a}.
 
 \subsubsection{Offset und Eingangsbeschaltung des ADCs}
 
+Für das USB-Digitaloszilloskop wurde ein einstellbarer Gleichspannungs-Offset vorgesehen, damit der volle Spitze-Spitze-Eingangsbereich von 10 V nicht nur für Signale mit Mittelpunkt bei 0 V nutzbar ist. Rein positive oder rein negative Eingangssignale können damit ebenfalls in den Arbeitsbereich des ADCs verschoben werden.\\
+
+Das Konzept folgt den Hinweisen des Datenblatts, nach denen der negative Analogeingang -AIN bei Gleichstromkopplung extern über einen Widerstandsteiler oder eine Spannungsreferenz auf ein Bezugspotenzial gelegt werden kann. Das Datenblatt zeigt hierfür sowohl ein festes Bezugspotenzial per Teiler als auch einen fein einstellbaren Offsetabgleich per Potentiometer (siehe \autoref{fig:adc_input_circuitry_ltc1420}). Beide Ansätze wurden zusammengeführt, um einen größeren und für unsere Anwendung erforderlichen Einstellbereich zu erhalten.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.5]{adc_input_circuitry_ltc1420.png} 
+	\caption{Mögliche Eingangsbeschaltungen des ADCs (aus \cite[S. 10 u. 12]{LinearTechnology1420})}
+	\label{fig:adc_input_circuitry_ltc1420}
+\end{figure}
+
+Das Datenblatt empfiehlt für bestmögliche dynamische Eigenschaften eine Zentrierung der Analogeingänge um 0 V im Dual-Supply-Betrieb sowie um 2.5 V im Single-Supply-Betrieb \cite[S. 9]{LinearTechnology1420}). Die tatsächliche Dynamikverschlechterung bei Abweichungen wird dort jedoch nicht quantifiziert. Das Design sieht daher eine Offseteinstellung über einen Spannungsteiler vor und bewertet die Performance experimentell im Aufbau.\\
+
+Der am Eingang des AD-Umsetzers nutzbare Bereich liegt differenziell bei $\pm$ 2.048 V. Daraus folgt als Zielgröße ein einstellbarer Offset von ebenfalls $\pm$ 2,048 V, weil sich damit rein positive oder rein negative Signale, deren Spitze-Spitze-Spannung $\pm$ 2.048V beträgt, in die Mitte des nutzbaren Fensters verschieben lassen. Diese Realisierung ist im Dual-Supply-Betrieb möglich, da die Aussteuerungsgrenzen entsprechend $\pm$ 5 V Versorgungsspannung ausreichende Reserven bieten.\\
+
+Die Offsetschaltung besteht aus einem Potentiometer $R_{Voff1}$ = 5 k$\Omega$, das zwischen +5 V und -5 V liegt. An den Enden des Potentiometers befinden sich symmetrische Vorwiderstände $R_{off1}$ = $R_{off2}$ = 2.7 k$\Omega$. Der Schleifer stellt den Offset bereit und speist über einen Jumper den Knoten -AIN. Nachgeschaltet sind zwei Glättungskondensatoren mit 1 $\mu$F und 100 nF gegen analoge Masse, die Versorgungsschwankungen und Spannungsspitzen dämpfen. Der Jumper ermöglicht bei Bedarf die Trennung des Offsets vom Eingangspfad, durch Überbrücken eines der Kondensatoren ist eine Festlegung des Signals auf 0 V möglich. Ein zusätzlicher Spannungsfolger oder eine Referenzquelle wurde bewusst vermieden, da das Datenblatt für DC-Kopplung einen einfachen Widerstandsteiler zulässt und damit der Schaltungsaufwand reduziert wird.\\
+
+Der zuegehörige Schaltplanteil findet sich auf Seite 3 des Schematics im \autoref{sec:appendix_a}.
+
+Mit dieser Wahl der Bauelemente ergibt sich folgender Einstellbereich.
+
+\[R_{Sigma} = R_{off1} + R_{Voff} + R_{off2} \]
+\[V_{off}^{(+)} = -V_S + 2V_S\cdot \frac{R_{Voff} + R_{off2}}{R_{Sigma}} = +2.404 V \]
+\[V_{off}^{(-)} = -V_S + 2V_S\frac{R_{off}\cdot 2}{R_{Sigma}} = -2.404 V\]
+
+Der Bereich deckt den Zielwert von $\pm$ 2,048 V ab und eignet sich damit für den vorgesehenen Zweck.\\
+
+\textbf{Weitere Beschaltung des ADCs}\\
+Neben den Beschaltungen für Offset und Spannungsbereich waren weitere Maßnahmen am AD-Umsetzer erforderlich, die dem Datenblatt entnommen wurden.  
+Da die 2,´.5-V-Spannung an $V_{CM}$ nicht genutzt wird, wurde sie mit einem 1-$\mu$F-Keramikkondensator gegen Masse verbunden.  
+Zusätzlich wurden an $V_{REF}$, $V_{SS}$ und $V_{DD}$ jeweils 1-$\mu$F-Keramikkon-densatoren nach Masse vorgesehen. Die positive und die negative Versorgung $V_{SS}$ und $V_{DD}$ wurden ebenfalls angeschlossen.  
+$V_{DD}$ und $OV_{DD}$ wurden gebrückt, um beide mit derselben 5-V-Versorgung zu speisen. Ursprünglich war vorgesehen, den digitalen Teil mit 3.3 V vom Mikrocontroller zu versorgen; dies wird jedoch nur im Single-Supply-Betrieb empfohlen, während im Dual-Supply-Betrieb 5 V empfohlen werden \cite[S. 12]{LinearTechnology1420}). Analoge und digitale Masse werden in unmittelbarer Nähe des AD-Umsetzers zusammengeführt, um die im Datenblatt geforderte Leitungsführung im Layout zu verdeutlichen. Weitere Informationen dazu folgen im Kapitel \textit{Layout} (siehe \autoref{subsec:hw_implementation}). Der Eingangsverstärkungsfaktor wurde auf eins gesetzt, da das Eingangssignal bereits durch einen Teiler herabgesetzt wird und eine zusätzliche Verstärkung eine stärkere Absenkung des Pegels durch den Spannungsteiler erfordern würde.  Der $GAIN$-Anschluss liegt dazu auf Versorgungspotenzial \cite[S. 6 u. 7]{LinearTechnology1420}).  Die Datenleitungen sind über Bussymbole geführt, um sie im Schaltplan eindeutig und übersichtlich den nachfolgenden Verarbeitungsschritten zuzuordnen.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.5]{block_diagram_ltc1420.png} 
+	\caption{Blockschaltbild des ADCs LTC1420 (aus \cite[S. 1]{LinearTechnology1420})}
+	\label{fig:ltc1420_block_diagram}
+\end{figure}
+
 \subsubsection{Eingangsimpedanz und Kopplung}
+
+Nachdem die Beschaltung des ADCs fertiggestellt war, konnte mit dem Design des analogen Frontends begonnen werden, angefangen mit Eingangsimpedanz und Kopplung.\\  
+Nach der BNC-Buchse wurde zur Festlegung der Eingangsimpedanz von 1 M$\Omega$ und zur gleichzeitigen Pegelabsenkung ein Spannungsteiler realisiert.\\  
+Ziel war, die Spannung auf die zulässigen Maximalwerte der Folgestufen zu begrenzen.  
+Für den an den ADC-Bereich von $\pm$ 2.048 V angepassten Teiler wurde ein Teilfaktor von 0.4096 angesetzt ($R_2 \approx 0.4096$ M$\Omega$, $R_1 \approx 0.5904$ M$\Omega$).\\  
+In der praktischen Umsetzung wurden die Widerstände als Serienkombinationen ausgeführt, um mit den vorhandenen E-Reihen möglichst nah an den errechneten Wert heranzukommen:\\  
+$R_1$ durch 560 k$\Omega$ + 30 k$\Omega$ (590 k$\Omega$) und $R_2$ durch 390 k$\Omega$ + 20 k$\Omega$ (410 k$\Omega$).  
+Damit wurde bewusst eine geringe Abweichung vom Soll in Kauf genommen, die später durch Softwarekalibrierung oder den Einsatz präziserer Widerstände korrigiert werden kann.\\  
+Da der Ausgang des Teilers eine hohe Ausgangsimpedanz besitzt, wurde anschließend ein Spannungsfolger eingesetzt, um die Belastbarkeit zu erhöhen.\\  
+Als Operationsverstärker wurde – in Anlehnung an ein Referenzprojekt\footnote{Siehe S.26 von \href{https://web.mit.edu/6.111/www/f2013/projects/kramnik_Project_Final_Report.pdf}{HDMI Digital Oscilloscope}} – der THS4631DGN gewählt. Im Projekt selbst wurde der OPA659 eingesetzt. Aufgrund des für unsere Anwendung zu geringem zulässigen Spannungsbereichs wurde jedoch auf eine im Datenblatt genannte Alternative mit höherem Versorgungsspannungsbereich bis zu $\pm$ 15V zurückgegriffen \cite[S. 3]{TexasInstruments659}. Der THS4631 überzeugte darüber hinaus durch einen sehr hohen Eingangswiderstand von 1 G$\Omega$ sowie eine Verstärkungsbandbreite von 210 MHz \cite[S. 1]{TexasInstruments4631}.\\  
+Seine sehr hohe Eingangsimpedanz (G$\Omega$-Bereich) belastet den hochohmigen Teiler nur vernachlässigbar (1 G$\Omega \parallel$ 410 k$\Omega \approx$ 409.8 k$\Omega$) und die verfügbare Bandbreite ist für den Einsatzzweck geeignet.\\
+Zur wahlweisen AC-Kopplung wurde zwischen Teilerknoten und OPV-Eingang ein Längskondensator vorgesehen.  
+Aufgrund der hohen Eingangsimpedanz des OPV ergibt sich bereits mit kleinen Kapazitäten eine niedrige Hochpass-Grenzfrequenz, was die Bauteilauswahl vereinfacht.\\ 
+Um zwischen AC- und DC-Betrieb ohne Entstehung offener Leiterstücke umschalten zu können, wurden zwei Jumper jeweils vor und hinter dem Koppelkondensator platziert, sodass der Kondensator bei Bedarf vollständig getrennt werden kann.\\
+ 
+Da am OPV-Eingang und an den Zuleitungen unvermeidliche Kapazitäten anliegen, würde in Verbindung mit dem hochohmigen Teiler ein ausgeprägtes Tiefpassverhalten entstehen, dessen Grenzfrequenz deutlich unterhalb der angestrebten 1-MHz-Bandbreite läge.\\
+Deshalb wurde – analog zum Prinzip des Oszilloskop-Tastkopfs (siehe \autoref{subsubsec:freq_comp_vdiv}) – ein kompensierter Spannungsteiler vorgesehen.\\
+Ein einstellbarer Trimmkondensator parallel zu $R_1$ zur Feineinstellung, ergänzt um einen parallelen Festwertkondensator zur Grobeinstellung, erlaubt den Abgleich der Zeitkonstante und damit eine frequenzunabhängigere Abschwächung.\\  
+Hierdurch werden die durch Eingangs- und Leitungskapazitäten verursachten Pegel- und Phasenfehler wirkungsvoll reduziert.\\
+
+Der zuegehörige Schaltplanteil findet sich auf Seite 2 des Schematics im \autoref{sec:appendix_a}.\\
+
+Für Messungen an 50-$\Omega$-Systemen ist optional ein Widerstand zur Eingangs-Anpassung vorgesehen. Damit kann der Eingang bei Bedarf auf 50 $\Omega$ umgeschaltet werden, ohne dass im Normalbetrieb die hohe 1-M$\Omega$-Eingangsimpedanz beeinträchtigt wird. Für den OPV wurden entsprechend des Datenblatts je Versorgungspannung zwei Bypass Kondensatoren mit 0.1$\mu$F und 100pF eingeplant. Ein weiterer größerer Kondensator im uF-Bereich, war ebenfalls gefordert. Da dieser laut Datenblatt allerdings nicht direkt am Device gefordert ist und mit anderen Bausteinen geteilt werden kann, wurde auf Grund der weiteren OPV in nahe des Spannungsfolgers auf diesen verzichtet.
 
 \subsubsection{Anti-Aliasing-Filter}
 \label{subsubsec:aaf_concept}
 
+Der zuegehörige Schaltplanteil findet sich auf Seite 2 des Schematics im \autoref{sec:appendix_a}.\\
+
+Der Entwurf des Anti-Aliasing-Filters erfolgte mit dem Analog Filter Wizard\footnote{\url{https://tools.analog.com/en/filterwizard/}} von Analog Devices und orientierte sich an den im Kapitel zum Filterentwurf festgelegten Kriterien (\autoref{subsec:aaf_nyquist}). Für die Synthese wurden die 3-dB-Grenzfrequenz, die geforderte Sperrbanddämpfung und der Beginn des Sperrbands vorgegeben. Außerdem wurde ein Spannungsbereich von $\pm$5 V festgelegt. Die 3-dB-Grenzfrequenz wurde auf 1,5 MHz festgelegt, um die Zielbandbreite von 1 MHz sicher zu erreichen. Der Beginn des Sperrbands wurde mit der Nyquist-Frequenz gleichgesetzt, die bei der halben Abtastrate liegt und hier 5 MHz beträgt. Die notwendige Sperrbanddämpfung wurde aus der Auflösung des AD-Umsetzers hergeleitet, da das SINAD ebenfalls bei rund 72 dB liegt.
+
+\begin{equation}
+	A_{stop} \approx 6.02 \cdot N dB \approx 72 dB
+\end{equation}
+
+Es wurde ein Tiefpass neunter Ordnung gewählt. Zur Begrenzung der Komplexität und zur Reduktion von Instabilitätsrisiken sollte die Realisierung höchstens vier Operationsverstärker umfassen. Das Filter wurde daher als Kaskade aus vier aktiven Stufen ausgelegt und am Ausgang um ein zusätzliches RC-Glied ergänzt. Die Auslegung basiert auf der Annahme eines hohen Eingangswiderstands des AD-Umsetzers während der Wandlung, weshalb hinter dem RC-Glied kein weiterer Puffer erforderlich ist.
+Im Designwerkzeug wurden die Parameter auf das schnellstmögliche Einschwingverhalten unter den gegebenen Randbedingungen eingestellt. Zusätzlich erfolgte eine Optimierung auf niedriges Rauschen. Für die endliche Verstärkungsbandbreite der eingesetzten Operationsverstärker wurde eine Kompensation in der Beschaltung berücksichtigt. Die Bauteilauswahl folgt praxisnahen Reihen mit Kondensatoren aus der E12-Reihe und Widerständen aus der E24-Reihe.
+
+Die Bewertung des Filters erfolgte anhand der zuvor definierten Kriterien im \autoref{subsec:aaf_nyquist}, insbesondere anhand der Diagramme zur Gruppenlaufzeit (\autoref{fig:afw_group_delay_aaf}), Sprungantwort (\autoref{fig:afw_step_response_aaf}) und Betrags-Frequenzgang (\autoref{fig:afw_magnitude_dB_aaf}). Das Design-Tool schlug als OPV den AD8022 von Analog Devieces vor, welchen wir nach einer Sichtung des Datenblatts übernommen. Das Ergebnis wurde in den Schaltplan übernommen, dabei wurden die im Datenblatt der OPVs beschriebenen Entkopplungskondensatoren berücksichtigt.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.9]{afw_group_delay_aaf.png} 
+	\caption{Gruppenlaufzeit des AAF (Analog Filter Wizard)}
+	\label{fig:afw_group_delay_aaf}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.9]{afw_step_response_aaf.png} 
+	\caption{Sprungantwort des AAF (Analog Filter Wizard)}
+	\label{fig:afw_step_response_aaf}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.9]{afw_magnitude_dB_aaf.png} 
+	\caption{Betrags-Frequenzgang des AAF (Analog Filter Wizard)}
+	\label{fig:afw_magnitude_dB_aaf}
+\end{figure}
 
 
+\subsubsection{Trigger- und Clock-Schaltung}
+
+Entsprechend der im Kapitel zur Schnittstelle beschriebenen Anforderungen (\autoref{subsec:requirements_hw_fw_interface}) war eine Pegelwandlung des Taktsignals erforderlich. Parallel dazu war eine analoge Triggereinrichtung vorgesehen. Beide Funktionen wurden über einen Komparator realisiert. Für die Umsetzung der beiden Komparatorfunktionen Pegelwandlung des Taktsignals sowie Trigger-Erfassung wurde der LT1714 gewählt. Es handelt sich um einen Dual-Komparator, der zwei identische Komparatorstufen in einem Gehäuse bereitstellt \cite[S. 1]{LinearTechnology1714}.\\
+
+\textbf{Anforderungen}
+
+\begin{enumerate}
+    \item Pegelwandlung Takt 3.3 V $\rightarrow$ 5 V
+    \begin{itemize}
+        \item Taktfrequenz 10 MHz
+        \item Sehr kurze Verzögerungszeiten und CMOS-kompatibler Ausgang erforderlich
+        \item Versorgung 5 V Single Supply ausreichend
+    \end{itemize}
+    \item Trigger-Erfassung
+    \begin{itemize}
+        \item Konfiguration mit einstellbarer Referenzspannung über Trimm-Potentiometer
+        \item Betrieb mit Dual Supply ±5 V, um positive und negative Eingangssignale zu erfassen
+        \item Niedriges Propagation Delay für präzise Flankenerkennung
+        \item CMOS-kompatibler Ausgang für die digitale Weiterverarbeitung
+    \end{itemize}
+\end{enumerate}
+
+\textbf{Begründung der Auswahl}\\
+Der LT1714 besitzt ein Propagation Delay von 7 ns bei 20 mV Übersteuerung und maximal 12 ns sowie eine maximale Schaltfrequenz von 65 MHz, womit die geforderten 10 MHz für die Takt-Pegelumsetzung problemlos realisierbar sind (\cite[S. 1, 3-4]{LinearTechnology1714}). Das IC unterstützt sowohl Single-Supply-Betrieb von 2.4 V bis 12 V als auch Dual-Supply von $\pm$ 2.4 V bis $\pm$ 6 V, womit die Versorgung mit $\pm$ 5 V für die Trigger-Anwendung möglich ist (\cite[S. 1-2]{LinearTechnology1714}). Die Eingänge sind rail-to-rail und können 100 mV über die Versorgungsspannungen hinaus betrieben werden, sodass sich bei $\pm$ 5 V ein nutzbarer Bereich von etwa -5.1 V bis +5.1 V ergibt. Eine Hysteresebeschaltung ist vorgesehen und unterstützt eine stabile Triggerung (\cite[S. 1, 8, 10]{LinearTechnology1714}). Die Ausgänge sind rail-to-rail, komplementär und TTL/CMOS-kompatibel; bei 5 V Versorgung werden typischerweise $V_{OH} = 4.8\,\text{V}$ bei 1 mA Last und $V_{OL} = 0.2\,\text{V}$ erreicht, was eine direkte digitale Weiterverarbeitung ermöglicht (\cite[S. 3-4]{LinearTechnology1714}).\\
+
+Für die Trigger-Einrichtung wurde zur Einstellung des Triggerpegels ein Potentiometer verwendet, das über zwei symmetrische Widerstände zwischen die positiven und negativen 5-V-Versorgungsschienen gelegt ist. Der Schleifer führt zum negativen Komparatoreingang. Die Widerstände besitzen 820 $\Omega$, das Potentiometer 10 k$\Omega$. Damit ist eine Spannung von etwa $\pm$ 4.096 V geplant. Die tatsächlich erreichbaren Endwerte ergeben sich aus der Spannungsteilung und lauten wie folgt:
+
+\[
+R_{\Sigma} = R_{\text{trig1}} + R_{V_{\text{trig}}} + R_{\text{trig2}}
+\]
+
+\[
+V_{\text{trig}}^{(+)} = -V_S + 2V_S\frac{R_{V_{\text{trig}}} + R_{\text{trig2}}}{R_{\Sigma}} = +4.296\,\text{V}
+\]
+
+\[
+V_{\text{trig}}^{(-)} = -V_S + 2V_S\frac{R_{\text{trig2}}}{R_{\Sigma}} = -4.296\,\text{V}
+\]
+
+Zur Glättung gegen Versorgungsschwankungen und Spannungsspitzen wurden zwei Bypass-Kondensatoren mit 0.1 $\mu$F und 4.7 $\mu$F eingesetzt. Über zwei Widerstände wurde gemäß Datenblatt eine Hysterese von 10 mV eingestellt, um eine höhere Stabilität zu gewährleisten (siehe \autoref{fig:comparator_hysteresis_circuit}).
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.4]{comparator_hysteresis_circuit.png} 
+	\caption{Hysterese Beschaltung aus \cite[S. 10]{LinearTechnology1714}}
+	\label{fig:comparator_hysteresis_circuit}
+\end{figure}
+
+Für die Pegelwandlung des Clock-Signals wurde die Schaltschwelle über einen Widerstandsteiler definiert. Der obere Widerstand besitzt 68 k$\Omega$ und der untere 33 k$\Omega$. Die resultierende Schwelle beträgt näherungsweise 1.63 V und ergibt sich aus:
+
+\[
+V_{\text{th,clk}} = V_S \cdot \frac{R_{\text{clk2}}}{R_{\text{clk1}} + R_{\text{clk2}}} = 5\,\text{V} \cdot \frac{33k}{68k + 33k} = 1.634\,\text{V}
+\]
+
+Auch diese Stufe wurde zur Stabilisierung mit 0.1 $\mu$F und 4.7 $\mu$F beschaltet. Zusätzlich wurde ebenfalls eine Hysterese von 10 mV realisiert. Entkopplungskondensatoren mit 0.1 $\mu$F und 4.7 $\mu$F wurden entsprechend dem Datenblatt vorgesehen (\cite[S. 8]{LinearTechnology1714}).\\
+
+Als Abgriff für das Triggersignal wurden ein Jumper direkt am Eingang des AD-Umsetzers und ein weiterer Jumper unmittelbar hinter dem Spannungsfolger vorgesehen. Über einen zusätzlichen Jumper wird die gewünschte Triggerquelle ausgewählt. Der Abgriff hinter dem Spannungsfolger ist aufgrund der niedrigen Ausgangsimpedanz grundsätzlich vorteilhaft. Bei höheren Frequenzen kann er jedoch durch die Lage vor dem Anti-Aliasing-Filter dazu führen, dass der Trigger nicht exakt dem im Oszilloskop dargestellten Signal entspricht.\\
+
+Der zuegehörige Schaltplanteil findet sich auf Seite 6 des Schematics im \autoref{sec:appendix_a}.
+
+
+\subsubsection{Simulation des AFEs}
+
+Zur Verifikation des gesamten analogen Frontends und zur frühzeitigen Erkennung möglicher Probleme vor dem Layout wurde das geplante Design in PSPICE übertragen (siehe Simulationen im \autoref{sec:appendix_a}). Die Simulation diente außerdem dazu, Richtwerte für Kompensationskondensator und Koppelkondensator zu bestimmen. Da im Analog Filter Wizard bereits eine Filtersimulation vorlag, lag der Schwerpunkt auf dem Gesamtsystem. Einzelne Stufen wurden zur Absicherung ebenfalls simuliert. Eine vollständige Darstellung aller Einzelergebnisse würde jedoch den Rahmen dieser Dokumentation sprengen.\\
+
+Die verwendeten Simulationsmodelle stammten überwiegend aus den integrierten Bibliotheken des Programms. Das Modell des Spannungsfolgers wurde aus einer Internetbibliothek des Herstellers (\footnotesize \url{https://www.ti.com/product/de-de/THS4631#design-tools-simulation}\normalsize ) eingebunden. Nach Abschluss des Schaltplans wurden verschiedene Simulationen ohne aktivierte Kopplung durchgeführt. Zunächst wurde der geeignete Wert beziehungsweise der geeignete Wertebereich für den Kompensationskondensator ermittelt. In der AC-Analyse ergab die parametrische Darstellung des Frequenzgangs einen idealen Wert von rund 5.6 pF. Daraus wurde ein Trimmkondensator mit einem Einstellbereich von 2 bis 10 pF abgeleitet. Anschließend folgten Transientenanalysen mit repräsentativen Eingangssignalen. Exemplarisch sind im Anhang Rechtecksignale mit 100 kHz und 1 MHz sowie Sinussignale mit 100 kHz und 1 MHz dargestellt. Zusätzlich wurden Frequenzgang und Gruppenlaufzeit über AC-Analysen bestimmt. An der Bandbreitengrenze von 1 MHz ergab sich simulatorisch eine Dämpfung von rund 1 dB. Die Ergebnisse stimmten gut mit den Resultaten des Filterdesign-Tools überein und stützen die gewählte Schaltungsauslegung.\\
+
+Die Verifikation der Kopplung erwies sich als anspruchsvoller. Die Kopplung arbeitete nicht über den gesamten Frequenzbereich so trennscharf wie gewünscht. Je nach gewählter Kapazität wurde der Gleichanteil nicht ausreichend unterdrückt oder es trat bereits eine Dämpfung bei Signalen auf, die noch nicht gedämpft werden sollten. In der Simulation zeigte eine Kapazität von etwa 12 pF die besten Ergebnisse. Für eine optimierte Kopplung wäre vermutlich eine aufwendigere Schaltungstopologie erforderlich gewesen. Vor diesem Hintergrund wurde die Kopplung in der vorliegenden Form umgesetzt und im praktischen Aufbau evaluiert. Für die Grundfunktion des Oszilloskops ist sie nicht zwingend erforderlich, da sich eine Zentrierung des Wechselanteils um Masse und damit die Entfernung des Offsetanteils auch über die Offset-Funktion erreichen lässt.
+
+
+\subsubsection{Interface und Connector zum $\mu$C}
+
+Entsprechend der festgelegten Anforderungen an die Schnittstelle zwischen Firmware und Hardware (\autoref{subsec:requirements_hw_fw_interface}) wurde im Schaltplan ein Interface entworfen, das die definierten Pegel sicherstellt. Das Interface besteht primär aus Spannungsteilern für die Leitungen vom HW-Teil zum Mikrocontroller sowie aus Pull-up-Widerständen für Leitungen vom Mikrocontroller zum HW-Teil. Die Pegelwandlung war bereits konzeptionell festgelegt und wurde durch geeignete Widerstandswerte umgesetzt.
+
+Für die Pull-up-Widerstände wurden 10 k$\Omega$ gewählt. Diese Dimensionierung begrenzt die statische Belastung der Versorgung und erlaubt zugleich eine ausreichend schnelle Flankenbildung für die vorgesehenen Steuerereignisse.
+
+Für die Spannungsteiler wurde ein niedrigerer Gesamtwiderstand gewählt, da diese Pfade für die ADC-Kommunikation bestimmt sind und damit höhere Geschwindigkeiten erfordern. Gleichzeitig fließt hier nicht dauerhaft Strom wie bei den Pull-ups. Verwendet wurden 1.8 k$\Omega$ als oberer Widerstand zum 5-V-Pegel und 3.3 k$\Omega$ als unterer Widerstand nach Masse. Der resultierende Ausgangspegel bei einem 5-V-Eingang beträgt:
+
+\[
+V_{out} = V_{in} \cdot \frac{R_{unten}}{R_{oben} + R_{unten}} = 5 V \cdot \frac{3.3\,k\Omega}{1.8\,k\Omega + 3.3\,k\Omega} \approx 3.235 V
+\]
+
+Damit liegt der Logikpegel im zulässigen Bereich für die 3.3-V-Eingänge des Mikrocontrollers.
+
+Die Daten- und Steuerleitungen des fertiggestellten Interfaceblocks (siehe Seite 4 des Schematics in \autoref{sec:appendix_a}) wurden anschließend gemäß der zuvor vereinbarten Pinbelegung auf die Mikrocontroller-Konnektoren geführt. Die Spannungsversorgung und die Masse wurden an den Konnektoren ebenfalls angeschlossen (siehe Seite 8 des Schematics in \autoref{sec:appendix_a}).
+
+
+\subsubsection{Spannungsversorgung}
 
 
 
 \subsection{Implementierung}
+\label{subsec:hw_implementation}
+
 \subsection{HW-Test}
 \label{subsec:hw_test}
 
@@ -897,7 +1089,14 @@ Der zuegehörige Schaltplanteil findet sich auf Seite 3 des Schematics im \autor
 - Pegelwandlung: Pull-Ups+Open-Drain; Spannungsteiler\\
 - DAC-Ansteuerung
 
-\subsection{Auswahl des Komparators}
+\subsection{Anforderungen an die Schnittstelle}
+\label{subsec:requirements_hw_fw_interface}
+
+\subsection{Festlegung der Pins und Pegelwandlung}
+
+\subsection{Schnittstellen-Test HW-FW}
+
+\subsection{Zusammenfassung der Ergebnisse}
 
 \pagebreak
 
