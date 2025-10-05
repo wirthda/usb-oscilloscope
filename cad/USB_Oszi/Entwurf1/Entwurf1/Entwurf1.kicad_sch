@@ -1,0 +1,1511 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "dbb0b33c-273d-4d20-a0b0-89ec7ca7458d")
+	(paper "A4")
+	(title_block
+		(title "Blockschaltbild")
+		(date "2025-10-02")
+		(rev "1")
+	)
+	(lib_symbols
+		(symbol "Connector:Conn_Coaxial"
+			(pin_names
+				(offset 1.016)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "J"
+				(at 0.254 3.048 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Value" "Conn_Coaxial"
+				(at 2.921 0 90)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" "~"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "coaxial connector (BNC, SMA, SMB, SMC, Cinch/RCA, LEMO, ...)"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "BNC SMA SMB SMC LEMO coaxial connector CINCH RCA MCX MMCX U.FL UMRF"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_fp_filters" "*BNC* *SMA* *SMB* *SMC* *Cinch* *LEMO* *UMRF* *MCX* *U.FL*"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "Conn_Coaxial_0_1"
+				(polyline
+					(pts
+						(xy -2.54 0) (xy -0.508 0)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start 1.778 0)
+					(mid 0.222 -1.8079)
+					(end -1.778 -0.508)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(arc
+					(start -1.778 0.508)
+					(mid 0.2221 1.8084)
+					(end 1.778 0)
+					(stroke
+						(width 0.254)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(circle
+					(center 0 0)
+					(radius 0.508)
+					(stroke
+						(width 0.2032)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+				(polyline
+					(pts
+						(xy 0 -2.54) (xy 0 -1.778)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "Conn_Coaxial_1_1"
+				(pin passive line
+					(at -5.08 0 0)
+					(length 2.54)
+					(name "In"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+				(pin passive line
+					(at 0 -5.08 90)
+					(length 2.54)
+					(name "Ext"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "2"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+		(symbol "power:GNDA"
+			(power)
+			(pin_numbers
+				(hide yes)
+			)
+			(pin_names
+				(offset 0)
+				(hide yes)
+			)
+			(exclude_from_sim no)
+			(in_bom yes)
+			(on_board yes)
+			(property "Reference" "#PWR"
+				(at 0 -6.35 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Value" "GNDA"
+				(at 0 -3.81 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+				)
+			)
+			(property "Footprint" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Datasheet" ""
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "Description" "Power symbol creates a global label with name \"GNDA\" , analog ground"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(property "ki_keywords" "global power"
+				(at 0 0 0)
+				(effects
+					(font
+						(size 1.27 1.27)
+					)
+					(hide yes)
+				)
+			)
+			(symbol "GNDA_0_1"
+				(polyline
+					(pts
+						(xy 0 0) (xy 0 -1.27) (xy 1.27 -1.27) (xy 0 -2.54) (xy -1.27 -1.27) (xy 0 -1.27)
+					)
+					(stroke
+						(width 0)
+						(type default)
+					)
+					(fill
+						(type none)
+					)
+				)
+			)
+			(symbol "GNDA_1_1"
+				(pin power_in line
+					(at 0 0 270)
+					(length 0)
+					(name "~"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+					(number "1"
+						(effects
+							(font
+								(size 1.27 1.27)
+							)
+						)
+					)
+				)
+			)
+			(embedded_fonts no)
+		)
+	)
+	(text "NICHT IMPLEMENTIERT"
+		(exclude_from_sim no)
+		(at 117.348 114.554 0)
+		(effects
+			(font
+				(size 2.286 2.286)
+				(thickness 0.508)
+				(bold yes)
+			)
+		)
+		(uuid "cb523819-8186-4a3d-84db-fe46a1f5bacf")
+	)
+	(wire
+		(pts
+			(xy 229.87 48.26) (xy 240.03 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "045e953f-67cf-471a-b873-c4a1ee45647c")
+	)
+	(wire
+		(pts
+			(xy 229.87 31.75) (xy 240.03 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "04dbd1f8-1525-41cb-8d08-b80d555a45ba")
+	)
+	(bus
+		(pts
+			(xy 229.87 29.21) (xy 240.03 29.21)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1cafcd85-975f-4ba7-ab04-3bd02197c7bf")
+	)
+	(wire
+		(pts
+			(xy 33.02 39.37) (xy 36.83 39.37)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "1d2d1e36-fcbb-4650-a2c4-57df6cdae662")
+	)
+	(bus
+		(pts
+			(xy 229.87 53.34) (xy 240.03 53.34)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "257b466b-8288-4c3e-9194-03502cd85a4c")
+	)
+	(wire
+		(pts
+			(xy 80.01 181.61) (xy 80.01 185.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "3e07e342-aeb5-4c11-b3e4-ee7a6221e9d2")
+	)
+	(wire
+		(pts
+			(xy 73.66 181.61) (xy 73.66 185.42)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "43448d4b-a345-470d-9144-889bac6936fe")
+	)
+	(bus
+		(pts
+			(xy 138.43 50.8) (xy 162.56 50.8)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "4763112d-ed25-4c87-9b22-e0be140d5173")
+	)
+	(wire
+		(pts
+			(xy 229.87 45.72) (xy 240.03 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "47a8c1a1-7059-4d71-878e-f26478926de8")
+	)
+	(wire
+		(pts
+			(xy 138.43 45.72) (xy 162.56 45.72)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6329eb49-1552-403b-8212-02e75ac75fc7")
+	)
+	(wire
+		(pts
+			(xy 92.71 68.58) (xy 92.71 50.8)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6540fc39-5d5a-48c8-ba57-1a098332669d")
+	)
+	(wire
+		(pts
+			(xy 138.43 31.75) (xy 162.56 31.75)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "666c09a8-9bad-4641-b583-67062cba64d5")
+	)
+	(wire
+		(pts
+			(xy 82.55 50.8) (xy 82.55 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "6afef686-445e-4d03-b424-d68375fcb858")
+	)
+	(bus
+		(pts
+			(xy 138.43 29.21) (xy 162.56 29.21)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "70294e64-c709-4d6d-bb06-af8bf0cc0909")
+	)
+	(wire
+		(pts
+			(xy 73.66 149.86) (xy 73.66 153.67)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "73d822af-f90c-4e1f-9141-b919d3bae880")
+	)
+	(wire
+		(pts
+			(xy 92.71 68.58) (xy 95.25 68.58)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7a30b745-098b-41b6-b68e-90c088553a89")
+	)
+	(wire
+		(pts
+			(xy 92.71 50.8) (xy 95.25 50.8)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7b77acb5-6805-44b1-9906-2d1f58112982")
+	)
+	(wire
+		(pts
+			(xy 138.43 76.2) (xy 162.56 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "7c151606-1cec-4614-a976-3d1f664e1ec4")
+	)
+	(wire
+		(pts
+			(xy 27.94 44.45) (xy 27.94 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "8e1f32f2-b637-4d42-8a75-c8ab5e9a2077")
+	)
+	(wire
+		(pts
+			(xy 138.43 68.58) (xy 162.56 68.58)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "96653ff3-e3f7-4e9b-acec-b9d650010c64")
+	)
+	(wire
+		(pts
+			(xy 229.87 76.2) (xy 240.03 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "a15d7abc-1d71-4c8d-a866-73fdd8349ec0")
+	)
+	(wire
+		(pts
+			(xy 138.43 48.26) (xy 162.56 48.26)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b08b0084-e8c4-470f-aa23-b2e9c92988ed")
+	)
+	(wire
+		(pts
+			(xy 229.87 68.58) (xy 240.03 68.58)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "b5fa198b-a4b5-407c-8096-cc7112712d22")
+	)
+	(wire
+		(pts
+			(xy 82.55 76.2) (xy 95.25 76.2)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "ca7968f3-42ac-4a77-a0b9-4146762f2cd4")
+	)
+	(bus
+		(pts
+			(xy 229.87 50.8) (xy 240.03 50.8)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "d5e57a37-68ab-4ba2-acad-e58bcdcc5f95")
+	)
+	(wire
+		(pts
+			(xy 73.66 50.8) (xy 82.55 50.8)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e0815b55-b381-4a64-9131-5058c6bed61e")
+	)
+	(wire
+		(pts
+			(xy 80.01 149.86) (xy 80.01 153.67)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "e44d5eaf-c83c-47cf-9c0a-91167e4158db")
+	)
+	(wire
+		(pts
+			(xy 73.66 39.37) (xy 95.25 39.37)
+		)
+		(stroke
+			(width 0)
+			(type default)
+		)
+		(uuid "fe409e44-e22f-440d-9b7b-89e8f282d421")
+	)
+	(global_label "+5V"
+		(shape input)
+		(at 80.01 149.86 90)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "181766b2-c919-4723-915c-aba2334d35d4")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 80.01 143.0043 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "V+"
+		(shape input)
+		(at 73.66 149.86 90)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify left)
+		)
+		(uuid "5d468095-7fad-43ed-91f1-7af420af875f")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 73.66 144.2138 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "-5V"
+		(shape input)
+		(at 80.01 185.42 270)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "b1225356-fc17-4f57-b4d1-5998dd373b45")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 80.01 192.2757 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(global_label "V-"
+		(shape input)
+		(at 73.66 185.42 270)
+		(fields_autoplaced yes)
+		(effects
+			(font
+				(size 1.27 1.27)
+			)
+			(justify right)
+		)
+		(uuid "dcd32881-1d31-42b5-903d-ce08ca3db5de")
+		(property "Intersheetrefs" "${INTERSHEET_REFS}"
+			(at 73.66 191.0662 90)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+				(hide yes)
+			)
+		)
+	)
+	(symbol
+		(lib_id "power:GNDA")
+		(at 27.94 48.26 0)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(uuid "198ff3f4-67aa-43d3-a68d-ca7e002ae166")
+		(property "Reference" "#PWR022"
+			(at 27.94 54.61 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Value" "GNDA"
+			(at 27.94 53.34 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+			)
+		)
+		(property "Footprint" ""
+			(at 27.94 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" ""
+			(at 27.94 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "Power symbol creates a global label with name \"GNDA\" , analog ground"
+			(at 27.94 48.26 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "e4edf78c-bfab-4c3f-9e1c-980d5cc40daf")
+		)
+		(instances
+			(project ""
+				(path "/dbb0b33c-273d-4d20-a0b0-89ec7ca7458d"
+					(reference "#PWR022")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(symbol
+		(lib_id "Connector:Conn_Coaxial")
+		(at 27.94 39.37 0)
+		(mirror y)
+		(unit 1)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(uuid "8d7d5759-7e5f-47be-bd2c-0e2ab0cb5043")
+		(property "Reference" "J1"
+			(at 24.13 38.3931 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Value" "BNC_CH1"
+			(at 24.13 40.9331 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(property "Footprint" "Connector_Coaxial:BNC_Amphenol_B6252HB-NPP3G-50_Horizontal"
+			(at 27.94 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Datasheet" "~"
+			(at 27.94 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(property "Description" "coaxial connector (BNC, SMA, SMB, SMC, Cinch/RCA, LEMO, ...)"
+			(at 27.94 39.37 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(hide yes)
+			)
+		)
+		(pin "1"
+			(uuid "211402f7-c36e-4ed9-8898-24e1de5edaac")
+		)
+		(pin "2"
+			(uuid "78601513-cab4-4ffc-b463-0158b8c2cfbf")
+		)
+		(instances
+			(project ""
+				(path "/dbb0b33c-273d-4d20-a0b0-89ec7ca7458d"
+					(reference "J1")
+					(unit 1)
+				)
+			)
+		)
+	)
+	(sheet
+		(at 95.25 90.17)
+		(size 43.18 48.26)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "1ab5bd82-8217-4c9f-833c-ec24de06055d")
+		(property "Sheetname" "Logic analyzer"
+			(at 95.25 89.4584 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "logic_analyzer.kicad_sch"
+			(at 95.25 139.0146 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(instances
+			(project "Entwurf1"
+				(path "/dbb0b33c-273d-4d20-a0b0-89ec7ca7458d"
+					(page "7")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 162.56 25.4)
+		(size 67.31 132.08)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "555c8f5e-266b-4da6-b8c3-5697f1110fea")
+		(property "Sheetname" "Interface uC"
+			(at 162.56 24.6884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "interface_uC.kicad_sch"
+			(at 162.56 158.0646 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "5V_ADC1_D[0..11]" input
+			(at 162.56 29.21 180)
+			(uuid "7a4e9e69-1731-4ab6-8d35-fcadaf7ba618")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "5V_ADC1_OF_BIT" input
+			(at 162.56 31.75 180)
+			(uuid "90d21c9a-8653-4f8e-a5c7-2e82e01afd98")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "5V_DAC1_CLEAR_LOW_ACTIVE" output
+			(at 162.56 45.72 180)
+			(uuid "49ff9919-9923-4ad7-a868-d6af238a4c71")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "5V_DAC1_D[0..11]" output
+			(at 162.56 50.8 180)
+			(uuid "d15ab97d-f80c-4d31-8803-c95a9b24a6a1")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "5V_DAC1_LOAD_LOW_ACTIVE" output
+			(at 162.56 48.26 180)
+			(uuid "b4845ea7-1798-4932-9be6-a1f1835f4a62")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "3V3_CLK_ADC_OUT" output
+			(at 162.56 68.58 180)
+			(uuid "e27b0266-86d2-459c-8d42-08d8ec6f64e2")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "3V3_ADC1_D[0..11]" output
+			(at 229.87 29.21 0)
+			(uuid "e1d02941-5436-46d0-aa56-fc73f9ba1b2a")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "3V3_ADC1_OF_BIT" output
+			(at 229.87 31.75 0)
+			(uuid "586e7f24-d36f-4fac-b5e9-14fa0d18e19f")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "3V3_CLK_ADC_IN" input
+			(at 229.87 68.58 0)
+			(uuid "f13f57a0-baa6-45dd-a74c-5cfeb5378667")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "3V3_DAC1_CLEAR_LOW_ACTIVE" input
+			(at 229.87 45.72 0)
+			(uuid "65557581-762a-4590-a950-89a4114c316e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "3V3_DAC1_LOAD_LOW_ACTIVE" input
+			(at 229.87 48.26 0)
+			(uuid "edb0d354-2152-46f5-9e79-414e00c0ac4d")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "5V_TRIGGERED_SIG_IN" input
+			(at 162.56 76.2 180)
+			(uuid "52de641b-a00d-4147-b1a7-de6f4760010b")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "3V3_TRIGGERED_SIG_OUT" output
+			(at 229.87 76.2 0)
+			(uuid "b852f8da-77c7-4229-8460-157d6e5d0189")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "3V3_DAC1_D[0..6]" input
+			(at 229.87 50.8 0)
+			(uuid "b85818f2-09db-49cb-932a-a21969239d68")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "3V3_DAC1_D[7..11]" input
+			(at 229.87 53.34 0)
+			(uuid "a3bde905-23d2-4370-aaef-023f972f554b")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "Entwurf1"
+				(path "/dbb0b33c-273d-4d20-a0b0-89ec7ca7458d"
+					(page "4")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 240.03 25.4)
+		(size 33.02 132.08)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "5731ab5b-b296-4c98-9152-4b2500ee001b")
+		(property "Sheetname" "Connector uC"
+			(at 240.03 24.6884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "connector_uC.kicad_sch"
+			(at 240.03 158.0646 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "PE9" output
+			(at 240.03 68.58 180)
+			(uuid "a9722f76-54e6-4cae-85c8-e8a9e66d64c6")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "PF15" input
+			(at 240.03 31.75 180)
+			(uuid "bd51ca21-7df7-4665-b5c8-cebba16c26d2")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "PF[3..14]" input
+			(at 240.03 29.21 180)
+			(uuid "a75441a9-efeb-4681-9a67-0e4f73fddec5")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "PF2" input
+			(at 240.03 76.2 180)
+			(uuid "c383276c-2dce-40e1-aaca-1eec7dc5507d")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "PE1" output
+			(at 240.03 48.26 180)
+			(uuid "b3adae66-cca8-4764-97f6-046d8085fbbf")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "PE[2..8]" output
+			(at 240.03 50.8 180)
+			(uuid "1b0466f3-8da3-471d-b796-1c1d24118b95")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "PE[10..14]" output
+			(at 240.03 53.34 180)
+			(uuid "4ff26e8c-3f17-404b-b4fb-30689f0f9ce1")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "PE0" output
+			(at 240.03 45.72 180)
+			(uuid "a3e071fe-8b11-402d-ac57-f95ee237791b")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "Entwurf1"
+				(path "/dbb0b33c-273d-4d20-a0b0-89ec7ca7458d"
+					(page "8")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 20.32 153.67)
+		(size 64.77 27.94)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "93fa7cb6-10f3-49f9-870a-3a12eadc330a")
+		(property "Sheetname" "Power Supply"
+			(at 20.32 152.9584 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "power_supply.kicad_sch"
+			(at 20.32 182.1946 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "+5V" output
+			(at 80.01 153.67 90)
+			(uuid "8a083f44-0bc6-4d6e-89f9-13f0403a5066")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "-5V" output
+			(at 80.01 181.61 270)
+			(uuid "ba969f0f-a867-468f-ace6-c42f5e03b28a")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "V+" output
+			(at 73.66 153.67 90)
+			(uuid "c22b20f4-4b75-4682-b2a9-9419689633d1")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "V-" output
+			(at 73.66 181.61 270)
+			(uuid "2ee650bf-004e-42e1-919b-8401e21be522")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(instances
+			(project "Entwurf1"
+				(path "/dbb0b33c-273d-4d20-a0b0-89ec7ca7458d"
+					(page "5")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 36.83 25.4)
+		(size 36.83 29.21)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "a8ea6fbd-bda2-49b3-9633-7a650c8f30d2")
+		(property "Sheetname" "Analog Frontend CH1"
+			(at 36.83 24.6884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "analog_frontend.kicad_sch"
+			(at 36.83 55.1946 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "ANALOG_INPUT" input
+			(at 36.83 39.37 180)
+			(uuid "dea5be68-d184-4344-b3e7-03bf8f5cdd6a")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "ANALOG_OUTPUT" input
+			(at 73.66 39.37 0)
+			(uuid "8b40aed3-a299-4d1a-963d-28024a405fb5")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "TRIGGER_SIGNAL" output
+			(at 73.66 50.8 0)
+			(uuid "b3e55de1-f318-4a2d-ad2d-1f5e4451184e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "Entwurf1"
+				(path "/dbb0b33c-273d-4d20-a0b0-89ec7ca7458d"
+					(page "2")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 95.25 25.4)
+		(size 43.18 29.21)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "c1c2015b-17d7-4ad4-8bec-27a239cb3184")
+		(property "Sheetname" "ADC1 Circuit"
+			(at 95.25 24.6884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "adc.kicad_sch"
+			(at 95.25 55.1946 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "ADC1_CLK" input
+			(at 95.25 50.8 180)
+			(uuid "79213861-4d32-4b8b-a3a5-7698820ee769")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "ADC1_D[0..11]" output
+			(at 138.43 29.21 0)
+			(uuid "80da0484-4a87-43d6-a243-af40f20dc99b")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "ADC1_INPUT" input
+			(at 95.25 39.37 180)
+			(uuid "0bf985a5-4d23-4ae7-9ca1-be1ce607ce8e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "ADC1_OF_BIT" output
+			(at 138.43 31.75 0)
+			(uuid "2c2d2eeb-919b-48df-b36f-2c2920013012")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "DAC1_CLEAR_LOW_ACTIVE" input
+			(at 138.43 45.72 0)
+			(uuid "fe8c118c-a009-4887-8d9e-85a24bae4ae8")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "DAC1_D[0..11]" input
+			(at 138.43 50.8 0)
+			(uuid "1c411d12-25ac-485c-a5c6-4dc84cb520f8")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "DAC1_LOAD_LOW_ACTIVE" input
+			(at 138.43 48.26 0)
+			(uuid "6cd5affb-0daf-491c-ae4b-766d54f073ed")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "Entwurf1"
+				(path "/dbb0b33c-273d-4d20-a0b0-89ec7ca7458d"
+					(page "3")
+				)
+			)
+		)
+	)
+	(sheet
+		(at 95.25 63.5)
+		(size 43.18 17.78)
+		(exclude_from_sim no)
+		(in_bom yes)
+		(on_board yes)
+		(dnp no)
+		(fields_autoplaced yes)
+		(stroke
+			(width 0.1524)
+			(type solid)
+		)
+		(fill
+			(color 0 0 0 0.0000)
+		)
+		(uuid "edb538c7-4788-4f6f-ab23-aefd0221de0b")
+		(property "Sheetname" "Trigger and clock circuit"
+			(at 95.25 62.7884 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left bottom)
+			)
+		)
+		(property "Sheetfile" "trigger_circuit.kicad_sch"
+			(at 95.25 81.8646 0)
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left top)
+			)
+		)
+		(pin "TRIGGER_ANALOG_IN" input
+			(at 95.25 76.2 180)
+			(uuid "66c1a862-a7f4-4b0e-8cf2-dbec0c94f17e")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "TRIGGER_DIGITAL_OUT" output
+			(at 138.43 76.2 0)
+			(uuid "b3cffe20-eca2-48c2-a635-cac0042a3fa6")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(pin "5V_CLK_ADC_OUT" output
+			(at 95.25 68.58 180)
+			(uuid "8d2b83a8-376c-43b7-b7c8-bd116a9094d2")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify left)
+			)
+		)
+		(pin "3V3_CLK_ADC_IN" input
+			(at 138.43 68.58 0)
+			(uuid "555ba402-e4d7-4036-b77d-a8253aa0dc39")
+			(effects
+				(font
+					(size 1.27 1.27)
+				)
+				(justify right)
+			)
+		)
+		(instances
+			(project "Entwurf1"
+				(path "/dbb0b33c-273d-4d20-a0b0-89ec7ca7458d"
+					(page "6")
+				)
+			)
+		)
+	)
+	(sheet_instances
+		(path "/"
+			(page "1")
+		)
+	)
+	(embedded_fonts no)
+)

@@ -1,0 +1,20 @@
+** Profile: "SCHEMATIC1-TRAN"  [ c:\dev\projekt\pspice\analogesfrontend\einzelkomponenten\aaf\aaf-PSpiceFiles\SCHEMATIC1\TRAN.sim ] 
+
+** Creating circuit file "TRAN.cir" 
+** WARNING: THIS AUTOMATICALLY GENERATED FILE MAY BE OVERWRITTEN BY SUBSEQUENT SIMULATIONS
+
+*Libraries: 
+* Profile Libraries :
+* Local Libraries :
+.LIB "c:/dev/projekt/pspice/LIB/ths4631_b.lib" 
+* From [PSPICE NETLIST] section of C:\Users\Z003SP7U\AppData\Roaming\SPB_Data\cdssetup\OrCAD_PSpice\24.1.0\PSpice.ini file:
+.lib "nom.lib" 
+
+*Analysis directives: 
+.TRAN  0 1000ns 0 1ns 
+.OPTIONS ADVCONV
+.PROBE64 V(alias(*)) I(alias(*)) W(alias(*)) D(alias(*)) NOISE(alias(*)) 
+.INC "..\SCHEMATIC1.net" 
+
+
+.END

@@ -1,0 +1,25 @@
+(kicad_sch
+	(version 20250114)
+	(generator "eeschema")
+	(generator_version "9.0")
+	(uuid "9ac2fc93-dcc9-47a1-ab59-808addf1c569")
+	(paper "A4")
+	(title_block
+		(title "Logikanalysator")
+		(date "2025-10-02")
+		(rev "1")
+	)
+	(lib_symbols)
+	(text "NICHT IMPLEMENTIERT"
+		(exclude_from_sim no)
+		(at 146.558 103.886 0)
+		(effects
+			(font
+				(size 7.62 7.62)
+				(thickness 0.508)
+				(bold yes)
+			)
+		)
+		(uuid "4b4315f0-9cdd-426d-9176-aca7a920bf00")
+	)
+)

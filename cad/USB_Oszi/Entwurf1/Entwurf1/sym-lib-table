@@ -1,0 +1,9 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "2025-05-27_17-07-14")(type "KiCad")(uri "C:/dev/Projekt/KiCad/ADC/KiCADv6/2025-05-27_17-07-14.kicad_sym")(options " pwr_sym_only")(descr ""))
+  (lib (name "ADC_USB_OSZI")(type "KiCad")(uri "C:/dev/Projekt/KiCad/LIB/ADC/KiCADv6/ADC_USB_OSZI.kicad_sym")(options "")(descr ""))
+  (lib (name "AD8022")(type "KiCad")(uri "C:/dev/Projekt/KiCad/LIB/AD8022/KiCADv6/AD8022.kicad_sym")(options "")(descr ""))
+  (lib (name "DAC_USB_OSZI")(type "KiCad")(uri "C:/dev/Projekt/KiCad/LIB/DAC/KiCADv6/DAC_USB_OSZI.kicad_sym")(options "")(descr ""))
+  (lib (name "COMP_USB_OSZI")(type "KiCad")(uri "C:/dev/Projekt/KiCad/LIB/COMPERATOR_LT1714/KiCADv6/COMP_USB_OSZI.kicad_sym")(options "")(descr ""))
+  (lib (name "NUCLEO-F767ZI")(type "KiCad")(uri "C:/dev/Projekt/KiCad/LIB/NUCLEO_F767ZI/NUCLEO-F767ZI.kicad_sym")(options "")(descr ""))
+)

@@ -1,0 +1,369 @@
+
+**** 05/27/25 18:17:30 ***** PSpice 24.1.0 (17 April 2025) **** ID# 0 ********
+
+ ** Profile: "SCHEMATIC1-TRAN"  [ c:\dev\projekt\pspice\analogesfrontend\einzelkomponenten\aaf\aaf-PSpiceFiles\SCHEMATIC1\TRAN.sim ] 
+
+
+ ****     CIRCUIT DESCRIPTION
+
+
+******************************************************************************
+
+
+
+
+** Creating circuit file "TRAN.cir" 
+** WARNING: THIS AUTOMATICALLY GENERATED FILE MAY BE OVERWRITTEN BY SUBSEQUENT SIMULATIONS
+
+*Libraries: 
+* Profile Libraries :
+* Local Libraries :
+.LIB "c:/dev/projekt/pspice/LIB/ths4631_b.lib" 
+* From [PSPICE NETLIST] section of C:\Users\Z003SP7U\AppData\Roaming\SPB_Data\cdssetup\OrCAD_PSpice\24.1.0\PSpice.ini file:
+.lib "nom.lib" 
+
+*Analysis directives: 
+.TRAN  0 1000ns 0 1ns 
+.OPTIONS ADVCONV
+.PROBE64 V(alias(*)) I(alias(*)) W(alias(*)) D(alias(*)) NOISE(alias(*)) 
+.INC "..\SCHEMATIC1.net" 
+
+
+
+**** INCLUDING SCHEMATIC1.net ****
+* source AAF
+V_V5         V+ 0 {VCC}
+X_U4         N22500 N22212 V+ V- N22212 AD8022/AD
+R_R6         N22070 IN  330 TC=0,0 
+R_R9         OUT N22348  100 TC=0,0 
+R_R2         N22356 N22636  150 TC=0,0 
+C_C5         N22096 N22104  820p  TC=0,0 
+C_C6         N22062 N22070  820p  TC=0,0 
+C_C7         0 N22500  470p  TC=0,0 
+R_R3         N22062 N22104  130 TC=0,0 
+C_C8         0 N22636  680p  TC=0,0 
+V_V7         0 V- {VCC}
+C_C4         N22212 N22220  820p  TC=0,0 
+R_R12         N22212 N22356  82 TC=0,0 
+R_R8         N22220 N22500  180 TC=0,0 
+C_C2         0 OUT  820p  TC=0,0 
+C_C9         0 N22374  220p  TC=0,0 
+V_V8         IN 0  AC 5
++SIN 0 {VAMPL} {FREQ} 0 0 0
+R_R4         N22104 N22374  270 TC=0,0 
+X_U5         N22238 N22062 V+ V- N22062 AD8022/AD
+C_C10         0 N22238  47p  TC=0,0 
+R_R7         N22096 N22220  91 TC=0,0 
+C_C3         N22348 N22356  820p  TC=0,0 
+X_U6         N22374 N22096 V+ V- N22096 AD8022/AD
+R_R5         N22238 N22070  560 TC=0,0 
+X_U3         N22636 N22348 V+ V- N22348 AD8022/AD
+.PARAM  vcc=10 vampl=10 ckomp=5.4p freq=1meg
+
+**** RESUMING TRAN.cir ****
+.END
+
+**** 05/27/25 18:17:30 ***** PSpice 24.1.0 (17 April 2025) **** ID# 0 ********
+
+ ** Profile: "SCHEMATIC1-TRAN"  [ c:\dev\projekt\pspice\analogesfrontend\einzelkomponenten\aaf\aaf-PSpiceFiles\SCHEMATIC1\TRAN.sim ] 
+
+
+ ****     Diode MODEL PARAMETERS
+
+
+******************************************************************************
+
+
+
+
+               X_U4.diode      X_U5.diode      X_U6.diode      X_U3.diode      
+          IS    1.000000E-15    1.000000E-15    1.000000E-15    1.000000E-15 
+
+
+**** 05/27/25 18:17:30 ***** PSpice 24.1.0 (17 April 2025) **** ID# 0 ********
+
+ ** Profile: "SCHEMATIC1-TRAN"  [ c:\dev\projekt\pspice\analogesfrontend\einzelkomponenten\aaf\aaf-PSpiceFiles\SCHEMATIC1\TRAN.sim ] 
+
+
+ ****     BJT MODEL PARAMETERS
+
+
+******************************************************************************
+
+
+
+
+               X_U4.nbjt       X_U5.nbjt       X_U6.nbjt       X_U3.nbjt       
+               NPN             NPN             NPN             NPN             
+       LEVEL    1               1               1               1            
+          IS  100.000000E-18  100.000000E-18  100.000000E-18  100.000000E-18 
+          BF  150             150             150             150            
+          NF    1               1               1               1            
+          BR    1               1               1               1            
+          NR    1               1               1               1            
+         ISS    0               0               0               0            
+          RE    0               0               0               0            
+          RC    0               0               0               0            
+         CJE    0               0               0               0            
+         VJE     .75             .75             .75             .75         
+         CJC    0               0               0               0            
+         VJC     .75             .75             .75             .75         
+         MJC     .33             .33             .33             .33         
+        XCJC    1               1               1               1            
+         CJS    0               0               0               0            
+         VJS     .75             .75             .75             .75         
+          KF    0               0               0               0            
+          AF    1               1               1               1            
+          CN    2.42            2.42            2.42            2.42         
+           D     .87             .87             .87             .87         
+
+
+**** 05/27/25 18:17:30 ***** PSpice 24.1.0 (17 April 2025) **** ID# 0 ********
+
+ ** Profile: "SCHEMATIC1-TRAN"  [ c:\dev\projekt\pspice\analogesfrontend\einzelkomponenten\aaf\aaf-PSpiceFiles\SCHEMATIC1\TRAN.sim ] 
+
+
+ ****     INITIAL TRANSIENT SOLUTION       TEMPERATURE =   27.000 DEG C
+
+
+******************************************************************************
+
+
+
+ NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE
+
+
+(   IN)    0.0000  (   V+)   10.0000  (   V-)  -10.0000  (  OUT)    -.0154      
+
+(N22062)    -.0048 (N22070)-703.5E-06 (N22096)    -.0085 (N22104)    -.0051     
+
+(N22212)    -.0120 (N22220)    -.0087 (N22238)    -.0019 (N22348)    -.0154     
+
+(N22356)    -.0122 (N22374)    -.0057 (N22500)    -.0091 (N22636)    -.0125     
+
+(X_U3.3)    9.9648 (X_U3.4)    -.0125 (X_U3.5)    -.7554 (X_U3.6)    9.9648     
+
+(X_U3.7)    -.7554 (X_U3.8)    -.7647 (X_U3.9)   -9.2800 (X_U4.3)    9.9648     
+
+(X_U4.4)    -.0091 (X_U4.5)    -.7520 (X_U4.6)    9.9648 (X_U4.7)    -.7520     
+
+(X_U4.8)    -.7613 (X_U4.9)   -9.2800 (X_U5.3)    9.9648 (X_U5.4)    -.0019     
+
+(X_U5.5)    -.7448 (X_U5.6)    9.9648 (X_U5.7)    -.7448 (X_U5.8)    -.7541     
+
+(X_U5.9)   -9.2800 (X_U6.3)    9.9648 (X_U6.4)    -.0057 (X_U6.5)    -.7485     
+
+(X_U6.6)    9.9648 (X_U6.7)    -.7485 (X_U6.8)    -.7578 (X_U6.9)   -9.2800     
+
+(X_U3.10)    -.0154                   (X_U3.11)    7.5000                       
+
+(X_U3.12)   -7.5000                   (X_U3.20)    -.7564                       
+
+(X_U3.21)     .7256                   (X_U3.22)    -.0154                       
+
+(X_U3.40)-13.96E-06                   (X_U3.41)-13.96E-06                       
+
+(X_U3.42)-13.96E-06                   (X_U3.43)-13.96E-06                       
+
+(X_U3.70)    -.5518                   (X_U3.71)    0.0000                       
+
+(X_U3.72)    0.0000                   (X_U3.96)    -.0154                       
+
+(X_U3.97)    -.0140                   (X_U3.98)    0.0000                       
+
+(X_U4.10)    -.0120                   (X_U4.11)    7.5000                       
+
+(X_U4.12)   -7.5000                   (X_U4.20)    -.7530                       
+
+(X_U4.21)     .7290                   (X_U4.22)    -.0120                       
+
+(X_U4.40)-10.57E-06                   (X_U4.41)-10.57E-06                       
+
+(X_U4.42)-10.57E-06                   (X_U4.43)-10.57E-06                       
+
+(X_U4.70)    -.5717                   (X_U4.71)    0.0000                       
+
+(X_U4.72)    0.0000                   (X_U4.96)    -.0120                       
+
+(X_U4.97)    -.0106                   (X_U4.98)    0.0000                       
+
+(X_U5.10)    -.0048                   (X_U5.11)    7.5000                       
+
+(X_U5.12)   -7.5000                   (X_U5.20)    -.7458                       
+
+(X_U5.21)     .7362                   (X_U5.22)    -.0048                       
+
+(X_U5.40)-3.347E-06                   (X_U5.41)-3.347E-06                       
+
+(X_U5.42)-3.347E-06                   (X_U5.43)-3.347E-06                       
+
+(X_U5.70)    -.5717                   (X_U5.71)    0.0000                       
+
+(X_U5.72)    0.0000                   (X_U5.96)    -.0048                       
+
+(X_U5.97)    -.0033                   (X_U5.98)    0.0000                       
+
+(X_U6.10)    -.0085                   (X_U6.11)    7.5000                       
+
+(X_U6.12)   -7.5000                   (X_U6.20)    -.7495                       
+
+(X_U6.21)     .7325                   (X_U6.22)    -.0085                       
+
+(X_U6.40)-7.098E-06                   (X_U6.41)-7.098E-06                       
+
+(X_U6.42)-7.098E-06                   (X_U6.43)-7.098E-06                       
+
+(X_U6.70)    -.5717                   (X_U6.71)    0.0000                       
+
+(X_U6.72)    0.0000                   (X_U6.96)    -.0085                       
+
+(X_U6.97)    -.0071                   (X_U6.98)    0.0000                   
+
+
+
+
+    VOLTAGE SOURCE CURRENTS
+    NAME         CURRENT
+
+    V_V5        -1.779E-02
+    V_V7        -1.779E-02
+    V_V8        -2.132E-06
+    X_U4.Vdiode  -8.520E-12
+    X_U4.Voutclamp1   7.513E-12
+    X_U4.Voutclamp2   7.489E-12
+    X_U4.V1      2.769E-03
+    X_U4.V2      2.769E-03
+    X_U4.Vcd    -3.973E-06
+    X_U4.vi1     5.727E-13
+    X_U4.vi2    -3.973E-06
+    X_U5.Vdiode  -8.527E-12
+    X_U5.Voutclamp1   7.506E-12
+    X_U5.Voutclamp2   7.496E-12
+    X_U5.V1      2.769E-03
+    X_U5.V2      2.769E-03
+    X_U5.Vcd    -3.973E-06
+    X_U5.vi1     5.727E-13
+    X_U5.vi2    -3.973E-06
+    X_U6.Vdiode  -8.523E-12
+    X_U6.Voutclamp1   7.510E-12
+    X_U6.Voutclamp2   7.492E-12
+    X_U6.V1      2.769E-03
+    X_U6.V2      2.769E-03
+    X_U6.Vcd    -3.973E-06
+    X_U6.vi1     5.727E-13
+    X_U6.vi2    -3.973E-06
+    X_U3.Vdiode  -8.516E-12
+    X_U3.Voutclamp1   7.516E-12
+    X_U3.Voutclamp2   7.486E-12
+    X_U3.V1      2.769E-03
+    X_U3.V2      2.769E-03
+    X_U3.Vcd    -1.842E-06
+    X_U3.vi1     5.528E-13
+    X_U3.vi2    -1.842E-06
+
+    TOTAL POWER DISSIPATION   3.72E-01  WATTS
+
+
+ERROR(ORPSIM-15138): Convergence problem in Transient Analysis at Time =  411.9E-09.
+         Time step =  995.2E-21, minimum allowable step size =  1.000E-18
+
+  These supply currents failed to converge:
+
+    I(X_U5.Erefq)             =    13.64pA  \   -15.46pA
+    I(X_U6.Erefq)             =   -15.46pA  \   -44.57pA
+
+
+
+  Last node voltages tried were:
+
+ NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE
+
+
+(   IN)    5.2588  (   V+)   10.0000  (   V-)  -10.0000  (  OUT)     .3210      
+
+(N22062)    8.1884 (N22070)    9.2793 (N22096)    8.1884 (N22104)    9.4164     
+
+(N22212)    3.8031 (N22220)    6.6881 (N22238)    9.5468 (N22348)     .8245     
+
+(N22356)    2.2203 (N22374)    8.3542 (N22500)    3.9172 (N22636)     .8824     
+
+(X_U3.3)    9.9702 (X_U3.4)     .8716 (X_U3.5)     .1330 (X_U3.6)    9.9595     
+
+(X_U3.7)     .1358 (X_U3.8)     .1251 (X_U3.9)   -9.2800 (X_U4.3)    9.9982     
+
+(X_U4.4)    3.8060 (X_U4.5)    3.1395 (X_U4.6)    9.9315 (X_U4.7)    3.1571     
+
+(X_U4.8)    3.1390 (X_U4.9)   -9.2800 (X_U5.3) 416.0E+03 (X_U5.4) 416.0E+03     
+
+(X_U5.5) 416.0E+03 (X_U5.6)   10.0000 (X_U5.7) 416.0E+03 (X_U5.8) 416.0E+03     
+
+(X_U5.9)   -9.2800 (X_U6.3) 397.4E+03 (X_U6.4) 397.4E+03 (X_U6.5) 397.4E+03     
+
+(X_U6.6)   10.0000 (X_U6.7) 397.4E+03 (X_U6.8) 397.4E+03 (X_U6.9)   -9.2800     
+
+(X_U3.10)     .8243                   (X_U3.11)    7.5000                       
+
+(X_U3.12)   -7.5000                   (X_U3.20)     .0835                       
+
+(X_U3.21)    1.5655                   (X_U3.22)     .8245                       
+
+(X_U3.40)     .0086                   (X_U3.41) 853.4E-06                       
+
+(X_U3.42)     .0442                   (X_U3.43)     .0086                       
+
+(X_U3.70)     .7580                   (X_U3.71)    0.0000                       
+
+(X_U3.72)    0.0000                   (X_U3.96)     .8245                       
+
+(X_U3.97)     .8534                   (X_U3.98)    0.0000                       
+
+(X_U4.10)    3.8036                   (X_U4.11)    7.5000                       
+
+(X_U4.12)   -7.5000                   (X_U4.20)    3.0621                       
+
+(X_U4.21)    4.5441                   (X_U4.22)    3.8031                       
+
+(X_U4.40)     .0235                   (X_U4.41)     .0039                       
+
+(X_U4.42)    0.0000                   (X_U4.43)     .0235                       
+
+(X_U4.70)    -.7897                   (X_U4.71)    0.0000                       
+
+(X_U4.72)    0.0000                   (X_U4.96)    3.8031                       
+
+(X_U4.97)    3.8602                   (X_U4.98)    0.0000                       
+
+(X_U5.10)    8.5519                   (X_U5.11)    7.5000                       
+
+(X_U5.12)   -7.5000                   (X_U5.20)    7.4474                       
+
+(X_U5.21)    8.9294                   (X_U5.22)    8.1884                       
+
+(X_U5.40)    -.1771                   (X_U5.41)     .0089                       
+
+(X_U5.42) 416.0E+03                   (X_U5.43)    -.5931                       
+
+(X_U5.70)   -1.1046                   (X_U5.71)    0.0000                       
+
+(X_U5.72)    0.0000                   (X_U5.96)    8.1884                       
+
+(X_U5.97)    8.8676                   (X_U5.98)    0.0000                       
+
+(X_U6.10)    8.5507                   (X_U6.11)    7.5000                       
+
+(X_U6.12)   -7.5000                   (X_U6.20)    7.4474                       
+
+(X_U6.21)    8.9294                   (X_U6.22)    8.1884                       
+
+(X_U6.40)     .1027                   (X_U6.41)     .0083                       
+
+(X_U6.42) 397.4E+03                   (X_U6.43)    -.2947                       
+
+(X_U6.70)   -1.1034                   (X_U6.71)    0.0000                       
+
+(X_U6.72)    0.0000                   (X_U6.96)    8.1884                       
+
+(X_U6.97)    8.2713                   (X_U6.98)    0.0000                   
+
+
+**** Interrupt ****

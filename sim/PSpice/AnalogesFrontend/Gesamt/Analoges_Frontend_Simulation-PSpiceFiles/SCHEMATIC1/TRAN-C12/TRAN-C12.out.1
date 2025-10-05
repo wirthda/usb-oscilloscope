@@ -1,0 +1,76 @@
+
+**** 10/04/25 20:44:32 *** PSpice 25.1.0 (14 September 2025) ** ID# 0 ********
+
+ ** Profile: "SCHEMATIC1-TRAN-C12"  [ C:\dev\Projekt\PSpice\AnalogesFrontend\Gesamt\Analoges_Frontend_Simulation-PSpiceFiles\SCHEMATI
+
+
+ ****     CIRCUIT DESCRIPTION
+
+
+******************************************************************************
+
+
+
+
+** Creating circuit file "TRAN-C12.cir" 
+** WARNING: THIS AUTOMATICALLY GENERATED FILE MAY BE OVERWRITTEN BY SUBSEQUENT SIMULATIONS
+
+*Libraries: 
+* Profile Libraries :
+* Local Libraries :
+.LIB "C:/dev/Projekt/PSpice/LIB/ths4631_b.lib" 
+* From [PSPICE NETLIST] section of C:\Users\samue\AppData\Roaming\SPB_Data\cdssetup\OrCAD_PSpice\25.1.0\PSpice.ini file:
+.lib "nom.lib" 
+
+*Analysis directives: 
+.TRAN  0 20us 0 500ns 
+.STEP PARAM FREQ LIST 10k 100k 1M 
+-------------------------------$
+ERROR(ORPSIM-16068): Must be monotonically increasing or decreasing
+.OPTIONS ADVCONV
+.PROBE64 V(alias(*)) I(alias(*)) W(alias(*)) D(alias(*)) NOISE(alias(*)) 
+.INC "..\SCHEMATIC1.net" 
+
+
+
+**** INCLUDING SCHEMATIC1.net ****
+* source ANALOGES_FRONTEND_SIMULATION
+V_V5         V+ 0 {VCC}
+X_U4         N22500 N22212 V+ V- N22212 AD8022/AD
+R_R6         N22070 IN3  270 TC=0,0 
+R_R9         OUT N22348  100 TC=0,0 
+R_R2         N22356 N22636  180 TC=0,0 
+C_C5         N22096 N22104  820p  TC=0,0 
+C_C6         N22062 N22070  820p  TC=0,0 
+C_C7         0 N22500  470p  TC=0,0 
+R_R3         N22062 N22104  130 TC=0,0 
+C_C8         0 N22636  680p  TC=0,0 
+V_V7         0 V- {VCC}
+C_C4         N22212 N22220  820p  TC=0,0 
+R_R12         N22212 N22356  75 TC=0,0 
+R_R8         N22220 N22500  200 TC=0,0 
+X_U2         N29140 IN3 V+ V- IN3 THS4631
+C_C2         0 OUT  820p  TC=0,0 
+R_R11         0 IN2  410k TC=0,0 
+C_C9         0 N22374  220p  TC=0,0 
+C_C11         IN IN2 {{Ckomp}*0.5+.001p}
+R_R4         N22104 N22374  270 TC=0,0 
+X_U5         N22238 N22062 V+ V- N22062 AD8022/AD
+C_C10         0 N22238  47p  TC=0,0 
+R_R7         N22096 N22220  91 TC=0,0 
+C_C3         N22348 N22356  680p  TC=0,0 
+X_U6         N22374 N22096 V+ V- N22096 AD8022/AD
+R_R5         N22238 N22070  620 TC=0,0 
+R_R10         IN IN2  590k TC=0,0 
+X_U3         N22636 N22348 V+ V- N22348 AD8022/AD
+R_R13         0 N28009  1M TC=0,0 
+C_C12         IN2 N29140  {C12}  TC=0,0 
+V_V1         N28009 0  
++PULSE {-VAMPL} {+VAMPL} 0 10n 10n 5000n 10u
+V_V6         IN 0  AC 5
++SIN 4 {VAMPL} {FREQ} 0 0 0
+.PARAM  vampl=4 vcc=10 ckomp=5.6p freq=100k c12=12p
+
+**** RESUMING TRAN-C12.cir ****
+.END
+
