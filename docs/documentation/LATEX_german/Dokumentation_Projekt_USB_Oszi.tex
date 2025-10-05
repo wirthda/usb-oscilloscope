@@ -1,7 +1,6 @@
 % Ersteller: 	Daniel Wirth
 % Software:	TeX-Distribution --> MiKTeX (https://miktex.org/); Editor --> Texmaker (https://www.xm1math.net/texmaker/)
 % Literatur:	.bib erstellt mit JabRef (https://www.jabref.org/); %Achtung: bilatex-mode verwenden (preferences) und dann .bib-file erstellen; Engine --> biber
-% Der nachfolgende Praxisbericht wurde für das Praxisseminar im Studiengang BEI angefertigt.
 %
 
 \documentclass[a4paper, portrait, 12pt]{scrartcl} % Vorgabe TH Nbg
@@ -1315,9 +1314,29 @@ Da bereits relativ große Glättungskondensatoren eingesetzt wurden und unklar w
 
 \subsubsection{Überprüfung des analogen Triggers}
 
+Zur Überprüfung des analogen Triggers wurden zunächst die verbauten Jumper so gelötet, dass ein Abgriff direkt, nachdem Spannungsfolger erfolgt. Daraufhin wurde ein Dreiecksignal am Eingang eingespeist und am Triggerabgriff erfasst (CH1). Parallel dazu wurde der Komparatorausgang als Triggerereignis aufgezeichnet (CH2) sowie das aktuelle Triggerlevel (CH3). Anschließend wurde das Triggerlevel variiert und geprüft, ob sich die Pulsbreite des Triggersignals in Abhängigkeit von Triggerlevel und Eingangssignal erwartungsgemäß verändert (siehe \autoref{fig:hw_test_trigger_level_0V} und \autoref{fig:hw_test_trigger_level_1_8V}). Da die Triggerung mit Abgriff hinter dem Spannungsfolger zuverlässig funktionierte und das Risiko zusätzlicher parasitärer Kapazitäten oder Induktivitäten am ADC-Eingang über längere Leitungswege vermieden werden sollte, wurde der Triggerabgriff bewusst hinter dem Spannungsfolger beibehalten.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.5]{hw_test_trigger_level_0V.png} 
+	\caption{Dreieckssignal - Triggerlevel 0 V}
+	\label{fig:hw_test_trigger_level_0V}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.5]{hw_test_trigger_level_1_8V.png} 
+	\caption{Dreieckssignal - Triggerlevel 1.8 V}
+	\label{fig:hw_test_trigger_level_1_8V}
+\end{figure}
+
 \subsubsection{Kopplung}
 
+Abschließend wurde die AC-Kopplung geprüft. Hierfür wurde ein Kondensator mit einer Kapazität nahe dem in der Simulation ermittelten Wert eingefügt. Das analoge Frontend zeigte daraufhin ein schwer erklärbares Verhalten und die Funktion konnte nicht verifiziert werden. Da bereits in der Simulation absehbar war, dass die Kopplung problematisch sein könnte und eine alternative Realisierung erforderlich werden kann, wurde für den weiteren Verlauf mit DC-Kopplung gearbeitet.
+
 \subsubsection{Zusammenfassung der Ergebnisse}
+
+Insgesamt zeigten die Testergebnisse, dass die Baugruppe und das Layout keine größeren Fehler aufweisen. Eine erste Inbetriebnahme im Verbund mit dem Mikrocontroller und anschließend mit der Software war damit möglich. In diesem Rahmen wurden auch die weiteren komplexeren Funktionen der Hardware erprobt und vertiefende Tests durchgeführt, die allein mit der Hardware nicht sinnvoll oder nur mit unverhältnismäßigem Aufwand realisierbar gewesen wären.
 
 \pagebreak
 
@@ -1325,6 +1344,25 @@ Da bereits relativ große Glättungskondensatoren eingesetzt wurden und unklar w
 
 \subsection{Anforderungen an die Schnittstelle}
 \label{subsec:requirements_hw_fw_interface}
+
+An die Kommunikation zwischen Hardware und Firmware wurden verschiedene Anforderungen gestellt, welche sich aus den verwendeten Bauteilen und festgelegten Anforderungen ergaben. Dabei war insbesondere die Kommunikation mit dem ADC wichtig. Der ADC wird ausschließlich über das Clocksignal angesteuert, welches gleichzeitig zur Kommunikation dient und den Takt für die innere Logik des ADCs liefert. Die Wandlung wird durch die steigende Flanke des CLK-Eingangs gestartet. Für die interne Zeitsteuerung nutzt der ADC ausschließlich die steigenden Flanken, daher ist eine symmetrische Taktung nicht erforderlich. Für eine einwandfreie Wechselstromperformance sollte die Anstiegszeit des Takts unter 5 ns liegen. Es besteht eine zweizyklige Pipeline-Verzögerung. Die Daten zu einer Wandlung stehen zwei vollständige Taktzyklen plus 70 ns nach dem Start der Wandlung zur Verfügung. Ein sicheres Einlesen erfolgt mit der dritten steigenden CLK-Flanke nach der Flanke, die den Abtastvorgang begonnen hat. Für korrekte Ergebnisse muss der Takt schneller als 20 kHz sein. Hintergrund ist die kapazitive Speicherung der Stufensignale in der Pipeline, deren Ladung bei zu langen Pausen verfälscht würde. Der Betrieb erfolgt im Dual-Supply-Modus, weshalb ein Logiklevel von 5V gefordert wird \cite[S. 8 u. 12]{LinearTechnology1420}.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.5]{hw_fw_timing_diagram_adc.png} 
+	\caption{Timing Diagramm ADC}
+	\label{fig:hw_fw_timing_diagram_adc}
+\end{figure}
+
+Neben der Kommunikation des ADCs war auch die Ansteuerung des Digital-Analog-Umsetzers relevant, der die Referenzspannung setzt. Für die Ansteuerung wurde vorgesehen, dass die Input-Latches stets sofort aktualisiert werden. Die Leitungen zur Freigabe dieser wurden dauerhaft auf Low gelegt und spielten für die aktive Ansteuerung somit keine Rolle. Entscheidend war die steigende Flanke von LDAC, die die anliegenden zwölf Bits aus den Input-Latches in die DAC-Latches übernimmt und damit die Ausgangsspannung aktualisiert. Ebenfalls relevant war der Eingang CLR, welcher auf LOW gesetzt alle Latches asynchron auf Null setzt und einen Nullcode am Ausgang erzwingt. Trotz geringerer Anforderungen als beim Analog-Digital-Umsetzer mussten die Datenbits um die LDAC-Flanke stabil anliegen und die mindestbreite der Steuerpulse von CLR und LDAC eingehalten werden (40ns) \cite[S. 4, 7 und 8]{LinearTechnology1420}.\\
+
+Um auf Seiten des Mikrocontrollers eine ausreichend schnelle Datenaufnahme zu gewährleisten, wurde die Erfassung per DMA vorgesehen. Dafür mussten beim Mikrocontroller spezifische Ports genutzt werden und für die Weiterverarbeitung war es im Hinblick auf die Verarbeitungsgeschwindigkeit sinnvoll, die einzelnen Datenpins in der Reihenfolge ihrer Wertigkeit an einen gemeinsamen Port des ADCs zu führen. Da 12 Bit beziehungsweise 13 Bit inklusive Overflow-Bit zu speichern waren und der DMA transferweise in Bytes arbeitet, wurde ein Port benötigt, an dem zwei Byte als Pins zur Verfügung standen und der DMA-fähig war. Zusätzlich war für weitere Signale, etwa für die Ansteuerung des Digital-Analog-Umsetzers, eine zusammenhängende Pinbelegung an einem einzelnen Port vorteilhaft für die Programmierung. Der Mikrocontroller arbeitet mit einem Logikpegel von 3.3 Volt (siehe \cite{STmicroelectronics2024} und \cite[S. 156f]{STmicroelectronics2025}).\\
+
+Des Weiteren war die Erzeugung eines Trigger Signals aus dem heruntergeteilten Eingangssignal erforderlich. Dieses Trigger Signal sollte ohne Zwischenverarbeitung an den Mikrocontroller weitergeleitet werden, damit die Firmware Ereignisse zeitgenau erfassen kann.\\
+
+Auf beiden Seiten der Kommunikation waren ein stimmiges Timing und ausreichend saubere Datensignale, je nach Anwendung, erforderlich, um keine undefinierten Zustände zu erzeugen. Hinzu kamen layoutbezogene Vorgaben und Präferenzen, etwa eine räumliche Nähe der zusammengehörigen Pins zu Analog-Digital-Umsetzer und Digital-Analog-Umsetzer. Feste Randbedingungen ergaben sich aus den zu verwendenden Konnektoren, über die das Steckboard auf den Mikrocontroller aufgesteckt werden sollte. Gewünscht war der Einsatz der Konnektoren 11 und 12, da diese ausreichend Abstand boten, um die Schaltung dazwischen aufzubauen, und zugleich sämtliche benötigten Pins, Signale und Versorgungen bereitstellten \cite[S. 70f]{STmicroelectronics2025c}.\\
+
+Dafür war das Einhalten der mechanischen Maße essenziell, ebenso das konsequente Einhalten der vorgesehenen Pinbelegungen.\\
 
 \subsection{Festlegung der Pins und Pegelwandlung}
 \label{subsec:pin_mapping_levels}
