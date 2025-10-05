@@ -1155,6 +1155,8 @@ Nach Fertigstellung des Layouts wurde der Design Rule Check durchgeführt und al
 \subsection{HW-Test}
 \label{subsec:hw_test}
 
+Nach dem Bestücken der Baugruppe erfolgte ein erster Test ohne Mikrocontroller und ohne Software. Ziel war die Verifizierung der Grundfunktionen, bevor die Verbindung zur Mikrocontroller-Baugruppe hergestellt wurde. Zu diesem Zweck wurde ein Testaufbau realisiert. Er umfasste einen Rahmen zur Montage der Baugruppe mit mehreren Tastkopfhaltern, einen Signalgenerator zur Einspeisung des Taktsignals sowie zur Einspeisung einer Messspannung, zwei Labornetzteile mit je zwei Versorgungsspannungen, verschaltet auf $\pm$ 5 Volt und $\pm$ 12 Volt, ein Oszilloskop mit vier analogen Tastköpfen und einem digitalen Tastkopf sowie ein Multimeter zur Messung von Gleichspannungen. Die Tastköpfe wurden mit Massefedern ausgestattet, um verlässliche Ergebnisse zu erhalten. Die Anschlüsse des digitalen Tastkopfs wurden an den entsprechenden Pins des Steckverbinders angeschlossen, um das vom AD-Umsetzer übertragene Signal dekodieren zu können. D0 bis D11 waren den jeweiligen Bits des ADCs zugeordnet. D13 dem Overflow Bit. Zusätzlich wurden verschiedene Leitungen benötigt, um u. A. auch den DAC zu programmieren. (siehe \autoref{fig:afe_diagram}) Im Folgenden wird genauer auf die einzelnen durchgeführten Messungen eingegangen.
+
 \begin{figure}[H]
 	\centering
     \includegraphics[scale=0.25]{aufbau_hardwaretest.jpg} 
@@ -1162,17 +1164,164 @@ Nach Fertigstellung des Layouts wurde der Design Rule Check durchgeführt und al
 	\label{fig:afe_diagram}
 \end{figure}
 
+\subsubsection{Hochlaufen der Versorungsspannungen}
+
+Zu Beginn wurden die Versorgungsschienen verifiziert. Geprüft wurden die Nennpegel sowie das korrekte Einschwingen beim Hochlaufen. Die Messkurven zeigen einen sauberen Anstieg ohne Überschwingen oder Einbrüche und es traten keine Auffälligkeiten auf (siehe Abb. n.)
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.5]{hw_test_startup_voltage.png} 
+	\caption{Hochlaufen der Versorgungsschienen ($\pm$ 5 V (blau, türkis) und $\pm$ 12 V)}
+	\label{fig:hw_test_startup_voltage}
+\end{figure}
+
+\subsubsection{Test des AFE (ohne angeschlossenen ADC)}
+
+Im nächsten Schritt wurde das analoge Frontend in Isolation geprüft. Der Jumper zum AD-Umsetzer blieb hierzu unbestückt, sodass keine Beeinflussung durch dessen Eingangspfad vorlag. Es wurden mehrere Messungen durchgeführt, um das Verhalten des Frontends unabhängig vom AD-Umsetzer zu verifizieren. Dabei wurden zuerst Sinus Signale mit verschiedenen Frequenzen und später auch andere Signalformen eingespeist. Dabei wurde auch der Spannungsteiler über den Trimmkondensator abgeglichen. Gemessen wurde dabei an der BNC-Buchse (CH1), am Spannungsfolger-Ausgang (CH2) und Ausgang AAF (CH3).
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.5]{hw_test_sine_100khz_8vpp.png} 
+	\caption{\centering Oszillogramm: Sinus $f$ = 100 kHz, $V_{pp}$ = 8 V}
+	\label{fig:hw_test_sine_100khz_8vpp}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.5]{hw_test_sine_500khz_8vpp.png} 
+	\caption{\centering Oszillogramm: Sinus $f$ = 500 kHz, $V_{pp}$ = 8 V}
+	\label{fig:hw_test_sine_500khz_8vpp}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.5]{hw_test_sine_1Mhz_8vpp.png} 
+	\caption{\centering Oszillogramm: Sinus $f$ = 1 MHz, $V_{pp}$ = 8 V}
+	\label{fig:hw_test_sine_1Mhz_8vpp}
+\end{figure}
+
+Ab etwa 500 kHz kommt ein nennenswerter Gleichanteil im Signalpfad hinzu (ca. 200 mV). Der Effekt zeigt sich bereits hinter dem Spannungsfolger. (siehe \autoref{fig:hw_test_sine_500khz_8vpp}) Daher liegt die Ursache vermutlich in der Kombination aus hochohmigem Eingang, parasitären Kapazitäten und den hohen Widerstandswerten der Eingangsschaltung. Eine vollständige Korrektur hätte wahrscheinlich eine Überarbeitung des Layouts erfordert. Vor diesem Hintergrund wurde zunächst auf eine weitergehende Fehlersuche verzichtet.
+
+Abgesehen von diesem Effekt erfüllten die Messungen die Anforderungen. Die Amplituden lagen im erwartbaren Bereich, gemessen an den zu erwartenden Toleranzen durch die Messunsicherheit des Oszilloskops, die Bauteiltoleranzen und die Dämpfungen der verwendeten Komponenten.
+
+\subsubsection{Vergleich mit angeschlossenem ADC}
+
+Zur Überprüfung der Ergebnisse mit angeschlossenem AD-Umsetzer wurden aus der isolierten Messung zwei Referenzkurven gespeichert ein Sinus mit 1 MHz und ein Sinus mit 100 kHz. Anschließend wurde der Jumper zum AD-Umsetzer verlötet, die Messungen unter identischen Bedingungen wiederholt und die Ergebnisse mit den Referenzen verglichen.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.5]{hw_test_sine_100kHz_ADC.png} 
+	\caption{\centering Oszillogramm: Sinus $f$ = 100 kHz mit und ohne ADC}
+	\label{fig:hw_test_sine_100kHz_ADC}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.5]{hw_test_sine_1MHz_ADC.png} 
+	\caption{\centering Oszillogramm: Sinus $f$ = 1 MHz mit und ohne ADC}
+	\label{fig:hw_test_sine_1MHz_ADC}
+\end{figure}
+
+Aus den Messungen zeigt sich kein erkennbarer Unterschied (siehe \autoref{fig:hw_test_sine_100kHz_ADC} und \autoref{fig:hw_test_sine_1MHz_ADC}). Aus diesem Grund bestätigte sich die Annahme, dass kein Operationsverstärker hinter dem RC-Glied benötigt wird.
+
+\subsubsection{ADC-Clock}
+
+Zur Absicherung der vorangegangenen Messergebnisse und zur Bestätigung der Grundfunktion der Leiterplatte wurde die Funktion des AD-Umsetzers überprüft. Zunächst erfolgte eine Messung am Takteingang. Dabei wurde verifiziert, dass das über die Steckleiste eingespeiste 3.3 V-Taktsignal mit 10 MHz nach der vorgesehenen Pegelwandlung als 5 V-Signal am CLK-Pin des AD-Umsetzers anliegt.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.5]{hw_test_clock_signal_awg.png} 
+	\caption{Clock Signal am ADC (Einspeisung über Signalgenerator)}
+	\label{fig:hw_test_clock_signal_awg}
+\end{figure}
+
+Das gemessene Taktsignal entsprach in Pegel (ca. 5 V) und Anstiegszeit (ca. 4 ns) den geforderten Kriterien. (siehe \autoref{fig:hw_test_clock_signal_awg}) Damit wurden sowohl die Funktion des Komparators als Pegelwandler als auch die korrekte Leitungsführung bestätigt.
+
+\subsubsection{Überprüfung der Umsetzung}
+
+Nach Bestätigung des korrekten Taktsignals erfolgte eine erste rudimentäre Überprüfung des Wandlungsprozesses. Hierzu wurden einfache Rechtecksignale sowie 0 V eingespeist und die resultierenden Digitalwerte mit Logiktastköpfen dekodiert. Geprüft wurde, ob die konvertierten Codes den angelegten Spannungen entsprechen. Eingesetzt wurden drei Testszenarien. Erstens ein Signal mit definierter Übersteuerung, um zu verifizieren, dass der AD-Umsetzer reproduzierbar in den Anschlag geht. Zweitens ein Signal mit $\pm$ 1 V, um die lineare Abbildung im Arbeitsbereich zu kontrollieren. Drittens 0 V, um den Nullpunkt und eine korrekte Codierung ohne Gleichanteilsfehler zu prüfen.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.5]{hw_test_adc_decode_0V.png} 
+	\caption{ADC BUS Dekodierung - 0 V}
+	\label{fig:hw_test_adc_decode_0V}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.5]{hw_test_adc_decode_plusminus1V.png} 
+	\caption{ADC BUS Dekodierung - $\pm$ 1 V}
+	\label{fig:hw_test_adc_decode_plusminus1V}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.5]{hw_test_adc_decode_overflow.png} 
+	\caption{ADC BUS Dekodierung - Übersteuerung}
+	\label{fig:hw_test_adc_decode_overflow}
+\end{figure}
+
+Die Messergebnisse bestätigten eine korrekte Wandlung der Eingangssignale. Die beobachteten Schwankungen lagen in einem erwartbaren, relativ geringen Bereich. Der AD-Umsetzer ging bei definierter Übersteuerung reproduzierbar in den Anschlag und auch das Overflow Bit wurde gesetzt (siehe \autoref{fig:hw_test_adc_decode_overflow}). Auch die Werte für 0 V  und $\pm$ 1 V sind plausibel:
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.4]{hw_test_adc_decode_calc.png} 
+	\caption{Erläuterung zur ADC Dekodierung}
+	\label{fig:hw_test_adc_decode_calc}
+\end{figure}
+
+Bei der Auswertung war zu beachten, dass das Teilerverhältnis des vorgeschalteten Spannungsteilers in die Berechnung der Eingangsspannung einfließt.
+
+\subsubsection{Überprüfung des DACs und der Referenzspannung}
+
+Zur Sicherstellung der korrekten Einstellung der Referenzspannung wurde der im Kapitel Schnittstelle (\autoref{subsec:pin_mapping_levels}) definierte Ansteuermechanismus genutzt, in dem einzelne Leitungen auf GND gezogen wurden. Die Steuersignale wurden so gesetzt, dass schrittweise unterschiedliche Referenzspannungen ausgegeben werden konnten. Anschließend wurde mit dem Multimeter verifiziert, dass die eingestellten Spannungen am Ausgang des DACs anliegen. Danach wurde die Auswirkung der Referenzeinstellung auf den Wandlungsprozess geprüft. Hierzu wurde das höchstwertige Bit auf Null gesetzt, wodurch sich die Referenz und damit der zulässige Spannungsbereich halbiert. Anschließend wurde die Hälfte der zuvor für den Anschlag verwendeten Eingangsspannung eingespeist. An den Digitalausgängen zeigte sich, dass der AD-Umsetzer trotz der halbierten Eingangsspannung sicher in den Anschlag geht. Damit wurde die Einstellbarkeit des Spannungsbereichs verifiziert (siehe \autoref{fig:hw_test_adc_decode_Overflow_half_reference}).
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.5]{hw_test_adc_decode_Overflow_half_reference.png} 
+	\caption{ADC BUS Dekodierung - Übersteuerung mit halbierter Referenz}
+	\label{fig:hw_test_adc_decode_Overflow_half_reference}
+\end{figure}
+
+\subsubsection{Überprüfung des Offsets}
+
+Als nächstes wurde der Offset überprüft. Dazu wurde das Potentiometer auf verschiedene Stellungen gebracht und mit dem Multimeter verifiziert, dass sich die zu erwartenden Gleichspannungen einstellen lassen. Die Messung bestätigte die Einstellbarkeit. Zur Beurteilung der Signalqualität erfolgte eine ergänzende Prüfung mit dem Oszilloskop. Dabei zeigte sich insbesondere bei niedrigen Frequenzen am negativen Eingang des AD-Umsetzers eine gedämpfte, jedoch erkennbare Wechselspannung, die der am positiven Eingang angelegten Signalform entsprach (siehe \autoref{fig:hw_test_neg_adc_input_sine_100hz_8vpp},  \autoref{fig:hw_test_neg_adc_input_sine_1000hz_8vpp} und \autoref{fig:hw_test_neg_adc_input_sine_100khz_8vpp}). Eine Einkopplung über die Versorgung wurde ausgeschlossen. Aufgrund der niedrigen Frequenzen ist nicht von Hochfrequenzeffekten auszugehen.\\
+
+Die Beobachtung lässt sich plausibel mit einem vergleichsweise geringen differentiellen Eingangswiderstand des AD-Umsetzers erklären. Durch das Einstellen der Spannungsreferenz des Offsets über das Potentiometer, welches keinen niederohmigen Treiber bereitstellt, gelangt ein kleiner Anteil der positiven Eingangsspannung auf den negativen Eingang. Dass dieser Effekt bei höheren Frequenzen nicht auftritt, ist vermutlich auf die beiden Glättungskondensatoren zurückzuführen.\\
+
+Da bereits relativ große Glättungskondensatoren eingesetzt wurden und unklar war, in welchem Umfang sich die Störung auf den Wandlungsprozess auswirkt (die Schaltung wurde aus dem Datenblatt übernommen), wurde eine pragmatische Zwischenlösung gewählt. Die Referenzspannung für den Offset wurde zunächst über einen Null-Ohm-Widerstand auf Masse gelegt. Eine vertiefte Analyse des Effekts wurde mit der Inbetriebnahme des Gesamtsystems vorgesehen.
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.4]{hw_test_neg_adc_input_sine_100hz_8vpp.png} 
+	\caption{Negativer ADC-Eingang - Einspeisung Sinus $f$ = 100 Hz, $V_{pp}$ = 8 V}
+	\label{fig:hw_test_neg_adc_input_sine_100hz_8vpp}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.4]{hw_test_neg_adc_input_sine_1000hz_8vpp.png} 
+	\caption{Negativer ADC-Eingang - Einspeisung Sinus $f$ = 1000 Hz, $V_{pp}$ = 8 V}
+	\label{fig:hw_test_neg_adc_input_sine_1000hz_8vpp}
+\end{figure}
+
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.4]{hw_test_neg_adc_input_sine_100khz_8vpp.png} 
+	\caption{Negativer ADC-Eingang - Einspeisung Sinus $f$ = 100 kHz, $V_{pp}$ = 8 V}
+	\label{fig:hw_test_neg_adc_input_sine_100khz_8vpp}
+\end{figure}
+
+\subsubsection{Überprüfung des analogen Triggers}
+
+\subsubsection{Kopplung}
+
+\subsubsection{Zusammenfassung der Ergebnisse}
 
 \pagebreak
 
 \section{Schnittstelle Hardware - Firmware}
-- Anforderungen HW-seitig und FW-seitig (wie gelöst?)\\
-- Explizite Erwähnung, dass das Routing der ADC-Datenpins zu einem Port des uC geschehen musste! Aufwand im Layout)\\
-- Pinbelegung\\
-- Komparator-Auswahl (LT1714)\\
-- Pegelwandlung: Trigger und Clock\\
-- Pegelwandlung: Pull-Ups+Open-Drain; Spannungsteiler\\
-- DAC-Ansteuerung
 
 \subsection{Anforderungen an die Schnittstelle}
 \label{subsec:requirements_hw_fw_interface}
