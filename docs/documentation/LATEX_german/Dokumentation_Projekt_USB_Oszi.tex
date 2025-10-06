@@ -2063,7 +2063,7 @@ Zur Übersichtlichkeit wurde das Programm in mehrere Unterprogramme zerlegt. \au
 
 \subsubsection{Konzept Hardwareinterface}
 
-Um das Hardwareinterface zu realisieren wurde die Zustandsmaschine, die auf den Microcontroller läuft auf den PC abgebildet. Das Zustandsdiagramm des PCs befindet sich im \autoref{subsec:appendix_a_statediagram_pc}. Mit dem Unterprogramm \emph{find\_my\_device.py} wird der passende COM-Port automatisch gefunden. Mit \emph{serial\_interface.py} werden die Methoden der Python Klasse \emph{serial\_interface} überschrieben. Die Kommunikation zwischen PC und Microcontroller wird über diese Funktionen realisiert. Die Zustandsmaschine soll in einem seperaten Thread laufen, um die Benutzeroberfläche responsiv zu halten.
+Um das Hardwareinterface zu realisieren wurde die Zustandsmaschine, die auf dem $\mu$C läuft auf dem PC abgebildet. Das Zustandsdiagramm des PCs befindet sich im \autoref{sec:appendix_a} im \autoref{subsec:appendix_a_statediagram_pc}. Mit dem Unterprogramm \emph{find\_my\_device.py} wird der passende COM-Port automatisch gefunden. Mit \emph{serial\_interface.py} werden die Methoden der Python Klasse \emph{serial\_interface} überschrieben. Die Kommunikation zwischen PC und $\mu$C wird über diese Funktionen realisiert. Die Zustandsmaschine soll in einem seperaten Thread laufen, um die Benutzeroberfläche responsiv zu halten.
 
 \pagebreak
 
@@ -2090,9 +2090,9 @@ Die Funktionalität der einzelnen Seiten ist wie folgt aufgeteilt:
 	\end{itemize}
     \item \textbf{General:} Beinhaltet die Hauptbenutzeroberfläche. Hier werden sämtliche grafische Elemente erzeugt und die zugehörige Logik implementiert. Innerhalb dieser Klasse werden die folgenden Klassen instanziiert:
     \begin{itemize}
-        \item \emph{UsbOsziGUI} synchronisiert die Benutzeroberfläche mit der Zustandsmaschine (FSM) auf PC- und Mikrocontroller-Seite.
+        \item \emph{UsbOsziGUI} synchronisiert die Benutzeroberfläche mit der Zustandsmaschine (FSM) auf PC- und $\mu$C-Seite.
         \item \emph{MatplotlibWidget} kümmert sich um die Visualisierung der Messdaten sowie um die Implementierung von Achseneinstellungen und Cursorfunktionen.
-        \item \emph{MeasureWorker} Verwaltet die Ausführung der Messfunktionen und stellt deren Ergebnisse zur Anzeige bereit.
+        \item \emph{MeasureWorker} verwaltet die Ausführung der Messfunktionen und stellt deren Ergebnisse zur Anzeige bereit.
     \end{itemize}
 \end{itemize}
 
@@ -2105,7 +2105,7 @@ Bei der Auswahl der Messungen wurde sich am Benutzerhandbuch des Agilent Infinii
 	\item \textbf{Maximum:} Höchste Wert des Signals.
 	\item \textbf{Minimum:} Niedrigste Wert des Signals.
 	\item \textbf{Dach:} Häufigste Wert im oberen Wellenformteil. Falls dieser nicht eindeutig bestimmt werden kann ist der Dach Wert gleich dem Maximum.
-	\item \textbf{Base:} Häufigste Wert im unteren Wellenformteil. Falls dieser nicht eindeutig bestimmt werden kann ist der Base wert gleich dem Minimum.
+	\item \textbf{Base:} Häufigste Wert im unteren Wellenformteil. Falls dieser nicht eindeutig bestimmt werden kann ist der Base Wert gleich dem Minimum.
 	\item \textbf{Amplitude:} Differenz zwischen Dach und Base.
 	\item \textbf{Spitze Spitze:} Differenz zwischen Maximum und Minimum.
 	\item \textbf{Mittelwert:} Mittelwert über vollständige Perioden. Dieser ergibt sich folgendermaßen:
@@ -2128,10 +2128,10 @@ Bei der Auswahl der Messungen wurde sich am Benutzerhandbuch des Agilent Infinii
 
 \pagebreak
 \subsection{Implementierung}
-Die nachfolgende Beschreibung gibt einen Überblick über die Umsetzung der Software. Diese schließt sowohl das Hardwareinterface, zur Kommunikation mit dem $\mu$C ein, sowie die Benutzeroberfläche. Für genaue Informationen zur Implementierung sei auf die Quellcode-Dateien verwiesen.
+Die nachfolgende Beschreibung gibt einen Überblick über die Umsetzung der Software. Diese schließt sowohl das Hardwareinterface, zur Kommunikation mit dem $\mu$C ein, sowie die Benutzeroberfläche zur Interaktion mit der Baugruppe und Darstellung der Messergebnisse. Für genaue Informationen zur Implementierung sei auf die Quellcode-Dateien verwiesen.
 
 \subsubsection{Implementierung Hardwareinterface}
-Die Implementierung der FSM auf dem PC erfolgte nach dem in \autoref{sec:appendix_a} dargestellten Zustandsdiagramm. Hierfür wurde das Python Paket \emph{python-statemachine} verwendet. Dieses ermöglicht es Zustände und Zustandstransitionen einfach zu erstellen. Der Zustandsautomat wurde folgendermaßen implementiert:
+Die Implementierung der FSM auf dem PC erfolgte nach dem in \autoref{sec:appendix_a} \autoref{subsec:appendix_a_statediagram_pc} dargestellten Zustandsdiagramm. Hierfür wurde das Python Paket \emph{python-statemachine} verwendet. Dieses ermöglicht es Zustände und Zustandstransitionen einfach zu erstellen. Der Zustandsautomat wurde folgendermaßen implementiert:
 
 \begin{lstlisting}[language=Python, caption={Implementierung der Zustandsmaschine \texttt{usbOsziPC} in Python}]
 class usbOsziPC(StateMachine):
@@ -2158,9 +2158,9 @@ $$
 {\footnotesize Die 4095 ergeben sich aus der Auflösung des ADCs von 12 Bit. $v_{ref}$ ist die eingestellte Referenzspannung. Der div\_factor ergibt sich aus dem Spannungsteiler im AF.}
 
 \subsubsection{Implementierung Kommunikation zwischen PC FSM und GUI}
-Die Kommunikation zwischen den beiden Threads wurde mit zwei Queues realisiert, die \emph{command\_queue} und die {status\_queue}. Um zu verhindern, dass Daten überschrieben werden oder verloren gehen, kann immer nur ein Thread schreibend zugreifen und der andere nur lesend. So schreibt der GUI-Thread Befehle in die \emph{command\_queue}, der FSM-Thread liest diese aus und führt basiert auf seinem aktuellen Zustand und den Befehlen die passende Codezeile aus. Dabei schreibt er bei Zustandswechsel oder im Fehlerfall eine Nachricht in die  \emph{status\_queue}, welche wiederrum vom Thread der \emph{StatusProvider} Klasse, die sich im Programm der Benutzeroberfläche befindet, ausgewertet wird.\\ 
+Die Kommunikation zwischen den beiden Threads wurde mit zwei Queues realisiert, die \emph{command\_queue} und die {status\_queue}. Um zu verhindern, dass Daten überschrieben werden oder verloren gehen, kann immer nur ein Thread schreibend zugreifen und der andere nur lesend. So schreibt der GUI-Thread Befehle in die \emph{command\_queue}, der PC FSM-Thread liest diese aus und führt basiert auf seinem aktuellen Zustand und den Befehlen die passende Codezeile aus. Dabei schreibt er bei Zustandswechsel oder im Fehlerfall eine Nachricht in die  \emph{status\_queue}, welche wiederrum vom Thread der \emph{StatusProvider} Klasse, die sich im Programm der Benutzeroberfläche befindet, ausgewertet wird.\\ 
 
-Die \emph{StatusProvider} Klasse liest die \emph{status\_queue} aus und sendet eine Nachricht an die jeweilige Funktion \emph{handle\_status}, die sich in den Klassen \emph{General} und \emph{Debugging} befindet. Hier wird entschieden, ob die Nachricht für die Seite der GUI bestimmt war. Hier wird dann die eigentliche Reaktion auf die Statusmeldung ausgeführt.\\
+Die \emph{StatusProvider} Klasse liest die \emph{status\_queue} aus und sendet eine Nachricht an die jeweilige Funktion \emph{handle\_status}, die sich in den Klassen \emph{General} und \emph{Debugging} befindet. Dies geschieht mithilfe des Signal-and-Slots Konzept siehe \autoref{par:signal_slots}. Hier wird entschieden, ob die Nachricht für die Seite der GUI bestimmt war und die eigentliche Reaktion auf die Statusmeldung ausgeführt.\\
 
 Die \emph{StatusProvider} Klasse wird bei Programmstart als Thread instanziiert und fragt die \emph{status\_queue} alle 100~ms ab.
 \pagebreak
@@ -2168,7 +2168,7 @@ Die \emph{StatusProvider} Klasse wird bei Programmstart als Thread instanziiert 
 
 \textbf{Implementierung der Benutzeroberfläche:}\\
 
-Dieses Kapitel beginnt mit einer Erläuterung der grundlegenden Implementierungsprinzipien und -techniken, die in der Benutzeroberfläche der Anwendung durchgängig zum Einsatz kommen. Anschließend werden die spezifischen Implementierungsdetails der Hauptkomponenten – der \texttt{General}-Klasse, des \texttt{MatplotlibWidget} und der \texttt{Debugging}-Klasse – ausführlich dargestellt.
+Dieses Kapitel beginnt mit einer Erläuterung der grundlegenden Implementierungsprinzipien und -techniken, die in der Benutzeroberfläche der Anwendung durchgängig zum Einsatz kommen. Anschließend werden die spezifischen Implementierungsdetails der Hauptkomponenten – der \texttt{General}-Klasse, des \texttt{MatplotlibWidget} und der \texttt{Debugging}-Klasse – ausführlich dargestellt.\\
 
 \textbf{Grundlegende Implementierungsprinzipien:}\\
 
@@ -2184,7 +2184,7 @@ fsm_thread = threading.Thread(
 fsm_thread.start()
 \end{lstlisting}
 
-Die Verwendung von \texttt{command\_queue} und \texttt{status\_queue} als Argumente für den Thread \texttt{fsm\_pc} unterstreicht die Wichtigkeit dieser \texttt{Queue}-Objekte für die inter-Thread-Kommunikation. Sie ermöglichen einen sicheren und asynchronen Datenaustausch zwischen der GUI und den Hintergrundprozessen.
+Die Verwendung von \texttt{command\_queue} und \texttt{status\_queue} als Argumente für den Thread \texttt{fsm\_pc} unterstreicht die Wichtigkeit dieser \texttt{Queue}-Objekte für die inter-Thread-Kommunikation. Sie ermöglichen einen sicheren und asynchronen Datenaustausch zwischen der GUI und den Hintergrundprozessen.\\
 
 \textbf{Erstellung von PySide6-GUI-Elementen:}\\
 Die Entwicklung der Benutzeroberfläche folgt einem strukturierten Vorgehen, das für PySide6-Anwendungen typisch ist. Dieses Vorgehen gewährleistet eine klare Trennung von Layout, Elementinstanziierung und Funktionalität:
@@ -2192,13 +2192,14 @@ Die Entwicklung der Benutzeroberfläche folgt einem strukturierten Vorgehen, das
 \begin{enumerate}[label=\arabic*.] % Anpassbare Liste für 1., 2., 3. ...
     \item \textbf{Layout erstellen:} Zuerst wird ein Layout-Manager instanziiert, der die Anordnung der Widgets regelt (z.B. \texttt{layout = QGridLayout()}).
     \item \textbf{Element instanziieren:} Das gewünschte GUI-Element wird als Objekt erstellt (z.B. \texttt{self.reference\_voltage\_spinbox = QSpinBox()}).
-    \item \textbf{Element zum Layout hinzufügen:} Das instanziierte Element wird dem zuvor erstellten Layout an einer bestimmten Position hinzugefügt (z.B. \texttt{layout.addWidget(self.reference\_voltage\_spinbox, 1, 1)}).
-    \item \textbf{Element mit Funktion verknüpfen:} Interaktive Elemente werden mit einer spezifischen Methode (Slot) verbunden, die auf Benutzeraktionen reagiert (z.B. \texttt{self.reference\_voltage\_spinbox.valueChanged.connect(self.on\_reference\_voltage\_spinbox\_changed)}).
+    \item \textbf{Element zum Layout hinzufügen:} Das instanziierte Element wird dem zuvor erstellten Layout an einer bestimmten Position hinzugefügt\\ (z.B. \texttt{layout.addWidget(self.reference\_voltage\_spinbox, 1, 1)}).
+    \item \textbf{Element mit Funktion verknüpfen:} Interaktive Elemente werden mit einer spezifischen Methode (Slot) verbunden, die auf Benutzeraktionen reagiert (z.B. \texttt{self.reference\_voltage\_spinbox.valueChanged.\\connect(self.on\_reference\_voltage\_spinbox\_changed)}).
     \item \textbf{Verknüpfte Funktion definieren:} Die Methode (Slot), die durch das Signal ausgelöst wird, wird implementiert.
 \end{enumerate}
 {\footnotesize Während die Schritte 1 bis 3 für die visuelle Darstellung jedes GUI-Elements notwendig sind, sind die Schritte 4 und 5 optional und hängen von der gewünschten Interaktivität und Funktionalität des Elements ab.}\\
 
 \textbf{Signal-and-Slots-Konzept:}\\
+\label{par:signal_slots}
 Ein zentrales Merkmal des Qt-Frameworks, auf dem PySide6 basiert, ist das Signal-and-Slots-Konzept. Es ermöglicht eine lose gekoppelte, übersichtliche und sichere Kommunikation zwischen verschiedenen Komponenten einer GUI.
 
 Ein \textbf{Signal} ist ein Ereignis, das von einem Objekt ausgelöst wird. Beispiele hierfür sind ein Mausklick auf einen Button, eine Wertänderung in einer Spinbox oder eine Statusänderung eines Hintergrundprozesses. Ein \textbf{Slot} ist eine Methode, die auf das Eintreten eines Signals reagiert. Durch den \texttt{connect()}-Aufruf wird eine Verbindung zwischen einem Signal und einem Slot hergestellt, wodurch festgelegt wird, welche Aktion ausgeführt werden soll, wenn das Signal auftritt.
@@ -2208,17 +2209,17 @@ In PySide6 können eigene Signale als Klassenattribute unter Verwendung von \tex
 \textbf{Implementierung der \texttt{General}-Klasse:}\\
 Die Klasse \texttt{General} stellt die Hauptansicht des USB-Oszilloskops dar und umfasst die Kernfunktionalitäten für die Signalerfassung, -visualisierung und -analyse. Sie ist darauf ausgelegt, eine intuitive und umfassende Steuerung des Oszilloskops zu ermöglichen.\\
 
-\textbf{Implementierungsansatz:}\\
+\textbf{Implementierungsansatz:}
 \paragraph{Zustandsverwaltung und Initialisierung}
-Die Klasse verwaltet zahlreiche interne Zustandsvariablen wie \texttt{current\_timebase}, \texttt{current\_vdiv} und \texttt{is\_run\_mode}, die die aktuellen Einstellungen des Oszilloskops widerspiegeln. Listen wie \texttt{timebase\_values} und \texttt{vdiv\_values} definieren die diskreten, oszilloskop-typischen Einstellwerte für Zeitbasis und vertikale Skalierung. Ein internes \texttt{UsbOsziGUI}-Finite-State-Machine (FSM) Objekt (\texttt{self.gui\_fsm}) wird zur Steuerung des Anwendungsflusses und zur dynamischen Anpassung der GUI-Elemente an den aktuellen Betriebsmodus eingesetzt. Benutzereinstellungen für die GUI (z.B. letzte Skalierungswerte) werden mittels \texttt{pickle} in den Methoden \texttt{save\_settings} und \texttt{load\_settings} persistiert, um eine konsistente Benutzererfahrung über Sitzungen hinweg zu gewährleisten.
+Die Klasse verwaltet zahlreiche interne Zustandsvariablen wie \texttt{current\_timebase}, \texttt{current\_vdiv} und \texttt{is\_run\_mode}, die die aktuellen Einstellungen des Oszilloskops widerspiegeln. Listen wie \texttt{timebase\_values} und \texttt{vdiv\_values} definieren die diskreten, oszilloskop-typischen Einstellwerte für Zeitbasis und vertikale Skalierung. Ein internes \texttt{UsbOsziGUI}-Finite-State-Machine (FSM) Objekt (\texttt{self.gui\_fsm}) wird zur Steuerung des Anwendungsflusses und zur dynamischen Anpassung der GUI-Elemente an den aktuellen Betriebsmodus eingesetzt. Benutzereinstellungen für die GUI (z.B. letzte Skalierungswerte) werden mittels \texttt{pickle} in den Methoden \texttt{save\_settings} und \texttt{load\_settings} persistiert, um eine konsistente Benutzererfahrung nach Neustart zu gewährleisten.
 
 \paragraph{Benutzeroberflächen-Aufbau (\texttt{initUI})}
 Das Layout wird mithilfe eines \texttt{QGridLayout} strukturiert, das eine effiziente Anordnung der zahlreichen Steuerelemente ermöglicht.
 \begin{itemize}
-    \item \textbf{Visualisierung:} Die Signaldarstellung erfolgt über ein \texttt{MatplotlibWidget} (siehe Abschnitt \ref{par:matplotlib_widget}), das eine flexible Plot-Funktionalität bietet, ergänzt durch eine \texttt{NavigationToolbar} für interaktive Zoom- und Pan-Operationen.
+    \item \textbf{Visualisierung:} Die Signaldarstellung erfolgt über ein \texttt{MatplotlibWidget}, das eine flexible Plot-Funktionalität bietet, ergänzt durch eine \texttt{NavigationToolbar} für interaktive Zoom- und Scroll-Operationen.
     \item \textbf{Skalierung und Offset:} Für die Einstellung von Zeitbasis, vertikaler Division sowie X- und Y-Offset werden \texttt{QDial}-Widgets verwendet. Diese sind mit den vordefinierten Wertelisten verknüpft und bieten eine präzise, analog anmutende Steuerung. Die Dials für X- und Y-Offset sind kleiner dimensioniert und werden vertikal bzw. horizontal mittig zu den größeren Dials für Zeitbasis und V/div ausgerichtet, um eine platzsparende und ästhetische Anordnung zu erzielen.
-    \item \textbf{Aquisition-Steuerung:} \texttt{QPushButton}s für "Single", "Run", "Stop" und "Reset" ermöglichen die Steuerung des Datenerfassungsprozesses.
-    \item \textbf{Konfiguration:} \texttt{QComboBox}en dienen zur Auswahl des Trigger-Typs ("rising edge", "falling edge"), der Interpolationsmethode für die Signaldarstellung und des Tastkopf-Verhältnisses ("1:1", "10:1").
+    \item \textbf{Aquisition-Steuerung:} \texttt{QPushButton} für \emph{Single}, \emph{Run}, \emph{Stop} und \emph{Reset} ermöglichen die Steuerung des Datenerfassungsprozesses.
+    \item \textbf{Konfiguration:} \texttt{QComboBox}en dienen zur Auswahl des Trigger-Typs (rising edge, falling edge), der Interpolationsmethode für die Signaldarstellung und des Tastkopf-Verhältnisses (1:1, 10:1).
     \item \textbf{Messfunktionen:} Eine \texttt{QGroupBox} mit \texttt{QCheckBox}en erlaubt die Auswahl verschiedener Signalmessungen (z.B. Amplitude, Max, Min, Periode, Frequenz), deren Ergebnisse in einem dedizierten \texttt{QLabel} angezeigt werden.
     \item \textbf{Statusanzeigen:} \texttt{QLabel}s informieren über den aktuellen FSM-Status, Überlaufbedingungen (\texttt{overflow\_label}) und den Trigger-Status (\texttt{triggered\_label}). Ein \texttt{QTimer} (\texttt{status\_clear\_timer}) wird verwendet, um temporäre Statusmeldungen nach einer bestimmten Zeit automatisch zurückzusetzen.
 \end{itemize}
@@ -2237,29 +2238,26 @@ Die Methode \texttt{on\_measure\_changed} wird durch das Ändern der Checkboxen 
 Ein \texttt{QPushButton} (\texttt{toogle\_crosshair\_button}) steuert die Sichtbarkeit von Mess-Cursorn im \texttt{MatplotlibWidget}. Die Differenzen (\texttt{delta\_x}, \texttt{delta\_y}) zwischen den Cursorn werden über das Signal \texttt{cursor\_diff\_changed} des \texttt{MatplotlibWidget} empfangen und in dedizierten \texttt{QLabel}s angezeigt.
 
 \textbf{Implementierung der \texttt{MatplotlibWidget}-Klasse:}\\
-\label{par:matplotlib_widget}
+Die \texttt{MatplotlibWidget}-Klasse ist das zentrale Element für die grafische Darstellung der erfassten Oszilloskop-Daten. Sie integriert die leistungsstarken Plot-Funktionalitäten von Matplotlib nahtlos in die PySide6-Benutzeroberfläche und erweitert diese um interaktive Features wie Cursor-Messungen. Die Klasse erbt von \texttt{FigureCanvas} aus \\\texttt{matplotlib.backends.backend\_qt5agg}, wodurch sie direkt als Qt-Widget verwendet werden kann.
 
-Die \texttt{MatplotlibWidget}-Klasse ist das zentrale Element für die grafische Darstellung der erfassten Oszilloskop-Daten. Sie integriert die leistungsstarken Plot-Funktionalitäten von Matplotlib nahtlos in die PySide6-Benutzeroberfläche und erweitert diese um interaktive Features wie Cursor-Messungen. Die Klasse erbt von \texttt{FigureCanvas} aus \texttt{matplotlib.backends.backend\_qt5agg}, wodurch sie direkt als Qt-Widget verwendet werden kann.
-
-\textbf{Implementierungsansatz}\\
-
+\textbf{Implementierungsansatz}
 \paragraph{Initialisierung und Kernkomponenten (\texttt{\_\_init\_\_})}
 Bei der Instanziierung werden eine Matplotlib \texttt{figure} und \texttt{axes} (\texttt{self.figure}, \texttt{self.ax}) erstellt, die die Grundlage für alle Zeichnungen bilden.
 \begin{itemize}
     \item \textbf{Performanzoptimierung:} Statt bei jeder Datenaktualisierung neue Plot-Objekte zu erzeugen, werden die Hauptkurve (\texttt{self.line}), die beiden vertikalen und horizontalen Cursor-Linien (\texttt{self.vline1}, \texttt{self.hline1}, \texttt{self.vline2}, \texttt{self.hline2}) sowie deren Text-Annotationen (\texttt{self.coord\_text1}, \texttt{self.coord\_text2}) einmalig als persistente Matplotlib-Objekte angelegt. Dies minimiert den Overhead beim Aktualisieren der Darstellung.
     \item Eine \texttt{zero\_line} dient als statische Referenz für die Nulllinie.
-    \item Interne Flags (\texttt{self.crosshair1\_visible}, \texttt{self.crosshair2\_visible}, \texttt{self.dragging\_cursor}) und Variablen (\texttt{self.cursor\_x1}, \texttt{self.cursor\_y1}, etc.) verwalten den Zustand und die Position der Cursor.
+    \item Interne Flags (\texttt{self.crosshair1\_visible}, \texttt{self.crosshair2\_visible}, \\\texttt{self.dragging\_cursor}) und Variablen (\texttt{self.cursor\_x1}, \texttt{self.cursor\_y1}, etc.) verwalten den Zustand und die Position der Cursor.
     \item Die \texttt{data\_x} und \texttt{data\_y} Arrays speichern die aktuell geplotteten Datenpunkte.
-    \item Wichtige Mausereignisse (\texttt{button\_press\_event}, \texttt{motion\_notify\_event}, \texttt{button\_release\_event}) werden direkt mit internen Event-Handlern (\texttt{on\_mouse\_press}, \texttt{on\_mouse\_move}, \texttt{on\_mouse\_release}) verbunden, um die interaktive Cursor-Steuerung zu ermöglichen.
+    \item Wichtige Mausereignisse (\texttt{button\_press\_event}, \texttt{motion\_notify\_event}, \\\texttt{button\_release\_event}) werden direkt mit internen Event-Handlern (\texttt{on\_mouse\_press}, \texttt{on\_mouse\_move}, \\\texttt{on\_mouse\_release}) verbunden, um die interaktive Cursor-Steuerung zu ermöglichen.
 \end{itemize}
 
 \paragraph{Achsenskalierung und -beschriftung (\texttt{update\_axes\_scaling})}
-Diese Methode ist verantwortlich für die dynamische Anpassung des sichtbaren Plotbereichs. Sie berechnet die \texttt{x\_min}, \texttt{x\_max}, \texttt{y\_min} und \texttt{y\_max} Werte basierend auf der aktuellen Zeitbasis (\texttt{timebase}), der vertikalen Division (\texttt{vdiv}), den Offsets (\texttt{xoffset}, \texttt{yoffset}) und der Anzahl der Gitterdivisionen (\texttt{num\_xdiv}, \texttt{num\_ydiv}). \texttt{set\_xlim}, \texttt{set\_ylim}, \texttt{set\_xticks} und \texttt{set\_yticks} werden verwendet, um die Achsenbereiche und die Gitterlinien präzise auf die Oszilloskop-typische Darstellung anzupassen. Die Achsenbeschriftungen werden dynamisch über \texttt{get\_time\_label} und \texttt{get\_v\_label} formatiert, um Einheiten (z.B. "µs/div", "V/div") korrekt darzustellen. Nach einer Skalierungsänderung werden die Cursor-Positionen aktualisiert und ein \texttt{draw\_idle()}-Aufruf initiiert, um die Änderungen effizient zu rendern.
+Diese Methode ist verantwortlich für die dynamische Anpassung des sichtbaren Plotbereichs. Sie berechnet die \texttt{x\_min}, \texttt{x\_max}, \texttt{y\_min} und \texttt{y\_max} Werte basierend auf der aktuellen Zeitbasis (\texttt{timebase}), der vertikalen Division (\texttt{vdiv}), den Offsets (\texttt{xoffset}, \texttt{yoffset}) und der Anzahl der Gitterdivisionen (\texttt{num\_xdiv}, \texttt{num\_ydiv}). \texttt{set\_xlim}, \texttt{set\_ylim}, \texttt{set\_xticks} und \texttt{set\_yticks} werden verwendet, um die Achsenbereiche und die Gitterlinien präzise auf die Oszilloskop-typische Darstellung anzupassen. Die Achsenbeschriftungen werden dynamisch über \\\texttt{get\_time\_label} und \texttt{get\_v\_label} formatiert, um Einheiten (z.B. "µs/div", "V/div") korrekt darzustellen. Nach einer Skalierungsänderung werden die Cursor-Positionen aktualisiert und ein \texttt{draw\_idle()}-Aufruf initiiert, um die Änderungen effizient zu rendern.
 
 \paragraph{Datenplotting (\texttt{plot\_data})}
 Diese zentrale Methode empfängt die Rohdaten und die Abtastrate. Sie generiert die entsprechenden Zeitwerte (\texttt{t}) und aktualisiert die \texttt{self.data\_x} und \texttt{self.data\_y} Buffer.
 \begin{itemize}
-    \item \textbf{Flexible Plot-Stile:} Basierend auf dem \texttt{plot\_style}-Parameter (z.B. "linear", "points", "steps", "spline") wird die Darstellung des Signals angepasst. Für den "spline"-Stil wird \texttt{make\_interp\_spline} verwendet, um eine geglättete Kurve zu erzeugen.
+    \item \textbf{Flexible Plot-Stile:} Basierend auf dem \texttt{plot\_style}-Parameter (z.B. linear, points, steps, spline) wird die Darstellung des Signals angepasst. Für den spline-Stil wird \texttt{make\_interp\_spline} verwendet, um eine geglättete Kurve zu erzeugen.
     \item Der entscheidende Performanzaspekt ist die Verwendung von \texttt{self.line.set\_data(t, data)}, wodurch die Daten des bestehenden Linienobjekts aktualisiert werden, anstatt ein neues zu zeichnen.
     \item Die Cursor werden initial positioniert, falls noch nicht geschehen, und ihre Positionen sowie Text-Annotationen werden aktualisiert.
     \item Ein abschließender \texttt{self.figure.canvas.draw\_idle()}-Aufruf gewährleistet eine effiziente Aktualisierung der GUI, indem nur die notwendigen Bereiche neu gezeichnet werden.
@@ -2273,14 +2271,12 @@ Diese zentrale Methode empfängt die Rohdaten und die Abtastrate. Sie generiert 
 \end{itemize}
 
 \paragraph{Interaktive Cursor-Steuerung (Maus-Events)}
-Die \texttt{on\_mouse\_press}-Methode identifiziert, welcher Cursor (falls vorhanden und sichtbar) dem Klickpunkt am nächsten ist, und setzt \texttt{self.dragging\_cursor} entsprechend. \texttt{on\_mouse\_move} aktualisiert kontinuierlich die Position des \texttt{dragging\_cursor}, solange die Maustaste gedrückt ist. \texttt{on\_mouse\_release} setzt \texttt{self.dragging\_cursor} zurück, um den Ziehvorgang zu beenden.
+Die \texttt{on\_mouse\_press}-Methode identifiziert, welcher Cursor (falls vorhanden und sichtbar) dem Klickpunkt am nächsten ist, und setzt \texttt{self.dragging\_cursor} entsprechend. \texttt{on\_mouse\_move} aktualisiert kontinuierlich die Position des \texttt{dragging\_cursor}, solange die Maustaste gedrückt ist. \texttt{on\_mouse\_release} setzt \texttt{self.dragging\_cursor} zurück, um den Ziehvorgang zu beenden.\\
 
-\textbf{Implementierung der \texttt{Debugging}-Klasse:}\\
+\textbf{Implementierung der \texttt{Debugging}-Klasse:}
+Die Klasse \texttt{Debugging} dient als spezialisiertes Konfigurationsfenster innerhalb der \\\texttt{StackedWidgetApp}, das Funktionen für die detaillierte Einstellung von Abtastfrequenz und Referenzspannung bereitstellt. Ihre primäre Rolle liegt in der Unterstützung von Test-, Analyse- und Debugging-Szenarien, die über die Standardfunktionen der \texttt{General}-Ansicht hinausgehen.\\
 
-Die Klasse \texttt{Debugging} dient als spezialisiertes Konfigurationsfenster innerhalb der \texttt{StackedWidgetApp}, das Funktionen für die detaillierte Einstellung von Abtastfrequenz und Referenzspannung bereitstellt. Ihre primäre Rolle liegt in der Unterstützung von Test-, Analyse- und Debugging-Szenarien, die über die Standardfunktionen der \texttt{General}-Ansicht hinausgehen.
-
-\textbf{Implementierungsansatz}\\
-
+\textbf{Implementierungsansatz}
 \paragraph{Benutzeroberflächen-Aufbau (\texttt{initUI})}
 Das Layout wird ebenfalls mittels \texttt{QGridLayout} organisiert, um eine übersichtliche Anordnung der Konfigurationselemente zu gewährleisten.
 \begin{itemize}
@@ -2352,7 +2348,7 @@ Die Implementierung von \texttt{base} folgt einem analogen Prinzip wie \texttt{d
     \begin{itemize}
         \item Der Schwellenwert für den unteren Teil wird ebenfalls relativ zum Peak-to-Peak-Bereich berechnet, aber diesmal werden Werte unterhalb des Schwellenwerts betrachtet:
         $$
-        \text{threshold} = \text{min\_val} + (1 - \text{lower\_part\_threshold\_percentage}) \times (\text{max\_val} - \text{min\_val})
+        \text{threshold} = \text{min\_val} + (1 - \text{lower\_part\_threshold\_percentage}) \cdot (\text{max\_val} - \text{min\_val})
         $$
         
         \item Alle Datenpunkte, die kleiner oder gleich diesem Schwellenwert sind, bilden den \texttt{lower\_waveform\_part}.
@@ -2400,7 +2396,7 @@ Die Implementierung von \texttt{base} folgt einem analogen Prinzip wie \texttt{d
 \begin{itemize}
     \item \texttt{maximum(data)}: Bestimmt den maximalen Wert im Signal (\texttt{np.max()}).
     \item \texttt{minimum(data)}: Bestimmt den minimalen Wert im Signal (\texttt{np.min()}).
-    \item \texttt{mean(data)}: Berechnet den Mittelwert des Signals (\texttt{np.mean()}), wobei die Berechnung auf eine ganzzahlige Anzahl von Perioden begrenzt wird, um Periodenendeffekte zu minimieren.
+    \item \texttt{mean(data)}: Berechnet den Mittelwert des Signals (\texttt{np.mean()}), wobei die Berechnung auf eine ganzzahlige Anzahl von Perioden begrenzt wird, um Verfälschungen zu minimieren.
     \item \texttt{peak\_peak(data)}: Berechnet die Spitze-zu-Spitze-Spannung als Differenz zwischen Maximum und Minimum.
     \item \texttt{frequency(data, abtastzeit)}: Berechnet die Frequenz als Kehrwert der Periode, unter Verwendung von \texttt{period} und \texttt{abtastzeit}.
     \item \texttt{amplitude(data)}: Berechnet die Amplitude als Differenz zwischen dem ermittelten Dach und der Basis (\texttt{dach(data) - base(data)}).
