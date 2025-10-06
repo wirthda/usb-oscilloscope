@@ -154,7 +154,7 @@
 \maketitle
 \begin{figure}[H]
 	\centering
-    \includegraphics[scale=0.25]{Baugruppe_Bild.jpg} 
+    \includegraphics[scale=0.25]{Baugruppe_Bild.png} 
 	\label{fig:Baugruppe_Bild}
 \end{figure}
 
@@ -815,7 +815,7 @@ Das beschriebene Konzept reduziert den Schaltungsaufwand auf das notwendige Mini
 \begin{figure}[H]
 	\centering
     \includegraphics[scale=0.1]{Prinzipschaltbild_AFE.png} 
-	\caption{Prinzipschaltbild des Analog-Frontends (AFE)}
+	\caption{Prinzipschaltbild des Hardware-Konzepts}
 	\label{fig:afe_diagram}
 \end{figure}
 
@@ -1082,7 +1082,7 @@ Die Daten- und Steuerleitungen des fertiggestellten Interfaceblocks (siehe Seite
 
 Die Spannungsversorgung wurde bewusst auf Labornetzteile ausgelagert, da der Entwicklungsfokus auf Signalverarbeitung, Erfassung und Konditionierung liegen sollte und dadurch eine freiere Bauteilwahl sowie Schaltungsentwicklung möglich war. Das analoge Frontend erhielt eine eigene Versorgung. ADC, DAC und sämtliche digitalen Schaltungsteile wurden über eine weitere Versorgung gespeist. \\
 
-Für das analoge Frontend wurde eine Versorgungsspannung von $\pm$12 V gewählt. Die höhere Betriebsspannung schafft Reserven, da nach dem Eingangsteiler Signale bis zu 4.096 V am Frontend zulässig sind. Die eingesetzten Operationsverstärker arbeiten nicht rail-to-rail, daher erhöht die Wahl von $\pm$12 V die Aussteuerungsreserve und vermindert Klippgefahr. Außerdem liefern die OPVs bei dieser Versorgungsspannung die beste Gesamtperformance \cite[S. 1 u. 13]{AnalogDevices2011}. Der ADC und der Komparator erfordern eine Versorgung von $\pm$5 V. Für den Digitalteil einschließlich Mikrocontroller werden +5 V benötigt. Die +5-V-Schiene wurde gemeinsam mit den $\pm$5 V bereitgestellt, wodurch die Anzahl externer Netzteile reduziert wird und die Verteilung im Aufbau vereinfacht.\\
+Für das analoge Frontend wurde eine Versorgungsspannung von $\pm$12 V gewählt. Die höhere Betriebsspannung schafft Reserven, da nach dem Eingangsteiler Signale bis zu 4.096 V am Frontend zulässig sind. Die eingesetzten Operationsverstärker arbeiten nicht rail-to-rail, daher erhöht die Wahl von $\pm$12 V die Aussteuerungsreserve und vermindert Klippgefahr. Außerdem liefern die OPVs bei dieser Versorgungsspannung die beste Gesamtperformance \cite[S. 1 u. 13]{AnalogDevices8022}. Der ADC und der Komparator erfordern eine Versorgung von $\pm$5 V. Für den Digitalteil einschließlich Mikrocontroller werden +5 V benötigt. Die +5-V-Schiene wurde gemeinsam mit den $\pm$5 V bereitgestellt, wodurch die Anzahl externer Netzteile reduziert wird und die Verteilung im Aufbau vereinfacht.\\
 Zur Spannungsstabilisierung sind pro Schiene Elektrolytkondensatoren mit 100 $\mu$F vorgesehen. Als Verpolschutz werden Schottky-Dioden in die Zuleitungen eingesetzt. Die Versorgungseinspeisung erfolgt über Löt-Vias.\\
 Der zugehörige Schaltplanteil findet sich auf Seite 5 des Schematics in \autoref{subsec:appendix_a_schematic}.
 
