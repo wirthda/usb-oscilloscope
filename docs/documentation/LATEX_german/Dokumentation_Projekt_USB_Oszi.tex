@@ -2496,9 +2496,9 @@ Beim Anschluss sind die \autoref{tab:connections} und die darunterliegenden Hinw
 \subsection{Funktionstest}
 \label{subsec:integrationtest}
 
-Um die Funktion des Oszilloskops zu überprüfen wurde eine Reihe an Testsignalen mittels Funktionsgenerator eingespeist. Dies sollten dazu dienen die Performanz der Baugruppe zu testen. Die resultierenden Signale sind den folgenden Abbildungen zu entnehmen.\\
+Um die Funktion des Oszilloskops zu überprüfen wurde eine Reihe an Testsignalen mittels Funktionsgenerator eingespeist. Dies sollte dazu dienen die Performanz der Baugruppe zu testen. Die resultierenden Signale sind den folgenden Abbildungen zu entnehmen.\\
 
-Zu Beginn wurden sinusförmiger Wechselspannungen mit kleiner Amplitude eingespeist, um die generelle Darstellung zu überprüfen.
+Zu Beginn wurden sinusförmige Wechselspannungen mit kleiner Amplitude eingespeist, um die generelle Darstellung zu überprüfen.
 
 \begin{figure}[H]
 	\centering
@@ -2556,9 +2556,9 @@ Bei Erreichen der Grenzfrequenz (Bandbreite: 1 MHz) zeigt sich bereits eine leic
 	\label{fig:test_sine_1Mhz_2vpp_interpolate}
 \end{figure}
 
-Als Interpolationsalgorithmus wurde eine spezielle Form der Polynom-Interpolation verwendet. Es handelt sich um eine Annäherung durch an das Signal mittels Spline (dt. Polynomzug), eine abschnittsweise definierte Funktion, die aus Polynomen zusammengestezt ist (\emph{scipy}: \href{https://docs.scipy.org/doc/scipy-1.16.1/reference/generated/scipy.interpolate.make_interp_spline.html}{\texttt{make\_interp\_spline}}). Da stets eine Annäherung mit Polynomen erfolgt, können an den Rändern der interpolierten Datenreihe (Anfang und Ende der Signalaufzeichnung) Verzerrungen auftreten (siehe \autoref{fig:test_sine_1Mhz_2vpp_interpolate}).\\
+Als Interpolationsalgorithmus wurde eine spezielle Form der Polynom-Interpolation verwendet. Es handelt sich um eine Annäherung an das Signal mittels Spline (dt. Polynomzug), eine abschnittsweise definierte Funktion, die aus Polynomen zusammengestezt ist (\emph{scipy}: \href{https://docs.scipy.org/doc/scipy-1.16.1/reference/generated/scipy.interpolate.make_interp_spline.html}{\texttt{make\_interp\_spline}}). Da stets eine Annäherung mit Polynomen erfolgt, können an den Rändern der interpolierten Datenreihe (Anfang und Ende der Signalaufzeichnung) Verzerrungen auftreten (siehe \autoref{fig:test_sine_1Mhz_2vpp_interpolate}).\\
 
-Nachdem die grundlegende Signaldarstellung und auch die Interpolation in der PC-Anwendung überprüft wurde, konnten weitere Funktionalitäten, wie die Messungs-Funktionen und Cursor getestet werden.\\
+Nachdem die grundlegende Signaldarstellung und auch die Interpolation in der PC-Anwendung überprüft wurde, konnten weitere Funktionalitäten, wie die Messfunktionen und Cursor getestet werden.\\
 
 Das Ergebnis der Messungen entspricht den händisch berechneten Werten für das jeweilig eingespeiste Signal (beispielhafte Rechnung siehe \autoref{eq:ac_rms} und \autoref{eq:dc_rms}).
 
@@ -2596,7 +2596,7 @@ Als Nächstes wurden Rechteck-Wechselsignal eingespeist.
 	\label{fig:test_square_10khz_2vpp}
 \end{figure}
 
-Anhand der Messung, die in \autoref{fig:test_square_10khz_2vpp} zu sehen ist, konnte überprüft werden, ob die Top und Base Messung funktionieren. Eingespeist wurde ein Rechtecksignal mit einer Amplitude von 2 V. Somit wurde für Top und Base ein Wert von 1 V erwartet. Wie \autoref{fig:test_square_10khz_2vpp} entnommen werden kann, misst das USB-Oszi: Top = 1.00 V und Base = -0,99 V. Dieses Ergebnis war zufriedenstellend. 
+Anhand der Messung, die in \autoref{fig:test_square_10khz_2vpp} zu sehen ist, konnte überprüft werden, ob die Top und Base Messung funktionieren. Eingespeist wurde ein Rechtecksignal mit einer Amplitude von 2 V. Somit wurde für Top und Base ein Wert von 1 V erwartet. Wie \autoref{fig:test_square_10khz_2vpp} entnommen werden kann, misst das USB-Oszi: Top = 1.00 V und Base = -0.99 V. Dieses Ergebnis war zufriedenstellend. 
 \pagebreak
 
 Auch waren bei den Rechtecksignal-Messungen stets Überschwinger an den Flanken bzw. Übergängen zu beobachten. Dies lässt sich aber auch mit dem Entwurf des AAF erklären (siehe \autoref{subsubsec:aaf_concept}).
@@ -2619,7 +2619,7 @@ Auch waren bei den Rechtecksignal-Messungen stets Überschwinger an den Flanken 
 	\caption{Testsignal: Rechteck (f = 500 kHz, $V_{pp}$ = 2 V)}
 \end{figure}
 
-Beim weiteren Erhöhen der Frequnz, entfallen durch den AAF die hochfrequenten Anteile an den Flanken, sodass die Flanken immer flacher werden und die Wellenform immer sinusähnlicher wird.\\ Beim Erreichen der Grenzfrequenz ist nur noch die Grundschwingung (1 MHz Sinus) zu sehen (siehe \autoref{fig:test_square_1Mhz_2vpp}).
+Beim weiteren Erhöhen der Frequnz, entfallen durch den AAF die hochfrequenten Anteile an den Flanken, sodass die Flanken immer flacher werden und die Wellenform sinusähnlicher wird.\\ Beim Erreichen der Grenzfrequenz ist nur noch die Grundschwingung (1 MHz Sinus) zu sehen (siehe \autoref{fig:test_square_1Mhz_2vpp}).
 
 \begin{figure}[H]
 	\centering
@@ -2685,7 +2685,7 @@ Bei der Einspeisung eines positiven Bezugspotentials (siehe \autoref{fig:test_of
 
 Zunächst erfolgt eine Vergleich mit den Anforderungen, welche zu Beginn des Projekts definiert wurden (siehe \autoref{subsec:requirements}).\\
 
-Der vorliegende Prototyp implementiert eine 1-kanaliges Messsystem, welches zusammen mit der programmierten PC-Anwendung als Oszilloskop verwendet werden kann. Die Verbindung zwischen PC und Baugruppe erfolgt über USB.
+Der vorliegende Prototyp implementiert ein 1-kanaliges Messsystem, welches zusammen mit der programmierten PC-Anwendung als Oszilloskop verwendet werden kann. Die Verbindung zwischen PC und Baugruppe erfolgt über USB.
 
 Die angestrebte Bandbreite von 1 MHz wurde erreicht. Abweichungen vom eingespeisten Signal, sowie Maßnahmen zur Kompensation dieser Effekte wurden bereits im \autoref{subsec:hw_test} (\nameref{subsec:hw_test}) ausführlich beschrieben (merkliche Abweichungen bei Signalen mit Frequenzen ab 500 kHz).
 Die Abtastrate von 10 MS/s konnte durch die Auswahl der entsprechenden Bauelemente (ADC, $\mu$C, etc.) gewährleistet werden.
@@ -2697,7 +2697,7 @@ Für die nach den Anforderungen festgelegte Verwendung eines Offsets wären Erg�
 
 \subsection{Benutzung des USB-Oszilloskops}
 
-Die Verwednung des Oszilloskops setzt den Aufbau gemäß \autoref{fig:test_setup} in \autoref{subsec:test_setup} voraus.\\
+Die Verwendung des Oszilloskops setzt den Aufbau gemäß \autoref{fig:test_setup} in \autoref{subsec:test_setup} voraus.\\
 
 Das Endergebnis der entwickelten Benutzeroberfläche ist in \autoref{fig:Benutzeroberflaeche} dargestellt. Die Bedienung und Einstellmöglichkeiten orientieren sich stark an einem klassischen Oszilloskop und bieten dem Anwender zahlreiche sinnvolle Funktionen für die Signalbetrachtung und -auswertung.
 
@@ -2723,7 +2723,7 @@ Das Endergebnis der entwickelten Benutzeroberfläche ist in \autoref{fig:Benutze
   \item \textbf{Zeitbasis und Achsverschiebung:} Über zwei Drehregler wird die horizontale Zeitbasis (großer Regler) sowie die Verschiebung der X-Achse (kleiner Regler) eingestellt.
   \item \textbf{Trigger-Einstellungen:} Mithilfe eines Auswahlfensters kann der Triggertyp (steigende oder fallende Flanke) gewählt werden.
   \item \textbf{Interpolation:} Zusätzlich steht eine Auswahl zur Signalinterpolation bereit (z.\,B.\ linear, spline, steps, points).
-  \item \textbf{Messfunktion und Cursor:} Die Messfunktionen lassen sich mithilfe der „Measure“-Schaltfläche aktivieren. Die gewünschten Kennwerte (Amplitude, Mittelwert, Frequenz usw.) können über eine Checkbox ausgewählt werden; die berechneten Werte werden unmittelbar angezeigt. Mit dem Cursor-Button werden zwei Kreuzcursor aktiviert, deren Differenzen ($\Delta x$, $\Delta y$) links daneben angezeigt werden.
+  \item \textbf{Messfunktion und Cursor:} Die Messfunktionen lassen sich mithilfe der „Measure“-Schaltfläche aktivieren. Die gewünschten Kennwerte (Amplitude, Mittelwert, Frequenz usw.) können über eine Checkbox ausgewählt werden; die berechneten Werte werden unmittelbar angezeigt. Mit dem Cursor-Button werden zwei Kreuzcursor aktiviert, deren Differenzen ($\Delta x$, $\Delta y$) rechts daneben angezeigt werden.
   \item \textbf{Vertikale Achseneinstellung:} Zwei weitere Drehregler erlauben die Einstellung von Skalierung (Volt pro Kästchen) und Verschiebung der Y-Achse (Nullpunkt).
   \item \textbf{Status-Label:} Das Status-Label informiert über den aktuellen Zustand der Zustandsmaschine (PC und Mikrocontroller) und gibt Hinweise zu Änderungen der Trigger- oder Interpolationsart, Verbindungsstatus oder Fehlern.
   \item \textbf{Reset-Schaltfläche:} Damit kann die Zustandsmaschine zurückgesetzt werden, falls sie in einem ungültigen Zustand verharrt.
