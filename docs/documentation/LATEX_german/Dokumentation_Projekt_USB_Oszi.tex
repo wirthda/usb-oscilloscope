@@ -140,7 +140,7 @@
 
 \lstset{style=pythonstyle}
 
-\title{Projekt USB-Oszilloskop}
+\title{Projektarbeit ``USB-Oszilloskop``}
 \author{Samuel Oeser, Nicole Sturm, Daniel Wirth}
 \date{\today}
 
@@ -152,7 +152,21 @@
 
 %%%%%%%%%%% Deckblatt %%%%%%%%%%%
 \maketitle
-%\thispagestyle{empty}
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.25]{Baugruppe_Bild.jpg} 
+	\label{fig:Baugruppe_Bild}
+\end{figure}
+
+\begin{center}
+	Bachelorstudiengang Elektro- und Informationstechnik (BEI)\\
+	Technische Hochschule Nürnberg\\
+	Fakultät efi\\
+	SoSe2025
+\end{center}
+
+\thispagestyle{empty}
+
 \pagebreak
 
 %%%%%%%%%%% TOC %%%%%%%%%%%
@@ -1143,7 +1157,7 @@ Anhand dieser Design Vorgaben wurde mit dem Routing begonnen. Generell galt es, 
 
 Für den AD-Umsetzer war eine getrennte analoge Massefläche mit einem einzelnen Verbindungspunkt zum digitalen Massebezug gefordert. Umgesetzt wurde deshalb eine gemeinsame analoge Massefläche, die \textbf{ausschließlich} nahe am AD-Umsetzer mit der digitalen Masse verbunden ist. Diese Verbindung ist durch ein breites Leiterstück ausgeführt. Auch der DAC wurde mit dieser Massefläche verbunden, allerdings nahe der Verbindung zum Digitalen GND, um Rückströme durch den Analogteil zu vermeiden. Der analoge Teil wurde entsprechend den Vorgaben der Datenblätter ausgeführt. Unter den empfindlichen Eingangskreisen wurde die Massefläche gezielt ausgespart, um parasitäre Kapazitäten zu minimieren. Leiterwege wurden so kurz wie möglich gehalten. Widerstände in den Eingangspfaden wurden unmittelbar an den zugehörigen Pins platziert.\\
 
-Nach der Platzierung des analogen Frontends erfolgte die Auslegung des Digitalteils. Aufgrund der festgelegten Pinbelegungen und der begrenzten Fläche war eine kreuzungsfreie Leitungsführung nicht in allen Bereichen realisierbar. Wo immer möglich wurde eine konfliktfreie Führung dennoch angestrebt. Die Versorgungsschienen wurden so positioniert, dass ihre Anschlüsse funktional in das Routing integriert werden konnten. Ein zentraler Sammelpunkt für alle Anschlüsse wurde nicht erzwungen.\\
+Nach der Platzierung des analogen Frontends erfolgte die Auslegung des Digitalteils. Aufgrund der festgelegten Pinbelegungen und der begrenzten Fläche war eine kreuzungsfreie Leitungsführung nicht in allen Bereichen realisierbar. Wo immer möglich wurde eine konfliktfreie Führung dennoch angestrebt. Die Versorgungsschienen wurden so positioniert, dass ihre Anschlüsse funktional in das Routing integriert werden konnten. Ein zentraler Sammelpunkt für alle Anschlüsse wurde nicht erzwungen. Das Layout befindet sich in \autoref{subsec:appendix_a_layout}.\\
 
 Nach Fertigstellung des Layouts wurde der Design Rule Check durchgeführt und alle vorhandenen Fehler und Warnungen behoben oder als unkritisch eingestuft. Zusätzlich wurden die Beschriftungen sinnvoll platziert und anschließend die Fertigungsdaten an den gewählten Zulieferer übermittelt. Nach Erhalt der Leiterplatte wurde die Baugruppe von Hand bestückt. Als Versorgung wurden 4mm Leitungen über Lötfahnen an die entsprechenden VIAs gelötet. Aus den 3D-Modellen der Bibliothek wurde ein Modell der Baugruppe erstellt (siehe \autoref{fig:3dmodel_pcb_assembly}).
 
