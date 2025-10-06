@@ -163,6 +163,10 @@
 %%%%%%%%%%% Abstract / Zusammenfassung %%%%%%%%%%%
 \section{Abstract / Zusammenfassung}
 
+Im Rahmen eines praxisnahen Projektes wurde erfolgreich ein USB-Oszilloskop als digitaler Speicheroszilloskop-Prototyp entwickelt. Zielsetzung war die eigenständige Realisierung aller wesentlichen Entwicklungsphasen, von der Konzeption bis zur Inbetriebnahme, unter Zusammenführung von Hardware, Firmware und PC-Software. Die Hardware besteht aus einem analogen Frontend zur Signalaufbereitung, einem 12-Bit-Analog-Digital-Wandler und einem Mikrocontroller, der die Schnittstelle zum PC bereitstellt.\\ 
+Das Projektteam folgte einem strukturierten Vorgehensmodell und definierte die Systemanforderungen in enger Abstimmung mit der Projektbetreuung. Dazu gehörten eine Bandbreite von 1~MHz, eine Abtastrate von 10~MS/s und ein flexibler Eingangsspannungsbereich von $\pm5$~V, der mit üblichen Tastköpfen erweitert werden kann. Die Firmware steuert die Datenerfassung und Vorverarbeitung effizient mittels Zustandsautomat und DMA, die Datenübertragung zum PC erfolgt stabil über USB. Die eigens programmierte Benutzeroberfläche ermöglicht eine intuitive Steuerung sowie Echtzeit-Visualisierung und Analyse der Messdaten.\\ 
+Im Rahmen umfangreicher Tests wurde bestätigt, dass das System die Kernanforderungen in vollem Umfang erfüllt. Die Signalaufzeichnung ist bis 500~kHz besonders präzise, für höhere Frequenzen wurden Verbesserungsmöglichkeiten herausgearbeitet. Die modulare Systemarchitektur gewährleistet eine zuverlässige Zusammenarbeit aller Komponenten; die Bedienung erwies sich als benutzerfreundlich und fehlerfrei.\\ 
+Das Projekt bot nicht nur Gelegenheit, technische Kompetenzen in den Bereichen Schaltungsentwicklung, Embedded Software und GUI-Design zu vertiefen, sondern auch Teamarbeit, Organisation und systematisches Vorgehen praxisnah umzusetzen. Der Prototyp liefert somit eine fundierte Grundlage für weitere Optimierungen sowie die Entwicklung zusätzlicher Messfunktionen.
 \pagebreak
 
 %%%%%%%%%%% Einleitung %%%%%%%%%%%
@@ -722,7 +726,7 @@ In der zentralen Phase wurden die geplanten Komponenten umgesetzt. Dies umfasste
 
 \textbf{Organisation und Zusammenarbeit}\\
 Die Zusammenarbeit erfolgte hauptsächlich über ein gemeinsames Projektteam in Microsoft Teams. Dieses war in mehrere Kanäle gegliedert: einen allgemeinen Kanal für projektübergreifende Informationen, jeweils eigene Kanäle für Hardware, Firmware und Software sowie zusätzliche Kanäle für die Schnittstellen. Diese Struktur erleichterte die Ablage von Quellen, Materialien und Informationen und stellte die Übersicht über das gesamte Projekt sicher.\\
-Die Abstimmung innerhalb des Teams erfolgte in regelmäßigen Treffen, in denen abgeschlossene Arbeitspakete dokumentiert und neue Zielvorgaben bis zum nächsten Treffen festgelegt wurden. Die Ergebnisse wurden jeweils in Protokollen festgehalten. Eine detaillierte Auflistung der Tätigkeiten sowie deren Zuordnung zu den einzelnen Teammitgliedern findet sich im \nameref{sec:appendix_a} \ref{sec:appendix_a}.
+Die Abstimmung innerhalb des Teams erfolgte in regelmäßigen Treffen, in denen abgeschlossene Arbeitspakete dokumentiert und neue Zielvorgaben bis zum nächsten Treffen festgelegt wurden. Die Ergebnisse wurden jeweils in Protokollen festgehalten. Eine detaillierte Auflistung der Tätigkeiten sowie deren Zuordnung zu den einzelnen Teammitgliedern findet sich im \autoref{subsec:appendix_a_responsibilities} ``\nameref{subsec:appendix_a_responsibilities}``.
 \pagebreak
 
 \subsection{Anforderungen}
@@ -865,7 +869,7 @@ Die digitale Ansteuerung des LTC1450 folgt der im Datenblatt erläuterten Logik.
 
 Da die ausgegebenen Werte in diesem Projekt direkt in die Input-Latches geschrieben werden, sind alle drei Signale dauerhaft auf Low gelegt, sodass immer alle zwölf Bit in die Latches übernommen werden. Das Update des Ausgangs erfolgt ausschließlich über den LDAC-Eingang, der die Inhalte der Input-Latches in die DAC-Latches übernimmt und damit die Ausgangsspannung aktualisiert. Der CLR-Eingang setzt alle Latches auf Null und damit den Ausgang des invertierenden Verstärkers sofort auf den höchsten möglichen Wert für $V_{ref}$, also den größtmöglichen Eingangsspannungsbereich. Die Ausgangsverstärkung des DAC-Puffers wird über X1/X2 bestimmt und ist hier durch Verbindung nach GND auf zwei gesetzt, wodurch eine Full-Scale-Spannung von 4.095 V erreicht wird. Zusätzlich werden die Versorgungsspannung von 5 V sowie der digitale Ground angeschlossen. Zwischen $V_{CC}$ und GND ist gemäß Datenblatt ein 0,1 $\mu$F-Kondensator vorzusehen \cite[S. 1,7 u. 10]{LinearTechnology1450}. Mit diesen Festlegungen ließ sich die Referenzschaltung im Schaltplan umsetzen. Die Datenleitungen wurden über Bussymbole geführt, um sie im Schaltplan eindeutig und übersichtlich den nachfolgenden Verarbeitungsschritten zuzuordnen.\\
 
-Der zugehörige Schaltplanteil findet sich auf Seite 3 des Schematics im \autoref{sec:appendix_a}.
+Der zugehörige Schaltplanteil findet sich auf Seite 3 des Schematics in \autoref{subsec:appendix_a_schematic}.
 
 \subsubsection{Offset und Eingangsbeschaltung des ADCs}
 
@@ -886,7 +890,7 @@ Der am Eingang des AD-Umsetzers nutzbare Bereich liegt differenziell bei $\pm$ 2
 
 Die Offsetschaltung besteht aus einem Potentiometer $R_{Voff1}$ = 5 k$\Omega$, das zwischen +5 V und -5 V liegt. An den Enden des Potentiometers befinden sich symmetrische Vorwiderstände $R_{off1}$ = $R_{off2}$ = 2.7 k$\Omega$. Der Schleifer stellt den Offset bereit und speist über einen Jumper den Knoten -AIN. Nachgeschaltet sind zwei Glättungskondensatoren mit 1 $\mu$F und 100 nF gegen analoge Masse, die Versorgungsschwankungen und Spannungsspitzen dämpfen. Der Jumper ermöglicht bei Bedarf die Trennung des Offsets vom Eingangspfad, durch Überbrücken eines der Kondensatoren ist eine Festlegung des Signals auf 0 V möglich. Ein zusätzlicher Spannungsfolger oder eine Referenzquelle wurde bewusst vermieden, da das Datenblatt für DC-Kopplung einen einfachen Widerstandsteiler zulässt und damit der Schaltungsaufwand reduziert wird.\\
 
-Der zugehörige Schaltplanteil findet sich auf Seite 3 des Schematics im \autoref{sec:appendix_a}.
+Der zugehörige Schaltplanteil findet sich auf Seite 3 des Schematics iin \autoref{subsec:appendix_a_schematic}.
 
 Mit dieser Wahl der Bauelemente ergibt sich folgender Einstellbereich.
 
@@ -930,14 +934,14 @@ Deshalb wurde – analog zum Prinzip des Oszilloskop-Tastkopfs (siehe \autoref{s
 Ein einstellbarer Trimmkondensator parallel zu $R_1$ zur Feineinstellung, ergänzt um einen parallelen Festwertkondensator zur Grobeinstellung, erlaubt den Abgleich der Zeitkonstante und damit eine frequenzunabhängigere Abschwächung.\\  
 Hierdurch werden die durch Eingangs- und Leitungskapazitäten verursachten Pegel- und Phasenfehler wirkungsvoll reduziert.\\
 
-Der zugehörige Schaltplanteil findet sich auf Seite 2 des Schematics im \autoref{sec:appendix_a}.\\
+Der zugehörige Schaltplanteil findet sich auf Seite 2 des Schematics in \autoref{subsec:appendix_a_schematic}.\\
 
 Für Messungen an 50-$\Omega$-Systemen ist optional ein Widerstand zur Eingangs-Anpassung vorgesehen. Damit kann der Eingang bei Bedarf auf 50 $\Omega$ umgeschaltet werden, ohne dass im Normalbetrieb die hohe 1-M$\Omega$-Eingangsimpedanz beeinträchtigt wird. Für den OPV wurden entsprechend des Datenblatts je Versorgungspannung zwei Bypass Kondensatoren mit 0.1$\mu$F und 100pF eingeplant. Ein weiterer größerer Kondensator im uF-Bereich, war ebenfalls gefordert. Da dieser laut Datenblatt allerdings nicht direkt am Device gefordert ist und mit anderen Bausteinen geteilt werden kann, wurde auf Grund der weiteren OPV in nahe des Spannungsfolgers auf diesen verzichtet.
 
 \subsubsection{Anti-Aliasing-Filter}
 \label{subsubsec:aaf_concept}
 
-Der zugehörige Schaltplanteil findet sich auf Seite 2 des Schematics im \autoref{sec:appendix_a}.\\
+Der zugehörige Schaltplanteil findet sich auf Seite 2 des Schematics in \autoref{subsec:appendix_a_schematic}.\\
 
 Der Entwurf des Anti-Aliasing-Filters erfolgte mit dem Analog Filter Wizard\footnote{\url{https://tools.analog.com/en/filterwizard/}} von Analog Devices und orientierte sich an den im Kapitel zum Filterentwurf festgelegten Kriterien (\autoref{subsec:aaf_nyquist}). Für die Synthese wurden die 3-dB-Grenzfrequenz, die geforderte Sperrbanddämpfung und der Beginn des Sperrbands vorgegeben. Außerdem wurde ein Spannungsbereich von $\pm$5 V festgelegt. Die 3-dB-Grenzfrequenz wurde auf 1,5 MHz festgelegt, um die Zielbandbreite von 1 MHz sicher zu erreichen. Der Beginn des Sperrbands wurde mit der Nyquist-Frequenz gleichgesetzt, die bei der halben Abtastrate liegt und hier 5 MHz beträgt. Die notwendige Sperrbanddämpfung wurde aus der Auflösung des AD-Umsetzers hergeleitet, da das SINAD ebenfalls bei rund 72 dB liegt.
 
@@ -1030,14 +1034,14 @@ Auch diese Stufe wurde zur Stabilisierung mit 0.1 $\mu$F und 4.7 $\mu$F beschalt
 
 Als Abgriff für das Triggersignal wurden ein Jumper direkt am Eingang des AD-Umsetzers und ein weiterer Jumper unmittelbar hinter dem Spannungsfolger vorgesehen. Über einen zusätzlichen Jumper wird die gewünschte Triggerquelle ausgewählt. Der Abgriff hinter dem Spannungsfolger ist aufgrund der niedrigen Ausgangsimpedanz grundsätzlich vorteilhaft. Bei höheren Frequenzen kann er jedoch durch die Lage vor dem Anti-Aliasing-Filter dazu führen, dass der Trigger nicht exakt dem im Oszilloskop dargestellten Signal entspricht.\\
 
-Der zugehörige Schaltplanteil findet sich auf Seite 6 des Schematics im \autoref{sec:appendix_a}.
+Der zugehörige Schaltplanteil findet sich auf Seite 6 des Schematics in \autoref{subsec:appendix_a_schematic}.
 
 
 \subsubsection{Simulation des AFEs}
 
 Zur Verifikation des gesamten analogen Frontends und zur frühzeitigen Erkennung möglicher Probleme vor dem Layout wurde das geplante Design in PSPICE übertragen (siehe Simulationen im \autoref{sec:appendix_a}). Die Simulation diente außerdem dazu, Richtwerte für Kompensationskondensator und Koppelkondensator zu bestimmen. Da im Analog Filter Wizard bereits eine Filtersimulation vorlag, lag der Schwerpunkt auf dem Gesamtsystem. Einzelne Stufen wurden zur Absicherung ebenfalls simuliert. Eine vollständige Darstellung aller Einzelergebnisse würde jedoch den Rahmen dieser Dokumentation sprengen.\\
 
-Die verwendeten Simulationsmodelle stammten überwiegend aus den integrierten Bibliotheken des Programms. Das Modell des Spannungsfolgers wurde aus einer Internetbibliothek des Herstellers (\footnotesize \url{https://www.ti.com/product/de-de/THS4631#design-tools-simulation}\normalsize ) eingebunden. Nach Abschluss des Schaltplans wurden verschiedene Simulationen ohne aktivierte Kopplung durchgeführt. Zunächst wurde der geeignete Wert beziehungsweise der geeignete Wertebereich für den Kompensationskondensator ermittelt. In der AC-Analyse ergab die parametrische Darstellung des Frequenzgangs einen idealen Wert von rund 5.6 pF. Daraus wurde ein Trimmkondensator mit einem Einstellbereich von 2 bis 10 pF abgeleitet. Anschließend folgten Transientenanalysen mit repräsentativen Eingangssignalen. Exemplarisch sind im Anhang Rechtecksignale mit 100 kHz und 1 MHz sowie Sinussignale mit 100 kHz und 1 MHz dargestellt. Zusätzlich wurden Frequenzgang und Gruppenlaufzeit über AC-Analysen bestimmt. An der Bandbreitengrenze von 1 MHz ergab sich simulatorisch eine Dämpfung von rund 1 dB. Die Ergebnisse stimmten gut mit den Resultaten des Filterdesign-Tools überein und stützen die gewählte Schaltungsauslegung.\\
+Die verwendeten Simulationsmodelle stammten überwiegend aus den integrierten Bibliotheken des Programms. Das Modell des Spannungsfolgers wurde aus einer Internetbibliothek des Herstellers \footnote{\url{https://www.ti.com/product/de-de/THS4631\#design-tools-simulation}} eingebunden. Nach Abschluss des Schaltplans wurden verschiedene Simulationen ohne aktivierte Kopplung durchgeführt. Zunächst wurde der geeignete Wert beziehungsweise der geeignete Wertebereich für den Kompensationskondensator ermittelt. In der AC-Analyse ergab die parametrische Darstellung des Frequenzgangs einen idealen Wert von rund 5.6 pF. Daraus wurde ein Trimmkondensator mit einem Einstellbereich von 2 bis 10 pF abgeleitet. Anschließend folgten Transientenanalysen mit repräsentativen Eingangssignalen. Exemplarisch sind im Anhang Rechtecksignale mit 100 kHz und 1 MHz sowie Sinussignale mit 100 kHz und 1 MHz dargestellt. Zusätzlich wurden Frequenzgang und Gruppenlaufzeit über AC-Analysen bestimmt. An der Bandbreitengrenze von 1 MHz ergab sich simulatorisch eine Dämpfung von rund 1 dB. Die Ergebnisse stimmten gut mit den Resultaten des Filterdesign-Tools überein und stützen die gewählte Schaltungsauslegung.\\
 
 Die Verifikation der Kopplung erwies sich als anspruchsvoller. Die Kopplung arbeitete nicht über den gesamten Frequenzbereich so trennscharf wie gewünscht. Je nach gewählter Kapazität wurde der Gleichanteil nicht ausreichend unterdrückt oder es trat bereits eine Dämpfung bei Signalen auf, die noch nicht gedämpft werden sollten. In der Simulation zeigte eine Kapazität von etwa 12 pF die besten Ergebnisse. Für eine optimierte Kopplung wäre vermutlich eine aufwendigere Schaltungstopologie erforderlich gewesen. Vor diesem Hintergrund wurde die Kopplung in der vorliegenden Form umgesetzt und im praktischen Aufbau evaluiert. Für die Grundfunktion des Oszilloskops ist sie nicht zwingend erforderlich, da sich eine Zentrierung des Wechselanteils um Masse und damit die Entfernung des Offsetanteils auch über die Offset-Funktion erreichen lässt.
 
@@ -1056,7 +1060,7 @@ V_{out} = V_{in} \cdot \frac{R_{unten}}{R_{oben} + R_{unten}} = 5 V \cdot \frac{
 
 Damit liegt der Logikpegel im zulässigen Bereich für die 3.3-V-Eingänge des Mikrocontrollers.
 
-Die Daten- und Steuerleitungen des fertiggestellten Interfaceblocks (siehe Seite 4 des Schematics in \autoref{sec:appendix_a}) wurden anschließend gemäß der zuvor vereinbarten Pinbelegung auf die Mikrocontroller-Konnektoren geführt. Die Spannungsversorgung und die Masse wurden an den Konnektoren ebenfalls angeschlossen (siehe Seite 8 des Schematics in \autoref{sec:appendix_a}).
+Die Daten- und Steuerleitungen des fertiggestellten Interfaceblocks (siehe Seite 4 des Schematics in \autoref{subsec:appendix_a_schematic}) wurden anschließend gemäß der zuvor vereinbarten Pinbelegung auf die Mikrocontroller-Konnektoren geführt. Die Spannungsversorgung und die Masse wurden an den Konnektoren ebenfalls angeschlossen (siehe Seite 8 des Schematics in \autoref{subsec:appendix_a_schematic}).
 
 
 \subsubsection{Spannungsversorgung}
@@ -1065,7 +1069,7 @@ Die Spannungsversorgung wurde bewusst auf Labornetzteile ausgelagert, da der Ent
 
 Für das analoge Frontend wurde eine Versorgungsspannung von $\pm$12 V gewählt. Die höhere Betriebsspannung schafft Reserven, da nach dem Eingangsteiler Signale bis zu 4.096 V am Frontend zulässig sind. Die eingesetzten Operationsverstärker arbeiten nicht rail-to-rail, daher erhöht die Wahl von $\pm$12 V die Aussteuerungsreserve und vermindert Klippgefahr. Außerdem liefern die OPVs bei dieser Versorgungsspannung die beste Gesamtperformance \cite[S. 1 u. 13]{AnalogDevices2011}. Der ADC und der Komparator erfordern eine Versorgung von $\pm$5 V. Für den Digitalteil einschließlich Mikrocontroller werden +5 V benötigt. Die +5-V-Schiene wurde gemeinsam mit den $\pm$5 V bereitgestellt, wodurch die Anzahl externer Netzteile reduziert wird und die Verteilung im Aufbau vereinfacht.\\
 Zur Spannungsstabilisierung sind pro Schiene Elektrolytkondensatoren mit 100 $\mu$F vorgesehen. Als Verpolschutz werden Schottky-Dioden in die Zuleitungen eingesetzt. Die Versorgungseinspeisung erfolgt über Löt-Vias.\\
-Der zugehörige Schaltplanteil findet sich auf Seite 5 des Schematics im \autoref{sec:appendix_a}.
+Der zugehörige Schaltplanteil findet sich auf Seite 5 des Schematics in \autoref{subsec:appendix_a_schematic}.
 
 \subsubsection{Schaltplan / Zusammenführung}
 
@@ -1086,7 +1090,7 @@ Nach Abschluss des Schaltplans wurde die Umsetzung in eine Baugruppe begonnen. Z
 \subsubsection{Routing, Layout und Fertigung}
 
 
-Nach Einbindung aller Footprints und 3D-Modelle sowie Aktualisierung der Bibliotheken begann die Platzierung. Die Außenabmessungen der Baugruppe wurden an das Mikrocontrollerboard angepasst. Zuerst wurde der Mikrocontroller-Connector positioniert und die Schaltung wurde ausschließlich zwischen den beiden Konnektoren des Mikrocontrollers aufgebaut. Die BNC-Buchse wurde an der oberen Kante der Leiterplatte platziert. Unmittelbar dahinter erfolgte die grobe Anordnung des analogen Frontends. Unter dem Analogteil, in Verlängerung des Signalflusses, wurden die digitalen Steuer- und Datensignale geführt und die digitalen Funktionsblöcke platziert. Der Erstentwurf sah eine zweilagige Leiterplatte vor. Als Standard-Leiterbahnbreite wurden 0.3 mm verwendet. Durchkontaktierungen erfolgten im gängigen Standard. Dabei wurden die Kosten und Möglichkeiten der entsprechenden Zulieferer beachtet. (Quelle Aisler Designregeln) Ausschließlich die Versorgungsleitungen erhielten größere Querschnitte auf Basis erfahrungsbasierter Strombelastbarkeit. Das Routing begann im analogen Frontend ausgehend von der BNC-Buchse, wobei die genaue Platzierung der Bauteile iterativ mit der Signalführung abgestimmt wurde.\\
+Nach Einbindung aller Footprints und 3D-Modelle sowie Aktualisierung der Bibliotheken begann die Platzierung. Die Außenabmessungen der Baugruppe wurden an das Mikrocontrollerboard angepasst. Zuerst wurde der Mikrocontroller-Connector positioniert und die Schaltung wurde ausschließlich zwischen den beiden Konnektoren des Mikrocontrollers aufgebaut. Die BNC-Buchse wurde an der oberen Kante der Leiterplatte platziert. Unmittelbar dahinter erfolgte die grobe Anordnung des analogen Frontends. Unter dem Analogteil, in Verlängerung des Signalflusses, wurden die digitalen Steuer- und Datensignale geführt und die digitalen Funktionsblöcke platziert. Der Erstentwurf sah eine zweilagige Leiterplatte vor. Als Standard-Leiterbahnbreite wurden 0.3 mm verwendet. Durchkontaktierungen erfolgten im gängigen Standard. Dabei wurden die Kosten und Möglichkeiten der entsprechenden Zulieferer beachtet\footnote{Aisler Design Rules: \url{https://community.aisler.net/t/pcb-design-rules/41}}. Ausschließlich die Versorgungsleitungen erhielten größere Querschnitte auf Basis erfahrungsbasierter Strombelastbarkeit. Das Routing begann im analogen Frontend ausgehend von der BNC-Buchse, wobei die genaue Platzierung der Bauteile iterativ mit der Signalführung abgestimmt wurde.\\
 
 Für das Layout waren insbesondere im Analogteil gewisse Layoutvorgaben einzuhalten, dazu wurde in den Datenblätter folgendes für uns relevante recherchiert:
 
@@ -2753,7 +2757,21 @@ Durch das Wechseln auf die Seite \emph{Debugging} bieten sich dem Benutzer noch 
 %%%%%%%%%%% Fazit und Ausblick %%%%%%%%%%%
 \section{Fazit und Ausblick}
 
-Da das Ziel des Projekts die Validierung unseres Konzepts zur Signalerfassung, -konditionierung und -verarbeitung für ein USB-Oszilloskop war, wurden weitergehende Aspekte nicht behandelt. Hierbei handelt es sich um Aspekte, die für die Validierung des Konzeptes nicht selbst entwickelt werden mussten. Hierunter fällt vorwiegend die Verwendung externer Netzteile zur Versorgung der Baugruppe.
+\textbf{Fazit}\\
+Das Projektziel, ein Konzept zur Signalerfassung, -konditionierung und -verarbeitung für ein USB-Oszilloskop zu entwickeln und validieren, wurde erreicht. Die Grundfunktionen wurden implementiert, die geforderten Eckdaten eingehalten und die Bedienung sowie die Aufnahme von Signalen erwiesen sich als praxistauglich. Die Arbeitsteilung in Hardware, Firmware und Software war zweckmäßig und schuf klare Verantwortlichkeiten. Aus dem Projektverlauf ergaben sich wesentliche Erkenntnisse für Entwicklung und Teamarbeit. Maßgeblich waren eine präzise Definition von Zielen, Anforderungen und Schnittstellen sowie ein frühzeitige Planung. Ebenso wichtig waren regelmäßige Abstimmungen und gegenseitige Unterstützung zwischen den Teilbereichen, insbesondere in Phasen mit Abhängigkeiten oder Verzögerungen.\\
+
+\textbf{Ausblick}\\
+Als nächster Schritt richtet sich der Blick auf die Weiterentwicklung des Systems. Der Ausblick bündelt die aus Messungen und Inbetriebnahme gewonnenen Erkenntnisse und leitet konkrete Maßnahmen zur Weiterentwicklung ab. Die möglichen Vorhaben sind nach Hardware, Firmware und Software gegliedert und verbinden kurzfristig umsetzbare Verbesserungen mit Optionen für einen größeren zeitlichen Horizont.\\
+
+\emph{Hardware}\\
+Zu Beginn stünde eine vertiefte Analyse an, insbesondere der kritischen Schaltungsteile. Das Anti-Aliasing-Filter ist hinsichtlich Variantenbestückungen zu evaluieren. Die real benötigte Sperrbanddämpfung ist gegenüber Sprungantwort und Einschwingverhalten abzuwägen. Gegebenenfalls könnte der AAF erweitert werden oder durch einen fertigen Filterbaustein ersetzt werden. Die Eingangsstufe ist mit Blick auf Kopplung und Offsetverhalten zu prüfen. Eine Verlagerung der Kopplung in einen eigenen Schaltungsteil reduziert parasitäre Kapazitäten, durch kürzere Leitungsführung und entschärft möglicherweise das beobachtete Offsetproblem. Außerdem ermöglicht es eine funktionierende Kopplung zu implementieren. Für das analoge Frontend ist eine Feinabstimmung mit präziseren Widerständen und bei Bedarf eine differentielle Leitungsführung sinnvoll. Die bei niedrigen Frequenzen aufgenommenen Störungen im Offsetzweig sind weiter zu analysieren, ein niederohmiger Impedanzwandler als Treiber könnte das Problem vermutlich lösen.\\
+Für höhere Abtastraten ist ein leistungsfähigerer AD-Umsetzer notwendig. Die passiven Spannungsteiler im Interface geraten bei deutlich höheren Datenraten an Grenzen, aktive Pegelwandler stellen dann die robustere Lösung dar. Das Platinenlayout ist hinsichtlich EMV, Versorgungskonzept, Lagenaufbau und Masseführung zu optimieren, hierbei wären weitere Lagen vorteilhaft, insbesondere zur Verteilung der Versorgungsspannung sowie zur Schirmung und Leitungsführung. Eine Integration des Mikrocontrollers auf derselben Leiterplatte verkürzt Leitungswege und verbessert die Systemintegration. Ergänzend können neue noch nicht implementierte Funktionen umgesetzt werden. Eine integrierte Spannungsversorgung ersetzt die Labornetzteile und wird im Idealfall über USB geliefert. Kopplung, Trigger und Offset wären über den Mikrocontroller zu automatisieren. Ein zweiter analoger Kanal würde den Funktionsumfang auch in der Software erweitern. Der ursprünglich geplante Logikanalysator kann mit Komparatoren und GPIOs realisiert werden. Ein geeignetes Gehäuse wäre sinnvoll zur Verbesserung der Nutzbarkeit und Abschirmung.\\
+
+\emph{Firmware}\\
+Zentral für die Weiterentwicklung wäre eine stärkere Modularisierung des Codes. Eine an objektorientierten Prinzipien orientierte Struktur könnte die Übersichtlichkeit, Wartbarkeit und Erweiterbarkeit verbessern. Das Nadelöhr des Gesamtsystems ließe sich durch ein performanteres Kommunikationskonzept entschärfen. Anstelle von USB-CDC (virtual COM-Port) wäre ein eigener USB-Endpoint-Treiber denkbar. Alternativ wäre der Wechsel von USB Full Speed auf USB High Speed zu prüfen, wofür zusätzliche Hardware erforderlich wäre, da die vorhandene Nucleo-Schnittstelle nur Full Speed unterstützt, das wäre im Rahmen einer Einbindung des uC in das Layout denkbar. Die Vorverarbeitung könnte ebenfalls ausgeweitet werden. Digitale Filterung im Frequenzbereich stünde als Möglichkeit zur flexiblen Bandbreitenanpassung zur Verfügung. Auch wäre ein über die Firmware implementierter Trigger für eine Ausweitung der Trigger-Funktionen nützlich. Für eine signifikante Ausweitung der aktuellen Leistung käme eher ein FPGA in Betracht. Darauf ließen sich Signalverarbeitung, Kommunikation und Speicherverwaltung anwendungsspezifisch abbilden, mit Fokus auf effizienter USB-Übertragung und zeitoptimiertem Transfer der ADC-Daten in den Sample-Buffer. Die mögliche Parallelisierung würde eine stärkere Zeitoptimierung ermöglichen.\\
+
+\emph{Software}\\
+Im Single-Mode wären zusätzliche Analysen einführbar. Sinc-Interpolation könnte die Rekonstruktion verbessern, eine FFT-Analyse würde die Frequenzauswertung ermöglichen. Weitere Funktionen, orientiert an existierenden Produkten, stünden zur Steigerung von Diagnosefähigkeit und Bedienkomfort zur Verfügung. Beispielsweise ein invertieren des Signals wäre denkbar, der entwickelte Mittelwertfilter könnte über die Benutzeroberfläche zugeschalten werden, eine Schwingungsanalyse mit Bestimmung des Überschwingers könnte ergänzt werden. Bei Hinzunahme eines Logikanalysators oder weiterer Kanäle wären Bus-Auswertungen umsetzbar. Eine Messung von Tastverhältnis, Anstiegs- und Abfallzeit sowie positiver und negativer Pulsbreiten für die digitalen Signale wäre ebenfalls denkbar. Bei einem zweiten analogen Kanal ließen sich Mathematik-Funktionen Addition, Subtraktion und Multiplikation ergänzen, ein XY-Modus sowie die Messung der Phasenverschiebung wären möglich. Änderungen an der Hardware oder Firmware könnten in der Oberfläche abgebildet werden. Zusätzliche Triggereinstellungen (Level, Pulsbreite etc.), Offset-Level und die Umschaltung der Kanalkopplung zwischen AC und DC wären bereitzustellen. Eine frequenzabhängige Skalierung zur Korrektur von Frequenzgang und Offsetfehler käme in Betracht. Übergreifend ließen sich Nutzererlebnis und Interaktionsqualität durch klare Bedienkonzepte, konsistente Visualisierungen und reaktionsschnelle Abläufe steigern.
 
 \pagebreak
 
@@ -2889,10 +2907,16 @@ Sollten während der Installation oder des Starts Probleme auftreten, überprüf
 \end{figure}
 \pagebreak
 
+\subsection{Verantwortlichkeiten}
+\label{subsec:appendix_a_responsibilities}
+\includepdf[pages={-}, angle=0]{Verantwortlichkeiten.pdf}
+
 \subsection{Schematic (KiCad)}
+\label{subsec:appendix_a_schematic}
 \includepdf[pages={-}, angle=90]{../../schematics/Usb_Oszi_Schematic.pdf}
 
 \subsection{Layout (KiCad)}
+\label{subsec:appendix_a_layout}
 \includepdf[pages={-}, angle=0]{../../../cad/KiCad/USB_Oszi/Layout_Top.pdf}
 \includepdf[pages={-}, angle=0]{../../../cad/KiCad/USB_Oszi/Layout_Bottom.pdf}
 
