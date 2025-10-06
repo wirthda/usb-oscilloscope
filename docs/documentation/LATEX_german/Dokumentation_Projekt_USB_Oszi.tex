@@ -869,7 +869,7 @@ Die digitale Ansteuerung des LTC1450 folgt der im Datenblatt erläuterten Logik.
 
 Da die ausgegebenen Werte in diesem Projekt direkt in die Input-Latches geschrieben werden, sind alle drei Signale dauerhaft auf Low gelegt, sodass immer alle zwölf Bit in die Latches übernommen werden. Das Update des Ausgangs erfolgt ausschließlich über den LDAC-Eingang, der die Inhalte der Input-Latches in die DAC-Latches übernimmt und damit die Ausgangsspannung aktualisiert. Der CLR-Eingang setzt alle Latches auf Null und damit den Ausgang des invertierenden Verstärkers sofort auf den höchsten möglichen Wert für $V_{ref}$, also den größtmöglichen Eingangsspannungsbereich. Die Ausgangsverstärkung des DAC-Puffers wird über X1/X2 bestimmt und ist hier durch Verbindung nach GND auf zwei gesetzt, wodurch eine Full-Scale-Spannung von 4.095 V erreicht wird. Zusätzlich werden die Versorgungsspannung von 5 V sowie der digitale Ground angeschlossen. Zwischen $V_{CC}$ und GND ist gemäß Datenblatt ein 0,1 $\mu$F-Kondensator vorzusehen \cite[S. 1,7 u. 10]{LinearTechnology1450}. Mit diesen Festlegungen ließ sich die Referenzschaltung im Schaltplan umsetzen. Die Datenleitungen wurden über Bussymbole geführt, um sie im Schaltplan eindeutig und übersichtlich den nachfolgenden Verarbeitungsschritten zuzuordnen.\\
 
-Der zugehörige Schaltplanteil findet sich auf Seite 3 des Schematics im \autoref{sec:appendix_a}.
+Der zugehörige Schaltplanteil findet sich auf Seite 3 des Schematics in \autoref{subsec:appendix_a_schematic}.
 
 \subsubsection{Offset und Eingangsbeschaltung des ADCs}
 
@@ -890,7 +890,7 @@ Der am Eingang des AD-Umsetzers nutzbare Bereich liegt differenziell bei $\pm$ 2
 
 Die Offsetschaltung besteht aus einem Potentiometer $R_{Voff1}$ = 5 k$\Omega$, das zwischen +5 V und -5 V liegt. An den Enden des Potentiometers befinden sich symmetrische Vorwiderstände $R_{off1}$ = $R_{off2}$ = 2.7 k$\Omega$. Der Schleifer stellt den Offset bereit und speist über einen Jumper den Knoten -AIN. Nachgeschaltet sind zwei Glättungskondensatoren mit 1 $\mu$F und 100 nF gegen analoge Masse, die Versorgungsschwankungen und Spannungsspitzen dämpfen. Der Jumper ermöglicht bei Bedarf die Trennung des Offsets vom Eingangspfad, durch Überbrücken eines der Kondensatoren ist eine Festlegung des Signals auf 0 V möglich. Ein zusätzlicher Spannungsfolger oder eine Referenzquelle wurde bewusst vermieden, da das Datenblatt für DC-Kopplung einen einfachen Widerstandsteiler zulässt und damit der Schaltungsaufwand reduziert wird.\\
 
-Der zugehörige Schaltplanteil findet sich auf Seite 3 des Schematics im \autoref{sec:appendix_a}.
+Der zugehörige Schaltplanteil findet sich auf Seite 3 des Schematics iin \autoref{subsec:appendix_a_schematic}.
 
 Mit dieser Wahl der Bauelemente ergibt sich folgender Einstellbereich.
 
@@ -934,14 +934,14 @@ Deshalb wurde – analog zum Prinzip des Oszilloskop-Tastkopfs (siehe \autoref{s
 Ein einstellbarer Trimmkondensator parallel zu $R_1$ zur Feineinstellung, ergänzt um einen parallelen Festwertkondensator zur Grobeinstellung, erlaubt den Abgleich der Zeitkonstante und damit eine frequenzunabhängigere Abschwächung.\\  
 Hierdurch werden die durch Eingangs- und Leitungskapazitäten verursachten Pegel- und Phasenfehler wirkungsvoll reduziert.\\
 
-Der zugehörige Schaltplanteil findet sich auf Seite 2 des Schematics im \autoref{sec:appendix_a}.\\
+Der zugehörige Schaltplanteil findet sich auf Seite 2 des Schematics in \autoref{subsec:appendix_a_schematic}.\\
 
 Für Messungen an 50-$\Omega$-Systemen ist optional ein Widerstand zur Eingangs-Anpassung vorgesehen. Damit kann der Eingang bei Bedarf auf 50 $\Omega$ umgeschaltet werden, ohne dass im Normalbetrieb die hohe 1-M$\Omega$-Eingangsimpedanz beeinträchtigt wird. Für den OPV wurden entsprechend des Datenblatts je Versorgungspannung zwei Bypass Kondensatoren mit 0.1$\mu$F und 100pF eingeplant. Ein weiterer größerer Kondensator im uF-Bereich, war ebenfalls gefordert. Da dieser laut Datenblatt allerdings nicht direkt am Device gefordert ist und mit anderen Bausteinen geteilt werden kann, wurde auf Grund der weiteren OPV in nahe des Spannungsfolgers auf diesen verzichtet.
 
 \subsubsection{Anti-Aliasing-Filter}
 \label{subsubsec:aaf_concept}
 
-Der zugehörige Schaltplanteil findet sich auf Seite 2 des Schematics im \autoref{sec:appendix_a}.\\
+Der zugehörige Schaltplanteil findet sich auf Seite 2 des Schematics in \autoref{subsec:appendix_a_schematic}.\\
 
 Der Entwurf des Anti-Aliasing-Filters erfolgte mit dem Analog Filter Wizard\footnote{\url{https://tools.analog.com/en/filterwizard/}} von Analog Devices und orientierte sich an den im Kapitel zum Filterentwurf festgelegten Kriterien (\autoref{subsec:aaf_nyquist}). Für die Synthese wurden die 3-dB-Grenzfrequenz, die geforderte Sperrbanddämpfung und der Beginn des Sperrbands vorgegeben. Außerdem wurde ein Spannungsbereich von $\pm$5 V festgelegt. Die 3-dB-Grenzfrequenz wurde auf 1,5 MHz festgelegt, um die Zielbandbreite von 1 MHz sicher zu erreichen. Der Beginn des Sperrbands wurde mit der Nyquist-Frequenz gleichgesetzt, die bei der halben Abtastrate liegt und hier 5 MHz beträgt. Die notwendige Sperrbanddämpfung wurde aus der Auflösung des AD-Umsetzers hergeleitet, da das SINAD ebenfalls bei rund 72 dB liegt.
 
@@ -1034,7 +1034,7 @@ Auch diese Stufe wurde zur Stabilisierung mit 0.1 $\mu$F und 4.7 $\mu$F beschalt
 
 Als Abgriff für das Triggersignal wurden ein Jumper direkt am Eingang des AD-Umsetzers und ein weiterer Jumper unmittelbar hinter dem Spannungsfolger vorgesehen. Über einen zusätzlichen Jumper wird die gewünschte Triggerquelle ausgewählt. Der Abgriff hinter dem Spannungsfolger ist aufgrund der niedrigen Ausgangsimpedanz grundsätzlich vorteilhaft. Bei höheren Frequenzen kann er jedoch durch die Lage vor dem Anti-Aliasing-Filter dazu führen, dass der Trigger nicht exakt dem im Oszilloskop dargestellten Signal entspricht.\\
 
-Der zugehörige Schaltplanteil findet sich auf Seite 6 des Schematics im \autoref{sec:appendix_a}.
+Der zugehörige Schaltplanteil findet sich auf Seite 6 des Schematics in \autoref{subsec:appendix_a_schematic}.
 
 
 \subsubsection{Simulation des AFEs}
@@ -1060,7 +1060,7 @@ V_{out} = V_{in} \cdot \frac{R_{unten}}{R_{oben} + R_{unten}} = 5 V \cdot \frac{
 
 Damit liegt der Logikpegel im zulässigen Bereich für die 3.3-V-Eingänge des Mikrocontrollers.
 
-Die Daten- und Steuerleitungen des fertiggestellten Interfaceblocks (siehe Seite 4 des Schematics in \autoref{sec:appendix_a}) wurden anschließend gemäß der zuvor vereinbarten Pinbelegung auf die Mikrocontroller-Konnektoren geführt. Die Spannungsversorgung und die Masse wurden an den Konnektoren ebenfalls angeschlossen (siehe Seite 8 des Schematics in \autoref{sec:appendix_a}).
+Die Daten- und Steuerleitungen des fertiggestellten Interfaceblocks (siehe Seite 4 des Schematics in \autoref{subsec:appendix_a_schematic}) wurden anschließend gemäß der zuvor vereinbarten Pinbelegung auf die Mikrocontroller-Konnektoren geführt. Die Spannungsversorgung und die Masse wurden an den Konnektoren ebenfalls angeschlossen (siehe Seite 8 des Schematics in \autoref{subsec:appendix_a_schematic}).
 
 
 \subsubsection{Spannungsversorgung}
@@ -1069,7 +1069,7 @@ Die Spannungsversorgung wurde bewusst auf Labornetzteile ausgelagert, da der Ent
 
 Für das analoge Frontend wurde eine Versorgungsspannung von $\pm$12 V gewählt. Die höhere Betriebsspannung schafft Reserven, da nach dem Eingangsteiler Signale bis zu 4.096 V am Frontend zulässig sind. Die eingesetzten Operationsverstärker arbeiten nicht rail-to-rail, daher erhöht die Wahl von $\pm$12 V die Aussteuerungsreserve und vermindert Klippgefahr. Außerdem liefern die OPVs bei dieser Versorgungsspannung die beste Gesamtperformance \cite[S. 1 u. 13]{AnalogDevices2011}. Der ADC und der Komparator erfordern eine Versorgung von $\pm$5 V. Für den Digitalteil einschließlich Mikrocontroller werden +5 V benötigt. Die +5-V-Schiene wurde gemeinsam mit den $\pm$5 V bereitgestellt, wodurch die Anzahl externer Netzteile reduziert wird und die Verteilung im Aufbau vereinfacht.\\
 Zur Spannungsstabilisierung sind pro Schiene Elektrolytkondensatoren mit 100 $\mu$F vorgesehen. Als Verpolschutz werden Schottky-Dioden in die Zuleitungen eingesetzt. Die Versorgungseinspeisung erfolgt über Löt-Vias.\\
-Der zugehörige Schaltplanteil findet sich auf Seite 5 des Schematics im \autoref{sec:appendix_a}.
+Der zugehörige Schaltplanteil findet sich auf Seite 5 des Schematics in \autoref{subsec:appendix_a_schematic}.
 
 \subsubsection{Schaltplan / Zusammenführung}
 
@@ -2912,9 +2912,11 @@ Sollten während der Installation oder des Starts Probleme auftreten, überprüf
 \pagebreak
 
 \subsection{Schematic (KiCad)}
+\label{subsec:appendix_a_schematic}
 \includepdf[pages={-}, angle=90]{../../schematics/Usb_Oszi_Schematic.pdf}
 
 \subsection{Layout (KiCad)}
+\label{subsec:appendix_a_layout}
 \includepdf[pages={-}, angle=0]{../../../cad/KiCad/USB_Oszi/Layout_Top.pdf}
 \includepdf[pages={-}, angle=0]{../../../cad/KiCad/USB_Oszi/Layout_Bottom.pdf}
 
