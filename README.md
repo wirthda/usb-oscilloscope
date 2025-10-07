@@ -9,5 +9,8 @@ HW - hardware\
 FW - firmware\
 SW - software
 
+### USB oscilloscope prototype:
+![Picture of the USB oscilloscope prototype.](docs/img/Baugruppe_Bild.png)
+
 ### Documentation:
 PDF [GER]: [Dokumentation_Projekt_USB_Oszi.pdf](docs/documentation/LATEX_german/Dokumentation_Projekt_USB_Oszi.pdf)

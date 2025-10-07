@@ -140,7 +140,7 @@
 
 \lstset{style=pythonstyle}
 
-\title{Projekt USB-Oszilloskop}
+\title{Projektarbeit ``USB-Oszilloskop``}
 \author{Samuel Oeser, Nicole Sturm, Daniel Wirth}
 \date{\today}
 
@@ -152,7 +152,21 @@
 
 %%%%%%%%%%% Deckblatt %%%%%%%%%%%
 \maketitle
-%\thispagestyle{empty}
+\begin{figure}[H]
+	\centering
+    \includegraphics[scale=0.25]{Baugruppe_Bild.png} 
+	\label{fig:Baugruppe_Bild}
+\end{figure}
+
+\begin{center}
+	Bachelorstudiengang Elektro- und Informationstechnik (BEI)\\
+	Technische Hochschule Nürnberg\\
+	Fakultät efi\\
+	SoSe2025
+\end{center}
+
+\thispagestyle{empty}
+
 \pagebreak
 
 %%%%%%%%%%% TOC %%%%%%%%%%%
@@ -323,7 +337,7 @@ In der Praxis begrenzt das $SINAD$ häufig den nutzbaren Dynamikbereich des gew�
 	A(f_N)\approx min(|A_{max}|, |SINAD_{ADC}|)
 \end{equation}
 
-Die Bewertung des entworfenen Filters erfolgt in einem Tool wie dem Analog Filter Wizard über die Diagramme von Amplitudengang, Phasen- und Gruppenlaufzeit sowie Sprung- und Impulsantwort. Der Frequenzgang belegt Passband-Flachheit, Übergangsbreite und die Dämpfung an $f_N$. Phase und Gruppenlaufzeit zeigen, ob das Filter im Nutzband annähernd eine konstante Verzögerung liefert und damit Impulse und Flanken formtreu bleiben. Die Sprungantwort offenbart Überschwinger und Einschwingzeit. Eine Toleranzanalyse der zu erwartenden Widerstands- und Kapazitätsstreuungen zeigt, ob die Reserven ausreichend dimensioniert wurden (vgl. \cite{Pini2020} und \cite{Padmanabhuni2017}).
+Der Entwurf der Filter und die exakte Anpassung an die eigenen Forderungen erfolgt heutzutage in erster Linie mit Filter Tools, wie z.B. dem Analog Filter Wizard. Die Bewertung des entworfenen Filters erfolgt in dem Tool oder der Simulation u. A. über die Diagramme von Amplitudengang, Phasen- und Gruppenlaufzeit sowie Sprung- und Impulsantwort. Der Frequenzgang belegt Passband-Flachheit, Übergangsbreite und die Dämpfung an $f_N$. Phase und Gruppenlaufzeit zeigen, ob das Filter im Nutzband annähernd eine konstante Verzögerung liefert und damit Impulse und Flanken formtreu bleiben. Die Sprungantwort offenbart Überschwinger und Einschwingzeit. Eine Toleranzanalyse der zu erwartenden Widerstands- und Kapazitätsstreuungen zeigt, ob die Reserven ausreichend dimensioniert wurden (vgl. \cite{Pini2020} und \cite{Padmanabhuni2017}).
 
 \subsection{Analog-to-Digital-Converter (ADC)}
 \label{subsec:adc}
@@ -652,10 +666,10 @@ Es ist zu erkennen, dass die rechtsseitigen Eingangswerte zum Ausgangswert aufsu
 
 Damit entspricht der Moving Average Filter einer Faltung des Eingangssignals mit einem rechteckigen Filterkern \cite[S. 277f]{Smith1999}.\\
 
-Für das Projekt wurde der Filter kumulativ und rekursiv implementiert und nach dem Algorithmus in \autoref{fig:moving_avg_filter_algorithm_cumulative} im \autoref{subsubsec:preprocessing_concept} umgesetzt.
+Für das Projekt wurde der Filter kumulativ und rekursiv implementiert und nach den Algorithmen in \autoref{lst:moving_avg_filter_algorithm_cumulative} und \autoref{lst:moving_avg_filter_algorithm_recursive} im \autoref{subsubsec:preprocessing_concept} umgesetzt.
 
 \subsection{Parallele Prozesse und Nebenläufigkeiten in Python}
-Die folgenden Ausführungen orientieren sich maßgeblich auf den Erkentnissen von Niklas Lang ...
+
 \subsubsection{Threads in Python}
 	
 	Ein Thread ist ein paralleler Ausführungsstrang innerhalb eines Programms. Alle Threads teilen sich den selben Speicherbereich. 
@@ -664,13 +678,13 @@ Die folgenden Ausführungen orientieren sich maßgeblich auf den Erkentnissen vo
 	kann zu einem Zeitpunkt immer nur ein Thread, Python-Bytecode ausführen. Das heißt, auch wenn für einen Job mehrere Threads gestartet werden, arbeitet immer nur ein Thread gleichzeitig.
 	Dieses Prinzip widersricht zwar der Idee von paralleler Ausführung, jedoch darf ein anderer Thread Programmcode ausführen, wenn der Thread gerade auf eine Eingabe wartet.
 	Das GIL wird in Python genutzt, da es die Verwaltung von Python-Objekten im Speicher vereinfacht. Dies ist vor allem wichtig, da der der Speicher in Python typischerweise
-	automatisch verwaltet wird (vgl. \cite{Lang2024} Abschnitt ``Was sind Threads in Python?``). 
+	automatisch verwaltet wird (vgl. \cite{Lang2024} Abschnitt ``Was sind Threads in Python{?}``). 
 
 	Threading eignet sich vor allem für E/A-lastige Aufgaben, die mit Datenaustausch verbunden sind.
 
 	\underline{Synchronisation}
 	\begin{itemize}
-		\item Locks: Sperren, die verhindern, dass mehrere Threads gleichzeitig auf dieselben Daten zugreifen.
+		\item Locks: Sperren, die verhindern, dass mehrere Threads gleichzeitig auf die selben Daten zugreifen.
 		\item Semaphoren: Begrenzen die Anzahl gleichzeitiger Zugriffe auf eine Ressource.
 		\item Warteschlange (Queues): Erlauben thread-sicheren Austausch von Datenobjekten, nach dem FIFO-Prinzip.
 	\end{itemize}
@@ -697,7 +711,7 @@ Die folgenden Ausführungen orientieren sich maßgeblich auf den Erkentnissen vo
 
 In unserem Projekt wurden Threads verwendet, da die Anwendung hauptsächlich E/A-gebunden ist. Zusätzlich wird ein gemeinsamer Speicher benötigt, damit die Messdaten an die Benutzeroberfläche 
 übergeben werden können. Die Kommunikation wurde mit zwei Warteschlangen realisiert, eine dient zur Übergabe von Statusmeldungen von der FSM zur Benutzeroberfläche (GUI) und die andere zur
-Übergabe von Befehlen von der GUI an die FSM (vgl. \cite{Lang2024} Abschnitt ``Was ist Multiprocessing in Python?``). 
+Übergabe von Befehlen von der GUI an die FSM (vgl. \cite{Lang2024} Abschnitt ``Was ist Multiprocessing in Python{?}``). 
 
 
 
@@ -773,9 +787,9 @@ In der Entwurfsphase wurden Konzepte für die einzelnen Funktionaltäten erstell
 
 \subsubsection{Auswahl des ADCs}
 
-Die zentrale Entscheidung im Hardwareentwurf war die Auswahl eines geeigneten \emph{Analog-Digital-Umsetzers (ADC)}. Grundlage hierfür bildeten die zuvor definierten Projektanforderungen, insbesondere die \emph{Signalbandbreite von 1 MHz} und die daraus abgeleitete Abtastrate von 10 MS/s (vgl. \autoref{subsec:aaf_nyquist}). Darüber hinaus wurde eine \emph{Auflösung von mindestens 10 Bit} sowie ein \emph{analoger Eingangsspannungsbereich von $\pm$ 5 V} gefordert, wobei letzterer bei Bedarf über einen Spannungsteiler realisiert werden konnte. Da im Projekt lediglich ein einzelner Kanal vorgesehen war, genügte ein einkanaliger ADC. Trotz der deutlich geringeren Komplexität einer Anbindung über SPI wurde eine parallele Schnittstelle gewählt, da diese auf Grund der seriellen Übertragung einen deutlich höheren Takt erfordert hätte.\\
+Die zentrale Entscheidung im Hardwareentwurf war die Auswahl eines geeigneten \emph{Analog-Digital-Umsetzers (ADC)}. Grundlage hierfür bildeten die zuvor definierten Projektanforderungen, insbesondere die \emph{Signalbandbreite von 1 MHz} und die daraus abgeleitete Abtastrate von 10 MS/s (vgl. \autoref{subsec:aaf_nyquist}). Darüber hinaus wurde eine \emph{Auflösung von mindestens 10 Bit} sowie ein \emph{analoger Eingangsspannungsbereich von $\pm$ 5 V} gefordert, wobei letzterer bei Bedarf über einen Spannungsteiler realisiert werden konnte. Da im Projekt lediglich ein einzelner Kanal vorgesehen war, genügte ein einkanaliger ADC. Trotz der deutlich geringeren Komplexität einer Anbindung über SPI wurde eine parallele Schnittstelle gewählt, da diese aufgrund der seriellen Übertragung einen deutlich höheren Takt erfordert hätte.\\
 
-Neben diesen grundlegenden Anforderungen wurden weitere Parameter berücksichtigt, unter anderem das Rauschverhalten (SINAD, THD, ENOB…) sowie die Linearitätseigenschaften (INL, DNL). Um eine hohe Flexibilität im Entwicklungsprozess zu gewährleisten, fiel die Wahl auf einen Baustein, der sowohl im single-ended- als auch im differenziellen Betrieb eingesetzt werden kann. Zusätzlich sollte er im Dual-Supply- wie auch im Single-Supply-Betrieb einsetzbar sein und auf der digitalen Seite sowohl mit 3,3 V als auch mit 5 V betrieben werden können. Auch die Option zur Verwendung einer internen oder externen Referenzspannung war ein relevantes Kriterium, um die Anpassungsfähigkeit im späteren Entwicklungsverlauf zu erhöhen. Da die Wandlungslatenz nicht die primäre Einschränkung darstellte und vielmehr die Übertragungsgeschwindigkeit zwischen Mikrocontroller und PC der begrenzende Faktor war, wurde hinsichtlich der Architektur ein Pipeline-ADC ausgewählt. Dies ermöglichte im Vergleich zum Flash ADC eine höhere Auflösung (10 oder 12 Bit), bei gleichzeitiger Einhaltung eines annehmbaren Preisrahmens. Auch die Verfügbarkeit von SMD-Bauformen war ein wichtiges Kriterium.\\
+Neben diesen grundlegenden Anforderungen wurden weitere Parameter berücksichtigt, unter anderem das Rauschverhalten (SINAD, THD, ENOB…) sowie die Linearitätseigenschaften (INL, DNL). Um eine hohe Flexibilität im Entwicklungsprozess zu gewährleisten, fiel die Wahl auf einen Baustein, der sowohl im single-ended als auch im differenziellen Betrieb eingesetzt werden kann. Zusätzlich sollte er im Dual-Supply- wie auch im Single-Supply-Betrieb einsetzbar sein und auf der digitalen Seite sowohl mit 3.3 V als auch mit 5 V betrieben werden können. Auch die Option zur Verwendung einer internen oder externen Referenzspannung war ein relevantes Kriterium, um die Anpassungsfähigkeit im späteren Entwicklungsverlauf zu erhöhen. Da die Wandlungslatenz nicht die primäre Einschränkung darstellte und vielmehr die Übertragungsgeschwindigkeit zwischen Mikrocontroller und PC der begrenzende Faktor war, wurde hinsichtlich der Architektur ein Pipeline-ADC ausgewählt. Dies ermöglichte im Vergleich zum Flash ADC eine höhere Auflösung (10 oder 12 Bit), bei gleichzeitiger Einhaltung eines annehmbaren Preisrahmens. Auch die Verfügbarkeit von SMD-Bauformen war ein wichtiges Kriterium.\\
 
 Nach eingehender Recherche und Vergleichen bei verschiedenen Bauteillieferanten konnte mit dem \href{https://www.analog.com/en/products/ltc1420.html}{LTC1420} von Linear Technology ein ADC identifiziert werden, der alle definierten Anforderungen erfüllt. Er bietet mit \emph{12 Bit} eine höhere Auflösung als ursprünglich gefordert, zeichnet sich durch eine hohe Flexibilität im Betrieb (Single- oder Dual-Supply, differentiell oder single-ended, interner oder externer Referenzbetrieb) aus und weist zugleich ein \emph{sehr gutes Rauschverhalten} auf. Dieses zeigt sich insbesondere darin, dass die \emph{effektive Auflösung (ENOB)} nahe an der nominalen Bitzahl liegt (siehe Datenblatt \cite{LinearTechnology1420}, Berechnung von ENOB aus SINAD).
 
@@ -790,18 +804,18 @@ Um auch bei Eingangssignalen mit geringerer Amplitude die \emph{volle Auflösung
 
 \subsubsection{Konzept der Signalaufnahme und- konditionierung}
 
-Auf Basis der Anforderungen an Signalaufnahme und -konditionierung wurde zunächst ein Gesamtkonzept für den Hardwareteil erarbeitet. Diese Vorarbeit war notwendig, weil sich die Funktionsblöcke des Hardwareteils gegenseitig beeinflussen und zentrale Architekturentscheidungen früh zu treffen waren. Zwei Fragen standen dabei zu Beginn im Vordergrund. Erstens die Wahl zwischen Single-Ended und differenzieller Signalführung im analogen Frontend. Zweitens die Versorgung des Analogteils mit Single- oder Dualsupply. Trotz der Vorteile eines differenziellen Frontends wie Gleichtaktunterdrückung und Messung gegen ein vom Gerätemassepunkt unabhängiges Bezugspotenzial fiel die Entscheidung zugunsten einer Single-Ended-Lösung. Ausschlaggebend waren die deutlich größere Bauteilauswahl, der geringere Schaltungsaufwand und die vermiedene doppelte Signalführung. Für die Versorgung wurde eine Dual-Supply-Variante vorgesehen. Eine reine Single-Supply-Auslegung hätte einen virtuellen Massepunkt durch eine Offsetschaltung im analogen Frontend und geringe Aussteuerungsreserven erfordert und wäre damit näher an den Grenzwerten von Operationsverstärkern und ADC gelegen.\\
+Auf Basis der Anforderungen an Signalaufnahme und -konditionierung wurde zunächst ein Gesamtkonzept für den Hardwareteil erarbeitet. Diese Vorarbeit war notwendig, weil sich die Funktionsblöcke des Hardwareteils gegenseitig beeinflussen und zentrale Architekturentscheidungen früh zu treffen waren. Zwei Fragen standen dabei zu Beginn im Vordergrund. Erstens die Wahl zwischen Single-Ended und differenzieller Signalführung im analogen Frontend. Zweitens die Versorgung des Analogteils mit Single- oder Dual-Supply. Trotz der Vorteile eines differenziellen Frontends wie Gleichtaktunterdrückung und Messung gegen ein vom Gerätemassepunkt unabhängiges Bezugspotenzial fiel die Entscheidung zugunsten einer Single-Ended-Lösung. Ausschlaggebend waren die deutlich größere Bauteilauswahl, der geringere Schaltungsaufwand und die vermiedene doppelte Signalführung. Für die Versorgung wurde eine Dual-Supply-Variante vorgesehen. Eine reine Single-Supply-Auslegung hätte einen virtuellen Massepunkt durch eine Offsetschaltung im analogen Frontend und geringe Aussteuerungsreserven erfordert und wäre damit näher an den Grenzwerten von Operationsverstärkern und ADC gelegen.\\
 
-Im nächsten Schritt wurde der nutzbare Eingangsspannungsbereich des ADC festgelegt. Da der gewählte Umsetzer eine Anpassung über die Referenzspannung erlaubt, wird der Bereich über VREF in Verbindung mit einem DAC gesetzt. Diese Lösung ist im Datenblatt vorgesehen und ersetzt einen variablen analogen Verstärker im Frontend, womit eine aufwendige OPV-Schaltung oder Bauteilrecherche vermieden werden konnten. Zusätzlich verringert sich damit die Komplexität des Signalpfads. Es entfallen zusätzliche Rausch- und Stabilitätsrisiken, die bei verstellbaren Verstärkungsstufen erfahrungsgemäß auftreten. Aus demselben Grund wird der notwendige Gleichspannungs-Offset nicht durch eine separate OPV-Schaltung erzeugt, sondern über den negativen Analogeingang des ADC eingebracht. Das analoge Frontend stellt damit nur die Funktionen bereit, die unmittelbar für Impedanz, Pegelanpassung, Kopplung, Pufferung, Triggerabgriff und Bandbegrenzung erforderlich sind.\\
+Im nächsten Schritt wurde der nutzbare Eingangsspannungsbereich des ADC festgelegt. Da der gewählte Umsetzer eine Anpassung über die Referenzspannung erlaubt, wird der Bereich über VREF in Verbindung mit einem DAC gesetzt. Diese Lösung ist im Datenblatt vorgesehen und ersetzt einen variablen analogen Verstärker im Frontend, womit eine aufwendige OPV-Schaltung oder Bauteilrecherche vermieden werden konnten. Zusätzlich verringert sich damit die Komplexität des Signalpfads. Es entfallen zusätzliche Rausch- und Stabilitätsrisiken, die bei verstellbaren Verstärkungsstufen erfahrungsgemäß auftreten. Aus dem selben Grund wird der notwendige Gleichspannungs-Offset nicht durch eine separate OPV-Schaltung erzeugt, sondern über den negativen Analogeingang des ADC eingebracht. Das analoge Frontend stellt damit nur die Funktionen bereit, die unmittelbar für Impedanz, Pegelanpassung, Kopplung, Pufferung, Triggerabgriff und Bandbegrenzung erforderlich sind.\\
 
-Das Analoge Frontend beginnt unmittelbar nach der BNC-Buchse mit einer Eingangsimpedanz von 1 Megaohm. Dieser Widerstand ist Teil eines Spannungsteilers, der die Pegel auf den zuvor definierten ADC-Bereich absenkt. Um den Teiler nicht zu belasten, folgt ein hochohmiger Spannungsfolger als Impedanzwandler. Zwischen Teilerknoten und OPV-Eingang ist eine schaltbare Kopplung vorgesehen. Durch den hohen Eingangswiderstand des Puffers entsteht bereits mit kleinen Kapazitäten ein Hochpass mit niedriger Grenzfrequenz, sodass im AC-Betrieb auch langsame Signalanteile kaum beeinflusst werden. Hinter dem Impedanzwandler wird das Triggersignal abgegriffen und einer eigenen Auswertestufe zugeführt, die ein digitales Triggerereignis an den Mikrocontroller weitergibt. Vor dem positiven Analogeingang des ADC liegt das Anti-Aliasing-Filter, dessen Auslegung im entsprechenden Kapitel (\autoref{subsubsec:aaf_concept}) beschrieben ist und das die erforderliche Bandbegrenzung sicherstellt. Den Abschluss des Konzepts bilden die Versorgungsblöcke. Sie stellen die duale Versorgung für Operationsverstärker und Peripherie bereit.\\
+Das Analoge Frontend beginnt unmittelbar nach der BNC-Buchse mit einer Eingangsimpedanz von 1 M$\Omega$. Dieser Widerstand ist Teil eines Spannungsteilers, der die Pegel auf den zuvor definierten ADC-Bereich absenkt. Um den Teiler nicht zu belasten, folgt ein hochohmiger Spannungsfolger als Impedanzwandler. Zwischen Teilerknoten und OPV-Eingang ist eine schaltbare Kopplung vorgesehen. Durch den hohen Eingangswiderstand des Puffers entsteht bereits mit kleinen Kapazitäten ein Hochpass mit niedriger Grenzfrequenz, sodass im AC-Betrieb auch langsame Signalanteile kaum beeinflusst werden. Hinter dem Impedanzwandler wird das Triggersignal abgegriffen und einer eigenen Auswertestufe zugeführt, die ein digitales Triggerereignis an den Mikrocontroller weitergibt. Vor dem positiven Analogeingang des ADC liegt das Anti-Aliasing-Filter, dessen Auslegung im entsprechenden Kapitel (\autoref{subsubsec:aaf_concept}) beschrieben ist und das die erforderliche Bandbegrenzung sicherstellt. Den Abschluss des Konzepts bilden die Versorgungsblöcke. Sie stellen die duale Versorgung für Operationsverstärker und Peripherie bereit.\\
 
 Das beschriebene Konzept reduziert den Schaltungsaufwand auf das notwendige Minimum, nutzt die Stärken des ADC bei Bereichs- und Offseteinstellung und minimiert zugleich Empfindlichkeit gegen Rauschen, Schwingen und Toleranzen. Es schafft damit eine belastbare Grundlage für die nachfolgenden Teilschaltungen. Das Konzept ist in dem in \autoref{fig:afe_diagram} skizzierten Blockschaltbild dargestellt.
 
 \begin{figure}[H]
 	\centering
     \includegraphics[scale=0.1]{Prinzipschaltbild_AFE.png} 
-	\caption{Prinzipschaltbild des Analog-Frontends (AFE)}
+	\caption{Prinzipschaltbild des Hardware-Konzepts}
 	\label{fig:afe_diagram}
 \end{figure}
 
@@ -809,7 +823,7 @@ Nach Abschluss des Gesamtkonzepts für die Hardwareschaltung wurden die einzelne
 
 \subsubsection{Anpassung des Spannungsbereichs}
 
-Zunächst wurde die Methode zur Einstellung des Spannungsbereichs festgelegt, weil diese die Auslegung von Teilerverhältnis, Offset und maximal möglicher Eingangsspannung bestimmt. Gewählt wurde die Einstellung über einen Digital-Analog-Umsetzer, da diese Vorgehensweise im Datenblatt beschrieben ist und bereits eine entsprechende Schaltung vorgegeben wird. Der ADC-Eingangsbereich wird ohne Vorverstärkung durch $\frac{V_{ref}}{2}$ bestimmt \cite[S. 8]{LinearTechnology1420}. Die im Datenblatt gezeigte Beschaltung (siehe \autoref{fig:adc_reference_circuit}) nutzt den im LTC1420 integrierten Operationsverstärker in einer invertierenden Konfiguration mit Bezugspotenzial am nichtinvertierenden Eingang. Über die externe Verschaltung ergibt sich ein invertierender Verstärker mit einer Verstärkung von 1, dessen Bezugspotenzial um 2.048 V angehoben ist. Die Beziehung zu $V_{ref}$ lässt sich wie folgt herleiten:\\
+Zunächst wurde die Methode zur Einstellung des Spannungsbereichs festgelegt, weil diese die Auslegung von Teilerverhältnis, Offset und maximal möglicher Eingangsspannung bestimmt. Gewählt wurde die Einstellung über einen Digital-Analog-Umsetzer, da diese Vorgehensweise im Datenblatt beschrieben ist und bereits eine entsprechende Schaltung vorgegeben wird. Der ADC-Eingangsbereich wird ohne Vorverstärkung durch $\frac{V_{ref}}{2}$ bestimmt \cite[S. 9]{LinearTechnology1420}. Die im Datenblatt gezeigte Beschaltung (siehe \autoref{fig:adc_reference_circuit}) nutzt den im LTC1420 integrierten Operationsverstärker in einer invertierenden Konfiguration mit Bezugspotenzial am nichtinvertierenden Eingang. Über die externe Beschaltung ergibt sich ein invertierender Verstärker mit einer Verstärkung von 1, dessen Bezugspotenzial um 2.048 V angehoben ist. Die Beziehung zu $V_{ref}$ lässt sich wie folgt herleiten:\\
 
 Unter der Annahme, dass die Differenzspannung der OPV-Eingänge und die Eingangsströme jeweils Null sind, gelten die Gleichungen\\
 
@@ -852,7 +866,7 @@ Für $R_1 = R_2 = 5 k\Omega$ und $U_{int} = 2.048V$ ergibt sich
 \begin{figure}[H]
 	\centering
     \includegraphics[scale=0.3]{adc_reference_circuit_with_dac.png} 
-	\caption{Ansteuerung von $V_{ref}$ mittels DAC (aus \cite[S. 8]{LinearTechnology1420})}
+	\caption{Ansteuerung von $V_{ref}$ mittels DAC (aus \cite[S. 9]{LinearTechnology1420})}
 	\label{fig:adc_reference_circuit}
 \end{figure}
 
@@ -890,7 +904,7 @@ Der am Eingang des AD-Umsetzers nutzbare Bereich liegt differenziell bei $\pm$ 2
 
 Die Offsetschaltung besteht aus einem Potentiometer $R_{Voff1}$ = 5 k$\Omega$, das zwischen +5 V und -5 V liegt. An den Enden des Potentiometers befinden sich symmetrische Vorwiderstände $R_{off1}$ = $R_{off2}$ = 2.7 k$\Omega$. Der Schleifer stellt den Offset bereit und speist über einen Jumper den Knoten -AIN. Nachgeschaltet sind zwei Glättungskondensatoren mit 1 $\mu$F und 100 nF gegen analoge Masse, die Versorgungsschwankungen und Spannungsspitzen dämpfen. Der Jumper ermöglicht bei Bedarf die Trennung des Offsets vom Eingangspfad, durch Überbrücken eines der Kondensatoren ist eine Festlegung des Signals auf 0 V möglich. Ein zusätzlicher Spannungsfolger oder eine Referenzquelle wurde bewusst vermieden, da das Datenblatt für DC-Kopplung einen einfachen Widerstandsteiler zulässt und damit der Schaltungsaufwand reduziert wird.\\
 
-Der zugehörige Schaltplanteil findet sich auf Seite 3 des Schematics iin \autoref{subsec:appendix_a_schematic}.
+Der zugehörige Schaltplanteil findet sich auf Seite 3 des Schematics in \autoref{subsec:appendix_a_schematic}.
 
 Mit dieser Wahl der Bauelemente ergibt sich folgender Einstellbereich.
 
@@ -902,7 +916,7 @@ Der Bereich deckt den Zielwert von $\pm$ 2,048 V ab und eignet sich damit für d
 
 \textbf{Weitere Beschaltung des ADCs}\\
 Neben den Beschaltungen für Offset und Spannungsbereich waren weitere Maßnahmen am AD-Umsetzer erforderlich, die dem Datenblatt entnommen wurden.  
-Da die 2,´.5-V-Spannung an $V_{CM}$ nicht genutzt wird, wurde sie mit einem 1-$\mu$F-Keramikkondensator gegen Masse verbunden.  
+Da die 2.5-V-Spannung an $V_{CM}$ nicht genutzt wird, wurde sie mit einem 1-$\mu$F-Keramikkondensator gegen Masse verbunden.  
 Zusätzlich wurden an $V_{REF}$, $V_{SS}$ und $V_{DD}$ jeweils 1-$\mu$F-Keramikkon-densatoren nach Masse vorgesehen. Die positive und die negative Versorgung $V_{SS}$ und $V_{DD}$ wurden ebenfalls angeschlossen.  
 $V_{DD}$ und $OV_{DD}$ wurden gebrückt, um beide mit derselben 5-V-Versorgung zu speisen. Ursprünglich war vorgesehen, den digitalen Teil mit 3.3 V vom Mikrocontroller zu versorgen; dies wird jedoch nur im Single-Supply-Betrieb empfohlen, während im Dual-Supply-Betrieb 5 V empfohlen werden \cite[S. 12]{LinearTechnology1420}). Analoge und digitale Masse werden in unmittelbarer Nähe des AD-Umsetzers zusammengeführt, um die im Datenblatt geforderte Leitungsführung im Layout zu verdeutlichen. Weitere Informationen dazu folgen im Kapitel \textit{Layout} (siehe \autoref{subsec:hw_implementation}). Der Eingangsverstärkungsfaktor wurde auf eins gesetzt, da das Eingangssignal bereits durch einen Teiler herabgesetzt wird und eine zusätzliche Verstärkung eine stärkere Absenkung des Pegels durch den Spannungsteiler erfordern würde.  Der $GAIN$-Anschluss liegt dazu auf Versorgungspotenzial \cite[S. 6 u. 7]{LinearTechnology1420}).  Die Datenleitungen sind über Bussymbole geführt, um sie im Schaltplan eindeutig und übersichtlich den nachfolgenden Verarbeitungsschritten zuzuordnen.
 
@@ -914,6 +928,7 @@ $V_{DD}$ und $OV_{DD}$ wurden gebrückt, um beide mit derselben 5-V-Versorgung z
 \end{figure}
 
 \subsubsection{Eingangsimpedanz und Kopplung}
+\label{subsubsec:input_impedance_coupling}
 
 Nachdem die Beschaltung des ADCs fertiggestellt war, konnte mit dem Design des analogen Frontends begonnen werden, angefangen mit Eingangsimpedanz und Kopplung.\\  
 Nach der BNC-Buchse wurde zur Festlegung der Eingangsimpedanz von 1 M$\Omega$ und zur gleichzeitigen Pegelabsenkung ein Spannungsteiler realisiert.\\  
@@ -936,7 +951,7 @@ Hierdurch werden die durch Eingangs- und Leitungskapazitäten verursachten Pegel
 
 Der zugehörige Schaltplanteil findet sich auf Seite 2 des Schematics in \autoref{subsec:appendix_a_schematic}.\\
 
-Für Messungen an 50-$\Omega$-Systemen ist optional ein Widerstand zur Eingangs-Anpassung vorgesehen. Damit kann der Eingang bei Bedarf auf 50 $\Omega$ umgeschaltet werden, ohne dass im Normalbetrieb die hohe 1-M$\Omega$-Eingangsimpedanz beeinträchtigt wird. Für den OPV wurden entsprechend des Datenblatts je Versorgungspannung zwei Bypass Kondensatoren mit 0.1$\mu$F und 100pF eingeplant. Ein weiterer größerer Kondensator im uF-Bereich, war ebenfalls gefordert. Da dieser laut Datenblatt allerdings nicht direkt am Device gefordert ist und mit anderen Bausteinen geteilt werden kann, wurde auf Grund der weiteren OPV in nahe des Spannungsfolgers auf diesen verzichtet.
+Für Messungen an 50-$\Omega$-Systemen ist optional ein Widerstand zur Eingangs-Anpassung vorgesehen. Damit kann der Eingang bei Bedarf auf 50 $\Omega$ umgeschaltet werden, ohne dass im Normalbetrieb die hohe 1-M$\Omega$-Eingangsimpedanz beeinträchtigt wird. Für den OPV wurden entsprechend des Datenblatts je Versorgungspannung zwei Bypass Kondensatoren mit 0.1$\mu$F und 100pF eingeplant. Ein weiterer größerer Kondensator im uF-Bereich, war ebenfalls gefordert. Da dieser laut Datenblatt allerdings nicht direkt am Device gefordert ist und mit anderen Bausteinen geteilt werden kann, wurde auf Grund der weiteren OPVs in der Nähe des Spannungsfolgers auf diesen verzichtet \cite[S. 20]{TexasInstruments4631}.
 
 \subsubsection{Anti-Aliasing-Filter}
 \label{subsubsec:aaf_concept}
@@ -1030,7 +1045,7 @@ Für die Pegelwandlung des Clock-Signals wurde die Schaltschwelle über einen Wi
 V_{\text{th,clk}} = V_S \cdot \frac{R_{\text{clk2}}}{R_{\text{clk1}} + R_{\text{clk2}}} = 5\,\text{V} \cdot \frac{33k}{68k + 33k} = 1.634\,\text{V}
 \]
 
-Auch diese Stufe wurde zur Stabilisierung mit 0.1 $\mu$F und 4.7 $\mu$F beschaltet. Zusätzlich wurde ebenfalls eine Hysterese von 10 mV realisiert. Entkopplungskondensatoren mit 0.1 $\mu$F und 4.7 $\mu$F wurden entsprechend dem Datenblatt vorgesehen (\cite[S. 8]{LinearTechnology1714}).\\
+Auch diese Stufe wurde zur Stabilisierung mit 0.1 $\mu$F und 4.7 $\mu$F beschaltet. Zusätzlich wurde ebenfalls eine Hysterese von 10 mV realisiert. Entkopplungskondensatoren mit 0.1 $\mu$F und 4.7 $\mu$F wurden entsprechend dem Datenblatt vorgesehen (\cite[S. 9]{LinearTechnology1714}).\\
 
 Als Abgriff für das Triggersignal wurden ein Jumper direkt am Eingang des AD-Umsetzers und ein weiterer Jumper unmittelbar hinter dem Spannungsfolger vorgesehen. Über einen zusätzlichen Jumper wird die gewünschte Triggerquelle ausgewählt. Der Abgriff hinter dem Spannungsfolger ist aufgrund der niedrigen Ausgangsimpedanz grundsätzlich vorteilhaft. Bei höheren Frequenzen kann er jedoch durch die Lage vor dem Anti-Aliasing-Filter dazu führen, dass der Trigger nicht exakt dem im Oszilloskop dargestellten Signal entspricht.\\
 
@@ -1067,7 +1082,7 @@ Die Daten- und Steuerleitungen des fertiggestellten Interfaceblocks (siehe Seite
 
 Die Spannungsversorgung wurde bewusst auf Labornetzteile ausgelagert, da der Entwicklungsfokus auf Signalverarbeitung, Erfassung und Konditionierung liegen sollte und dadurch eine freiere Bauteilwahl sowie Schaltungsentwicklung möglich war. Das analoge Frontend erhielt eine eigene Versorgung. ADC, DAC und sämtliche digitalen Schaltungsteile wurden über eine weitere Versorgung gespeist. \\
 
-Für das analoge Frontend wurde eine Versorgungsspannung von $\pm$12 V gewählt. Die höhere Betriebsspannung schafft Reserven, da nach dem Eingangsteiler Signale bis zu 4.096 V am Frontend zulässig sind. Die eingesetzten Operationsverstärker arbeiten nicht rail-to-rail, daher erhöht die Wahl von $\pm$12 V die Aussteuerungsreserve und vermindert Klippgefahr. Außerdem liefern die OPVs bei dieser Versorgungsspannung die beste Gesamtperformance \cite[S. 1 u. 13]{AnalogDevices2011}. Der ADC und der Komparator erfordern eine Versorgung von $\pm$5 V. Für den Digitalteil einschließlich Mikrocontroller werden +5 V benötigt. Die +5-V-Schiene wurde gemeinsam mit den $\pm$5 V bereitgestellt, wodurch die Anzahl externer Netzteile reduziert wird und die Verteilung im Aufbau vereinfacht.\\
+Für das analoge Frontend wurde eine Versorgungsspannung von $\pm$12 V gewählt. Die höhere Betriebsspannung schafft Reserven, da nach dem Eingangsteiler Signale bis zu 4.096 V am Frontend zulässig sind. Die eingesetzten Operationsverstärker arbeiten nicht rail-to-rail, daher erhöht die Wahl von $\pm$12 V die Aussteuerungsreserve und vermindert Klippgefahr. Außerdem liefern die OPVs bei dieser Versorgungsspannung die beste Gesamtperformance \cite[S. 1 u. 13]{AnalogDevices8022}. Der ADC und der Komparator erfordern eine Versorgung von $\pm$5 V. Für den Digitalteil einschließlich Mikrocontroller werden +5 V benötigt. Die +5-V-Schiene wurde gemeinsam mit den $\pm$5 V bereitgestellt, wodurch die Anzahl externer Netzteile reduziert wird und die Verteilung im Aufbau vereinfacht.\\
 Zur Spannungsstabilisierung sind pro Schiene Elektrolytkondensatoren mit 100 $\mu$F vorgesehen. Als Verpolschutz werden Schottky-Dioden in die Zuleitungen eingesetzt. Die Versorgungseinspeisung erfolgt über Löt-Vias.\\
 Der zugehörige Schaltplanteil findet sich auf Seite 5 des Schematics in \autoref{subsec:appendix_a_schematic}.
 
@@ -1085,7 +1100,7 @@ Der Electric Rule Check wurde durchgeführt und alle vorhandenen Fehler und Warn
 
 \subsubsection{Footprints und Bauteileauswahl}
 
-Nach Abschluss des Schaltplans wurde die Umsetzung in eine Baugruppe begonnen. Zunächst erhielten alle Bauelemente passende Gehäuseformen bzw. Footprints. Die 3D-Bibliotheken wurden gepflegt, damit ein entsprechendes 3D-Modell der Baugruppe vorliegt. Für die Steckleisten des Nucleoboards war ein geeigneter Footprint vorhanden und konnte direkt übernommen werden. Bei den integrierten Schaltungen wurden gut lötbare SMD-Gehäuse mit guter Verfügbarkeit bevorzugt. Footprints und 3D-Modelle wurden dabei aus vom Hersteller bezogen. Für die BNC-Buchse kam eine horizontal ausgeführte Variante zum Einsatz. Die Potentiometer wurden in der Bauform 3314G vertical gewählt und es wurde ein Trimmkondensator der JR-Serie vorgesehen. Beide Bauteilarten wurden so dimensioniert, dass sie trotz kompakter Abmessungen gut einstellbar sind. Für große Stützkondensatoren wurden Elektrolytkondensatoren in der Bauform 6.3 × 7.7 mm eingesetzt. Als Schottky-Dioden für den Verpolschutz wurden SS14-Typen mit einem Nennstrom von 1 A vorgesehen. Keramikkondensatoren ab 1 $\mu$F wurden in 0805 umgesetzt, kleinere Werte in 0603. Als Dielektrikum wurde C0G beziehungsweise NP0 festgelegt, um einen geringen Temperaturkoeffizienten sowie hohe Stabilität und Präzision insbesondere im Filterpfad zu erreichen. Widerstände wurden als Metallschicht in 0603 ausgeführt. Für alle Bauteile wurden Spannungs-, Strom- und Verlustleistungsgrenzen überprüft. Für die Spannungsversorgung kamen THT-Pads mit 2.5 mm Landdurchmesser und 1.2 mm Bohrung zum Einsatz. Jumper wurden als Lötjumper ausgeführt. Testpunkte erhielten einen Durchmesser von 1 mm. Die Materialliste enthält weitere Details. Widerstandsnetzwerke wurden für die zum Mikrocontroller geführten Interface-Widerstände bewusst nicht verwendet, um spätere Varianten mit abweichenden Widerstandswerten ohne Layoutänderungen oder erneute Bauteilbestellung zu ermöglichen.
+Nach Abschluss des Schaltplans wurde die Umsetzung in eine Baugruppe begonnen. Zunächst erhielten alle Bauelemente passende Gehäuseformen bzw. Footprints. Die 3D-Bibliotheken wurden gepflegt, damit ein entsprechendes 3D-Modell der Baugruppe vorliegt. Für die Steckleisten des Nucleoboards war ein geeigneter Footprint vorhanden und konnte direkt übernommen werden. Bei den integrierten Schaltungen wurden gut lötbare SMD-Gehäuse mit guter Verfügbarkeit bevorzugt. Footprints und 3D-Modelle wurden dabei aus vom Hersteller bezogen. Für die BNC-Buchse kam eine horizontal ausgeführte Variante zum Einsatz. Die Potentiometer wurden in der Bauform 3314G vertical gewählt und es wurde ein Trimmkondensator der JR-Serie vorgesehen. Beide Bauteilarten wurden so dimensioniert, dass sie trotz kompakter Abmessungen gut einstellbar sind. Für große Stützkondensatoren wurden Elektrolytkondensatoren in der Bauform 6.3 × 7.7 mm eingesetzt. Als Schottky-Dioden für den Verpolschutz wurden SS14-Typen mit einem Nennstrom von 1 A vorgesehen. Keramikkondensatoren ab 1 $\mu$F wurden in 0805 umgesetzt, kleinere Werte in 0603. Als Dielektrikum wurde C0G beziehungsweise NP0 festgelegt, um einen geringen Temperaturkoeffizienten sowie hohe Stabilität und Präzision insbesondere im Filterpfad zu erreichen. Widerstände wurden als Metallschicht in 0603 ausgeführt. Für alle Bauteile wurden Spannungs-, Strom- und Verlustleistungsgrenzen überprüft. Für die Spannungsversorgung kamen THT-Pads mit 2.5 mm Landdurchmesser und 1.2 mm Bohrung zum Einsatz. Jumper wurden als Lötjumper ausgeführt. Testpunkte erhielten einen Durchmesser von 1 mm. Die Materialliste enthält weitere Details (siehe \autoref{subsec:appendix_a_bom}). Widerstandsnetzwerke wurden für die zum Mikrocontroller geführten Interface-Widerstände bewusst nicht verwendet, um spätere Varianten mit abweichenden Widerstandswerten ohne Layoutänderungen oder erneute Bauteilbestellung zu ermöglichen.
 
 \subsubsection{Routing, Layout und Fertigung}
 
@@ -1142,7 +1157,7 @@ Anhand dieser Design Vorgaben wurde mit dem Routing begonnen. Generell galt es, 
 
 Für den AD-Umsetzer war eine getrennte analoge Massefläche mit einem einzelnen Verbindungspunkt zum digitalen Massebezug gefordert. Umgesetzt wurde deshalb eine gemeinsame analoge Massefläche, die \textbf{ausschließlich} nahe am AD-Umsetzer mit der digitalen Masse verbunden ist. Diese Verbindung ist durch ein breites Leiterstück ausgeführt. Auch der DAC wurde mit dieser Massefläche verbunden, allerdings nahe der Verbindung zum Digitalen GND, um Rückströme durch den Analogteil zu vermeiden. Der analoge Teil wurde entsprechend den Vorgaben der Datenblätter ausgeführt. Unter den empfindlichen Eingangskreisen wurde die Massefläche gezielt ausgespart, um parasitäre Kapazitäten zu minimieren. Leiterwege wurden so kurz wie möglich gehalten. Widerstände in den Eingangspfaden wurden unmittelbar an den zugehörigen Pins platziert.\\
 
-Nach der Platzierung des analogen Frontends erfolgte die Auslegung des Digitalteils. Aufgrund der festgelegten Pinbelegungen und der begrenzten Fläche war eine kreuzungsfreie Leitungsführung nicht in allen Bereichen realisierbar. Wo immer möglich wurde eine konfliktfreie Führung dennoch angestrebt. Die Versorgungsschienen wurden so positioniert, dass ihre Anschlüsse funktional in das Routing integriert werden konnten. Ein zentraler Sammelpunkt für alle Anschlüsse wurde nicht erzwungen.\\
+Nach der Platzierung des analogen Frontends erfolgte die Auslegung des Digitalteils. Aufgrund der festgelegten Pinbelegungen und der begrenzten Fläche war eine kreuzungsfreie Leitungsführung nicht in allen Bereichen realisierbar. Wo immer möglich wurde eine konfliktfreie Führung dennoch angestrebt. Die Versorgungsschienen wurden so positioniert, dass ihre Anschlüsse funktional in das Routing integriert werden konnten. Ein zentraler Sammelpunkt für alle Anschlüsse wurde nicht erzwungen. Das Layout befindet sich in \autoref{subsec:appendix_a_layout}.\\
 
 Nach Fertigstellung des Layouts wurde der Design Rule Check durchgeführt und alle vorhandenen Fehler und Warnungen behoben oder als unkritisch eingestuft. Zusätzlich wurden die Beschriftungen sinnvoll platziert und anschließend die Fertigungsdaten an den gewählten Zulieferer übermittelt. Nach Erhalt der Leiterplatte wurde die Baugruppe von Hand bestückt. Als Versorgung wurden 4mm Leitungen über Lötfahnen an die entsprechenden VIAs gelötet. Aus den 3D-Modellen der Bibliothek wurde ein Modell der Baugruppe erstellt (siehe \autoref{fig:3dmodel_pcb_assembly}).
 
@@ -1169,7 +1184,7 @@ Nach dem Bestücken der Baugruppe erfolgte ein erster Test ohne Mikrocontroller 
 
 \subsubsection{Hochlaufen der Versorungsspannungen}
 
-Zu Beginn wurden die Versorgungsschienen verifiziert. Geprüft wurden die Nennpegel sowie das korrekte Einschwingen beim Hochlaufen. Die Messkurven zeigen einen sauberen Anstieg ohne Überschwingen oder Einbrüche und es traten keine Auffälligkeiten auf (siehe Abb. n.)
+Zu Beginn wurden die Versorgungsschienen verifiziert. Geprüft wurden die Nennpegel sowie das korrekte Einschwingen beim Hochlaufen. Die Messkurven zeigen einen sauberen Anstieg ohne Überschwingen oder Einbrüche und es traten keine Auffälligkeiten auf (siehe \autoref{fig:hw_test_startup_voltage})
 
 \begin{figure}[H]
 	\centering
@@ -1354,7 +1369,7 @@ An die Kommunikation zwischen Hardware und Firmware wurden verschiedene Anforder
 \begin{figure}[H]
 	\centering
     \includegraphics[scale=0.5]{hw_fw_timing_diagram_adc.png} 
-	\caption{Timing Diagramm ADC}
+	\caption{Timing Diagramm ADC aus \cite[S. 7]{LinearTechnology1420}}
 	\label{fig:hw_fw_timing_diagram_adc}
 \end{figure}
 
@@ -2159,7 +2174,7 @@ Anschließend werden die Rohdaten mit der Funktion \emph{calculate\_voltage()} i
 $$
 \frac{\text{raw\_value}}{4095} \cdot v_{\text{ref}} \cdot 10^{-3} \cdot v_{\text{div\_factor}}
 $$
-{\footnotesize Die 4095 ergeben sich aus der Auflösung des ADCs von 12 Bit. $v_{ref}$ ist die eingestellte Referenzspannung. Der div\_factor ergibt sich aus dem Spannungsteiler im AF.}
+{\footnotesize Die 4095 ergeben sich aus der Auflösung des ADCs von 12 Bit. $v_{ref}$ ist die eingestellte Referenzspannung. Der div\_factor ergibt sich aus dem Spannungsteiler im AF (siehe \autoref{subsubsec:input_impedance_coupling}).}
 
 \subsubsection{Implementierung Kommunikation zwischen PC FSM und GUI}
 Die Kommunikation zwischen den beiden Threads wurde mit zwei Queues realisiert, die \emph{command\_queue} und die {status\_queue}. Um zu verhindern, dass Daten überschrieben werden oder verloren gehen, kann immer nur ein Thread schreibend zugreifen und der andere nur lesend. So schreibt der GUI-Thread Befehle in die \emph{command\_queue}, der PC FSM-Thread liest diese aus und führt basiert auf seinem aktuellen Zustand und den Befehlen die passende Codezeile aus. Dabei schreibt er bei Zustandswechsel oder im Fehlerfall eine Nachricht in die  \emph{status\_queue}, welche wiederrum vom Thread der \emph{StatusProvider} Klasse, die sich im Programm der Benutzeroberfläche befindet, ausgewertet wird.\\ 
@@ -2919,6 +2934,11 @@ Sollten während der Installation oder des Starts Probleme auftreten, überprüf
 \label{subsec:appendix_a_layout}
 \includepdf[pages={-}, angle=0]{../../../cad/KiCad/USB_Oszi/Layout_Top.pdf}
 \includepdf[pages={-}, angle=0]{../../../cad/KiCad/USB_Oszi/Layout_Bottom.pdf}
+
+\subsection{BOM (KiCad)}
+BOM - bill of materials
+\label{subsec:appendix_a_bom}
+\includepdf[pages={-}, angle=0]{../../../cad/KiCad/USB_Oszi/BOM_pcb_assembly.pdf}
 
 \subsection{Simulationen}
 \includepdf[scale=0.9, pages={-}, angle=90]{../../../sim/PSpice/simulation_prints/Simulation.pdf}
