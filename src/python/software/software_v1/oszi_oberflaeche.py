@@ -193,9 +193,12 @@ class MatplotlibWidget(FigureCanvas):
         self.vline2.set_visible(False)
         self.hline2.set_visible(False)
         self.coord_text2.set_visible(False)
-        if hasattr(self, "delta_t_text") and self.delta_t_text is not None:
-                self.delta_t_text.remove()
-                self.delta_t_text = None
+        if hasattr(self, "delta_x_text") and self.delta_x_text is not None:
+                self.delta_x_text.remove()
+                self.delta_x_text = None
+        if hasattr(self, "delta_y_text") and self.delta_y_text is not None:
+                self.delta_y_text.remove()
+                self.delta_y_text = None
         self.draw_idle()
 
     def update_cursor1(self, mouse_x):
@@ -489,7 +492,29 @@ class Info(QWidget):
         
     def initUI(self):
         layout = QVBoxLayout()
-        self.info_label = QLabel("Here you can find some information about the GUI")
+        self.info_label = QLabel(
+    "<b>Bedienungsanleitung für das USB-Oszilloskop:</b><br><br>"
+    "1. <b>Vorbereitung:</b><br>"
+    "- Schließen Sie das USB-Oszilloskop an Ihren PC an.<br>"
+    "- Starten Sie die Anwendung und warten Sie, bis die Verbindung automatisch erkannt und hergestellt wird.<br><br>"
+    "2. <b>Überblick über die Oberfläche:</b><br>"
+    "- Nutzen Sie das Hauptmenü, um zwischen den Seiten <b>General</b>, <b>Info</b> und <b>Debugging</b> zu navigieren.<br>"
+    "- Die Seite <b>General</b> bietet Zugriff auf die Messfunktionen, grafische Anzeige und Einstellungen.<br>"
+    "- Unter <b>Info</b> finden Sie diese Anleitung.<br>"
+    "- Unter <b>Debugging</b> kann die Abtastfrequenz und die Referenzspannung angepasst werden.<br><br>"
+    "3. <b>Messung durchführen:</b><br>"
+    "- Stellen Sie gewünschte Parameter wie Abtastrate, Referenzspannung und Triggertyp ein.<br>"
+    "- Starten Sie mit dem Run-Button die kontinuierliche oder mit dem Single-Button die einmalige Aufzeichnung.<br>"
+    "- Die erfassten Daten werden grafisch dargestellt.<br><br>"
+    "4. <b>Ergebnisse auswerten:</b><br>"
+    "- Nutzen Sie die integrierten Funktionen (z.&nbsp;B. Maximum, Minimum, Mittelwert, RMS), um Ihre Messdaten zu analysieren.<br>"
+    "- Weitere Einstellungen zur Visualisierung können direkt im Diagramm oder über die Menüleiste geändert werden.<br><br>"
+    "5. <b>Hinweise zur Bedienung:</b><br>"
+    "- Änderung des Triggertyps, der Abtastfrequenz und der Referenzspannung können nur im IDLE Zustand durchgeführt werden. Einstellungsänderungen zur Darstellung können jederzeit gemacht werden.<br>"
+    "- Sollte die Verbindung unterbrochen sein, prüfen Sie das USB-Kabel, reseten sie die Anwendung mit dem Reset-Button oder starten Sie die Anwendung ggf. neu.<br><br>"
+    "Weitere Informationen und Tipps zur Erweiterung der Software finden Sie im Git Repository <a href='https://github.com/wirthda/usb-oscilloscope.git'>Online-Dokumentation</a>.<br><br>"
+)
+        self.info_label.setOpenExternalLinks(True)
         layout.addWidget(self.info_label)
         layout.addStretch(1) # Fügt einen dehnbaren Leerraum hinzu
         self.setLayout(layout) # Das Layout dem Widget zuweisen
